@@ -7,6 +7,7 @@ export class LikeButton extends React.Component<{}, {}> {
         return (
             <Button waves='light'>
                 <Icon>thumb_up</Icon>
-            </Button>)
+            </Button>
+        )
     }
 }
