@@ -3,6 +3,8 @@ import * as React from "react";
 import { Navbar, NavItem, Icon } from "react-materialize";
 import PlotlyChart from "react-plotlyjs-ts";
 
+import {Tabs, TabList, Tab, DragTabList, DragTab, PanelList, Panel, ExtraButton} from 'react-tabtab';
+
 export class App extends React.Component<{}, {}> {
   play = (e: Event) => {
     // Go through each tab and generate data then play
@@ -53,6 +55,9 @@ export class App extends React.Component<{}, {}> {
             displayModeBar: false
           }}
         />
+        <Tabs  >
+          
+        </Tabs>
       </div>
     );
   }
