@@ -48,10 +48,7 @@ export class App extends React.Component<object, State> {
     const panelTemplate: JSX.Element[] = [];
     this.state.tabs.forEach((tab: ExampleTab, index: number) => {
       tabsTemplate.push(<DragTab key={index}>{tab.title}</DragTab>);
-      panelTemplate.push(
-        <Panel key={index}>{`Expression: ${tab.expression} for time: ${
-          tab.length
-        } ms`}</Panel>
+      panelTemplate.push(<Panel key={index}>{`Expression: ${tab.expression} for time: ${tab.length} ms`}</Panel>
       );
     });
     
@@ -123,6 +120,7 @@ export class App extends React.Component<object, State> {
 
   private handlePlay = () => this.setState(playSegments);
   private handleStop = () => this.setState(stopAudio);
+  private handleSettings = () => this.setState(toggleSettingsModal);
   private handleOpenSettings = () => this.setState(openSettings);
   private handleCloseSettings = () => this.setState(closeSettings);
 
@@ -130,23 +128,20 @@ export class App extends React.Component<object, State> {
     this.setState({ activeTabIndex: index });
   };
 
-  private handleTabOrderChange = ({
-    oldIndex,
-    newIndex
-  }: {
-    oldIndex: number;
-    newIndex: number;
-  }) => {
+  private handleTabOrderChange = ({oldIndex, newIndex}: {oldIndex: number; newIndex: number;}) => {
     const { tabs } = this.state;
     const updateTabs = arrayMove(tabs, oldIndex, newIndex);
     this.setState({ tabs: updateTabs, activeTabIndex: newIndex });
-    return;
   };
 }
 
 const playSegments = (prevState: State) => ({});
 
 const stopAudio = (prevState: State) => ({});
+
+const toggleSettingsModal = (prevState: State) => ({
+  isModalOpen: !prevState.isModalOpen
+});
 
 const openSettings = (prevState: State) => ({
   isModalOpen: true
