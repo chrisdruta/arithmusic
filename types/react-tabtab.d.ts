@@ -38,8 +38,11 @@ export class ExtraButton extends React.Component {
 
   render(): any;
 
+  onClick(callback: any): void;
+
   static defaultProps: {
     disabled: boolean;
+    onClick: any;
   };
 }
 
@@ -307,11 +310,17 @@ export namespace ExtraButton {
 
   const replaceState: any;
 
+  function onClick(callback: any): void;
+
   function forceUpdate(callback: any): void;
 
   function render(): any;
 
   function setState(partialState: any, callback: any): void;
+
+  namespace onClick {
+    const prototype: {};
+  }
 
   namespace forceUpdate {
     const prototype: {};
@@ -530,6 +539,8 @@ export namespace Tabs {
     };
 
     const activeIndex: number;
+
+    const ExtraButton: JSX.Element;
 
     const showArrowButton: string;
 

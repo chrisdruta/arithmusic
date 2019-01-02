@@ -3,7 +3,8 @@ import PlotlyChart from "react-plotlyjs-ts";
 
 import { Navbar, NavItem, Icon, Modal, Row, Input } from "react-materialize";
 
-import { Tabs, DragTabList, DragTab, PanelList, Panel } from "react-tabtab";
+import { Tabs, DragTabList, DragTab, PanelList, Panel, ExtraButton } from "react-tabtab";
+import * as customStyle from "react-tabtab/lib/themes/material-design";
 
 import { arrayMove } from "react-sortable-hoc";
 
@@ -109,9 +110,10 @@ export class App extends React.Component<object, State> {
 
         <Tabs
           activeIndex={this.state.activeTabIndex}
-          //activeIndex={this.state.activeTabIndex}
           onTabChange={this.handleTabChange}
           onTabSequenceChange={this.handleTabOrderChange}
+          ExtraButton={<ExtraButton onClick={() => console.log('hi')}><Icon>add</Icon></ExtraButton>}
+          customStyle={customStyle}
         >
           <DragTabList>{tabsTemplate}</DragTabList>
           <PanelList>{panelTemplate}</PanelList>
