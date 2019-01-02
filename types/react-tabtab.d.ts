@@ -529,6 +529,8 @@ export namespace Tabs {
       TabList: any;
     };
 
+    const activeIndex: number;
+
     const showArrowButton: string;
 
     const showModalButton: number;

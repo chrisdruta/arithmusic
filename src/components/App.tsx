@@ -39,7 +39,8 @@ export class App extends React.Component<object, State> {
   shouldComponentUpdate(nextProps: object, nextState: State) {
     return (
       this.state.isModalOpen !== nextState.isModalOpen ||
-      this.state.activeTabIndex !== nextState.activeTabIndex
+      this.state.activeTabIndex !== nextState.activeTabIndex ||
+      this.state.tabs !== nextState.tabs
     );
   }
 
@@ -107,6 +108,7 @@ export class App extends React.Component<object, State> {
         />
 
         <Tabs
+          activeIndex={this.state.activeTabIndex}
           //activeIndex={this.state.activeTabIndex}
           onTabChange={this.handleTabChange}
           onTabSequenceChange={this.handleTabOrderChange}
