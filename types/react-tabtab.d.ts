@@ -533,9 +533,9 @@ export namespace Tabs {
 
     const showModalButton: number;
 
-    function onTabChange(): void;
+    function onTabChange(index: number): void;
 
-    function onTabSequenceChange(): void;
+    function onTabSequenceChange({oldIndex, newIndex}: {oldIndex: number; newIndex: number}): void;
 
     namespace onTabChange {
       const prototype: {};

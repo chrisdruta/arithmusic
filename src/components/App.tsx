@@ -3,32 +3,58 @@ import PlotlyChart from "react-plotlyjs-ts";
 
 import { Navbar, NavItem, Icon, Modal, Row, Input } from "react-materialize";
 
-import {
-  Tabs,
-  DragTabList,
-  DragTab,
-  PanelList,
-  Panel,
-} from "react-tabtab";
+import { Tabs, DragTabList, DragTab, PanelList, Panel } from "react-tabtab";
+
+import { arrayMove } from "react-sortable-hoc";
 
 const initialState = {
-  isModalOpen: false,
-  fs: 44100
+  isModalOpen: false as boolean,
+  activeTabIndex: 0 as number,
+  tabs: [
+    {
+      title: "Tab1",
+      expression: "x",
+      length: 500
+    },
+    {
+      title: "Tab2",
+      expression: "x^2",
+      length: 250
+    }
+  ] as ExampleTab[],
+  fs: 44100 as number
 };
+
+interface ExampleTab {
+  title: string;
+  expression: string;
+  length: number;
+}
 
 type State = Readonly<typeof initialState>;
 
 export class App extends React.Component<object, State> {
-
   readonly state: State = initialState;
 
   shouldComponentUpdate(nextProps: object, nextState: State) {
-    if (this.state.isModalOpen == nextState.isModalOpen && !nextState.isModalOpen)
-      return false;
-    return true;
+    return (
+      this.state.isModalOpen !== nextState.isModalOpen ||
+      this.state.activeTabIndex !== nextState.activeTabIndex
+    );
   }
 
   render() {
+    const tabsTemplate: JSX.Element[] = [];
+    const panelTemplate: JSX.Element[] = [];
+    this.state.tabs.forEach((tab: ExampleTab, index: number) => {
+      tabsTemplate.push(<DragTab key={index}>{tab.title}</DragTab>);
+      panelTemplate.push(
+        <Panel key={index}>{`Expression: ${tab.expression} for time: ${
+          tab.length
+        } ms`}</Panel>
+      );
+    });
+    
     return (
       <div>
         <Navbar
@@ -48,16 +74,21 @@ export class App extends React.Component<object, State> {
         </Navbar>
         <Modal
           open={this.state.isModalOpen}
-          header='Settings'
+          header="Settings"
           fixedFooter
           modalOptions={{
             complete: this.handleCloseSettings
           }}
         >
           <Row>
-            <Input label="Sampling Frequency (Hz)" s={6} defaultValue={this.state.fs} />
+            <Input
+              label="Sampling Frequency (Hz)"
+              s={6}
+              defaultValue={this.state.fs}
+            />
           </Row>
         </Modal>
+
         <PlotlyChart
           data={[
             {
@@ -77,17 +108,14 @@ export class App extends React.Component<object, State> {
             displayModeBar: false
           }}
         />
-        <Tabs>
-          <DragTabList>
-            <DragTab>Segment 1</DragTab>
-            <DragTab>Segment 2</DragTab>
-            <DragTab>Segment 3</DragTab>
-          </DragTabList>
-          <PanelList>
-            <Panel>Segment 1 Form</Panel>
-            <Panel>Segment 2 Form</Panel>
-            <Panel>Segment 3 Form</Panel>
-          </PanelList>
+
+        <Tabs
+          //activeIndex={this.state.activeTabIndex}
+          onTabChange={this.handleTabChange}
+          onTabSequenceChange={this.handleTabOrderChange}
+        >
+          <DragTabList>{tabsTemplate}</DragTabList>
+          <PanelList>{panelTemplate}</PanelList>
         </Tabs>
       </div>
     );
@@ -97,6 +125,23 @@ export class App extends React.Component<object, State> {
   private handleStop = () => this.setState(stopAudio);
   private handleOpenSettings = () => this.setState(openSettings);
   private handleCloseSettings = () => this.setState(closeSettings);
+
+  private handleTabChange = (index: number) => {
+    this.setState({ activeTabIndex: index });
+  };
+
+  private handleTabOrderChange = ({
+    oldIndex,
+    newIndex
+  }: {
+    oldIndex: number;
+    newIndex: number;
+  }) => {
+    const { tabs } = this.state;
+    const updateTabs = arrayMove(tabs, oldIndex, newIndex);
+    this.setState({ tabs: updateTabs, activeTabIndex: newIndex });
+    return;
+  };
 }
 
 const playSegments = (prevState: State) => ({});
@@ -109,4 +154,8 @@ const openSettings = (prevState: State) => ({
 
 const closeSettings = (prevState: State) => ({
   isModalOpen: false
+});
+
+const changeTabOrder = (prevState: State) => ({
+  //const {tabs} = prevState
 });
