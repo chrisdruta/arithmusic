@@ -1,7 +1,7 @@
 import * as React from "react";
 import PlotlyChart from "react-plotlyjs-ts";
 
-import { Navbar, NavItem, Icon, Modal, Row, Input } from "react-materialize";
+import { Navbar, NavItem, Icon, Modal, Row, Input, Button } from "react-materialize";
 
 import { Tabs, DragTabList, DragTab, PanelList, Panel, ExtraButton, Tab } from "react-tabtab";
 import * as md from "react-tabtab/lib/themes/material-design";
@@ -49,7 +49,7 @@ export class App extends React.Component<object, State> {
     const tabsTemplate: JSX.Element[] = [];
     const panelTemplate: JSX.Element[] = [];
     this.state.tabs.forEach((tab: ExampleTab, index: number) => {
-      tabsTemplate.push(<DragTab key={index} closable >{tab.title}</DragTab>);
+      tabsTemplate.push(<DragTab key={index}>{tab.title}</DragTab>);
       panelTemplate.push(<Panel key={index}>{`Expression: ${tab.expression} for time: ${tab.length} ms`}</Panel>
       );
     });
@@ -106,19 +106,22 @@ export class App extends React.Component<object, State> {
             displayModeBar: false
           }}
         />
-
+        <div style={{textAlign: "center"}}>Timeline</div>
         <Tabs
           activeIndex={this.state.activeTabIndex}
           onTabChange={this.handleTabChange}
           onTabEdit={this.handleTabAddition}
           onTabSequenceChange={this.handleTabOrderChange}
-          ExtraButton={<ExtraButton onClick={this.handleTabAddition}><Icon>add</Icon></ExtraButton>}
           showModalButton={false}
           customStyle={md}
         >
           <DragTabList>{tabsTemplate}</DragTabList>
           <PanelList>{panelTemplate}</PanelList>
         </Tabs>
+        <Button floating fab='vertical' icon='edit' className='red' large style={{bottom: '45px', right: '24px'}}>
+          <Button floating icon='add' className='green'/>
+          <Button floating icon='remove' className='blue'/>
+        </Button>
       </div>
     );
   }
