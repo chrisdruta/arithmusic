@@ -3,7 +3,7 @@ import PlotlyChart from "react-plotlyjs-ts";
 
 import { Navbar, NavItem, Icon, Modal, Row, Input } from "react-materialize";
 
-import { Tabs, DragTabList, DragTab, PanelList, Panel, ExtraButton } from "react-tabtab";
+import { Tabs, DragTabList, DragTab, PanelList, Panel, ExtraButton, Tab } from "react-tabtab";
 import * as md from "react-tabtab/lib/themes/material-design";
 
 import { arrayMove } from "react-sortable-hoc";
@@ -49,11 +49,10 @@ export class App extends React.Component<object, State> {
     const tabsTemplate: JSX.Element[] = [];
     const panelTemplate: JSX.Element[] = [];
     this.state.tabs.forEach((tab: ExampleTab, index: number) => {
-      tabsTemplate.push(<DragTab key={index}>{tab.title}</DragTab>);
+      tabsTemplate.push(<DragTab key={index} closable >{tab.title}</DragTab>);
       panelTemplate.push(<Panel key={index}>{`Expression: ${tab.expression} for time: ${tab.length} ms`}</Panel>
       );
     });
-    
     return (
       <div>
         <Navbar
@@ -111,8 +110,10 @@ export class App extends React.Component<object, State> {
         <Tabs
           activeIndex={this.state.activeTabIndex}
           onTabChange={this.handleTabChange}
+          onTabEdit={this.handleTabAddition}
           onTabSequenceChange={this.handleTabOrderChange}
-          ExtraButton={<ExtraButton onClick={() => console.log('hi')}><Icon>add</Icon></ExtraButton>}
+          ExtraButton={<ExtraButton onClick={this.handleTabAddition}><Icon>add</Icon></ExtraButton>}
+          showModalButton={false}
           customStyle={md}
         >
           <DragTabList>{tabsTemplate}</DragTabList>
@@ -133,9 +134,19 @@ export class App extends React.Component<object, State> {
   };
 
   private handleTabOrderChange = ({oldIndex, newIndex}: {oldIndex: number; newIndex: number;}) => {
-    const { tabs } = this.state;
+    const tabs = this.state.tabs;
     const updateTabs = arrayMove(tabs, oldIndex, newIndex);
     this.setState({ tabs: updateTabs, activeTabIndex: newIndex });
+  };
+
+  private handleTabAddition = () => {
+    const tabs = this.state.tabs;
+    const updateTabs = [...tabs, {
+      title: "New Tab",
+      expression: "x^new",
+      length: 420
+    }];
+    this.setState({ tabs: updateTabs, activeTabIndex: updateTabs.length - 1});
   };
 }
 
@@ -153,6 +164,9 @@ const openSettings = (prevState: State) => ({
 
 const closeSettings = (prevState: State) => ({
   isModalOpen: false
+});
+
+const addTab = (prevState: State) => ({
 });
 
 const changeTabOrder = (prevState: State) => ({
