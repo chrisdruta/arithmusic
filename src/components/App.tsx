@@ -119,8 +119,8 @@ export class App extends React.Component<object, State> {
           <PanelList>{panelTemplate}</PanelList>
         </Tabs>
         <Button floating fab='vertical' icon='edit' className='red' large style={{bottom: '45px', right: '24px'}}>
-          <Button floating icon='add' className='green'/>
-          <Button floating icon='remove' className='blue'/>
+          <Button floating icon='add' className='green' onClick={this.handleTabAddition}/>
+          <Button floating icon='remove' className='blue' onClick={this.handleTabDeletion}/>
         </Button>
       </div>
     );
@@ -128,7 +128,6 @@ export class App extends React.Component<object, State> {
 
   private handlePlay = () => this.setState(playSegments);
   private handleStop = () => this.setState(stopAudio);
-  private handleSettings = () => this.setState(toggleSettingsModal);
   private handleOpenSettings = () => this.setState(openSettings);
   private handleCloseSettings = () => this.setState(closeSettings);
 
@@ -143,23 +142,29 @@ export class App extends React.Component<object, State> {
   };
 
   private handleTabAddition = () => {
-    const tabs = this.state.tabs;
-    const updateTabs = [...tabs, {
+    const updateTabs = [...this.state.tabs, {
       title: "New Tab",
       expression: "x^new",
       length: 420
     }];
+
     this.setState({ tabs: updateTabs, activeTabIndex: updateTabs.length - 1});
   };
+
+  private handleTabDeletion = () => {
+    const updateTabs = [...this.state.tabs];
+    updateTabs.splice(this.state.activeTabIndex, 1);
+
+    if (this.state.activeTabIndex > 0)
+      this.setState({tabs: updateTabs, activeTabIndex: this.state.activeTabIndex - 1});
+    else
+      this.setState({tabs: updateTabs, activeTabIndex: 0});
+  } 
 }
 
 const playSegments = (prevState: State) => ({});
 
 const stopAudio = (prevState: State) => ({});
-
-const toggleSettingsModal = (prevState: State) => ({
-  isModalOpen: !prevState.isModalOpen
-});
 
 const openSettings = (prevState: State) => ({
   isModalOpen: true
@@ -167,11 +172,4 @@ const openSettings = (prevState: State) => ({
 
 const closeSettings = (prevState: State) => ({
   isModalOpen: false
-});
-
-const addTab = (prevState: State) => ({
-});
-
-const changeTabOrder = (prevState: State) => ({
-  //const {tabs} = prevState
 });
