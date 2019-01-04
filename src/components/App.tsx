@@ -1,12 +1,35 @@
 import * as React from "react";
 import PlotlyChart from "react-plotlyjs-ts";
 
-import { Navbar, NavItem, Icon, Modal, Row, Input, Button } from "react-materialize";
+import {
+  Navbar,
+  NavItem,
+  Icon,
+  Modal,
+  Row,
+  Input,
+  Button
+} from "react-materialize";
 
-import { Tabs, DragTabList, DragTab, PanelList, Panel, ExtraButton, Tab } from "react-tabtab";
+import {
+  Tabs,
+  DragTabList,
+  DragTab,
+  PanelList,
+  Panel,
+  ExtraButton,
+  Tab
+} from "react-tabtab";
+
 import * as md from "react-tabtab/lib/themes/material-design";
 
 import { arrayMove } from "react-sortable-hoc";
+
+interface ExampleTab {
+  title: string;
+  expression: string;
+  length: number;
+}
 
 const initialState = {
   isModalOpen: false as boolean,
@@ -26,13 +49,9 @@ const initialState = {
   fs: 44100 as number
 };
 
-interface ExampleTab {
-  title: string;
-  expression: string;
-  length: number;
-}
-
 type State = Readonly<typeof initialState>;
+
+const textStyle = { paddingLeft: "10 px" };
 
 export class App extends React.Component<object, State> {
   readonly state: State = initialState;
@@ -50,16 +69,29 @@ export class App extends React.Component<object, State> {
     const panelTemplate: JSX.Element[] = [];
     this.state.tabs.forEach((tab: ExampleTab, index: number) => {
       tabsTemplate.push(<DragTab key={index}>{tab.title}</DragTab>);
-      panelTemplate.push(<Panel key={index}>{`Expression: ${tab.expression} for time: ${tab.length} ms`}</Panel>
+      panelTemplate.push(
+        <Panel key={index}>
+          <Row>
+            <Input
+              label="Title"
+              s={3}
+              defaultValue={tab.title}
+              onChange={this.handleTabTitleChange}
+            />
+            <Input
+              label="Length (ms)"
+              s={3}
+              defaultValue={tab.length}
+              onChange={this.handleTabLenChange}
+            />
+          </Row>
+        </Panel>
       );
     });
+
     return (
       <div>
-        <Navbar
-          brand={<span style={{ paddingLeft: "10px" }}>TuneScript</span>}
-          href=""
-          right
-        >
+        <Navbar brand={<span style={textStyle}>TuneScript</span>} href="" right>
           <NavItem onClick={this.handlePlay}>
             <Icon>play_arrow</Icon>
           </NavItem>
@@ -106,11 +138,10 @@ export class App extends React.Component<object, State> {
             displayModeBar: false
           }}
         />
-        <div style={{textAlign: "center"}}>Timeline</div>
+        <h5 style={textStyle}>Draggable Timeline</h5>
         <Tabs
           activeIndex={this.state.activeTabIndex}
           onTabChange={this.handleTabChange}
-          onTabEdit={this.handleTabAddition}
           onTabSequenceChange={this.handleTabOrderChange}
           showModalButton={false}
           customStyle={md}
@@ -118,9 +149,26 @@ export class App extends React.Component<object, State> {
           <DragTabList>{tabsTemplate}</DragTabList>
           <PanelList>{panelTemplate}</PanelList>
         </Tabs>
-        <Button floating fab='vertical' icon='edit' className='red' large style={{bottom: '45px', right: '24px'}}>
-          <Button floating icon='add' className='green' onClick={this.handleTabAddition}/>
-          <Button floating icon='remove' className='blue' onClick={this.handleTabDeletion}/>
+        <Button
+          floating
+          fab="vertical"
+          icon="edit"
+          className="red"
+          large
+          style={{ bottom: "45px", right: "24px" }}
+        >
+          <Button
+            floating
+            icon="add"
+            className="green"
+            onClick={this.handleTabAddition}
+          />
+          <Button
+            floating
+            icon="remove"
+            className="blue"
+            onClick={this.handleTabDeletion}
+          />
         </Button>
       </div>
     );
@@ -131,24 +179,45 @@ export class App extends React.Component<object, State> {
   private handleOpenSettings = () => this.setState(openSettings);
   private handleCloseSettings = () => this.setState(closeSettings);
 
+  private handleTabTitleChange = (e: Event, val: string) => {
+    const updateTabs = [...this.state.tabs];
+    updateTabs[this.state.activeTabIndex].title = val;
+    this.setState({ tabs: updateTabs });
+  };
+
+  private handleTabLenChange = (e: Event, val: string) => {
+    const updateTabs = [...this.state.tabs];
+    updateTabs[this.state.activeTabIndex].length = Number(val);
+    this.setState({ tabs: updateTabs });
+  };
+
   private handleTabChange = (index: number) => {
     this.setState({ activeTabIndex: index });
   };
 
-  private handleTabOrderChange = ({oldIndex, newIndex}: {oldIndex: number; newIndex: number;}) => {
+  private handleTabOrderChange = ({
+    oldIndex,
+    newIndex
+  }: {
+    oldIndex: number;
+    newIndex: number;
+  }) => {
     const tabs = this.state.tabs;
     const updateTabs = arrayMove(tabs, oldIndex, newIndex);
     this.setState({ tabs: updateTabs, activeTabIndex: newIndex });
   };
 
   private handleTabAddition = () => {
-    const updateTabs = [...this.state.tabs, {
-      title: "New Tab",
-      expression: "x^new",
-      length: 420
-    }];
+    const updateTabs = [
+      ...this.state.tabs,
+      {
+        title: "New Tab",
+        expression: "x^new",
+        length: 420
+      }
+    ];
 
-    this.setState({ tabs: updateTabs, activeTabIndex: updateTabs.length - 1});
+    this.setState({ tabs: updateTabs, activeTabIndex: updateTabs.length - 1 });
   };
 
   private handleTabDeletion = () => {
@@ -156,10 +225,12 @@ export class App extends React.Component<object, State> {
     updateTabs.splice(this.state.activeTabIndex, 1);
 
     if (this.state.activeTabIndex > 0)
-      this.setState({tabs: updateTabs, activeTabIndex: this.state.activeTabIndex - 1});
-    else
-      this.setState({tabs: updateTabs, activeTabIndex: 0});
-  } 
+      this.setState({
+        tabs: updateTabs,
+        activeTabIndex: this.state.activeTabIndex - 1
+      });
+    else this.setState({ tabs: updateTabs, activeTabIndex: 0 });
+  };
 }
 
 const playSegments = (prevState: State) => ({});
