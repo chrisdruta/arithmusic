@@ -1,5 +1,4 @@
 import * as React from "react";
-import PlotlyChart from "react-plotlyjs-ts";
 
 import {
   Navbar,
@@ -16,19 +15,21 @@ import {
   DragTabList,
   DragTab,
   PanelList,
-  Panel,
-  ExtraButton,
-  Tab
+  Panel
 } from "react-tabtab";
 
 import * as md from "react-tabtab/lib/themes/material-design";
 
 import { arrayMove } from "react-sortable-hoc";
 
+import PlotlyChart from "react-plotlyjs-ts";
+import {Tex, InlineTex} from "react-tex";
+
 interface ExampleTab {
   title: string;
   expression: string;
   length: number;
+  tex: string;
 }
 
 const initialState = {
@@ -38,20 +39,20 @@ const initialState = {
     {
       title: "Tab1",
       expression: "x",
-      length: 500
+      length: 500,
+      tex: "error"
     },
     {
       title: "Tab2",
-      expression: "x^2",
-      length: 250
+      expression: "x",
+      length: 250,
+      tex: "error"
     }
   ] as ExampleTab[],
   fs: 44100 as number
 };
 
 type State = Readonly<typeof initialState>;
-
-const textStyle = { paddingLeft: "10 px" };
 
 export class App extends React.Component<object, State> {
   readonly state: State = initialState;
@@ -65,8 +66,10 @@ export class App extends React.Component<object, State> {
   }
 
   render() {
+    const textOffset: any = { paddingLeft: "10px" };
     const tabsTemplate: JSX.Element[] = [];
     const panelTemplate: JSX.Element[] = [];
+
     this.state.tabs.forEach((tab: ExampleTab, index: number) => {
       tabsTemplate.push(<DragTab key={index}>{tab.title}</DragTab>);
       panelTemplate.push(
@@ -74,16 +77,23 @@ export class App extends React.Component<object, State> {
           <Row>
             <Input
               label="Title"
-              s={3}
+              s={2}
               defaultValue={tab.title}
               onChange={this.handleTabTitleChange}
             />
             <Input
-              label="Length (ms)"
+              label="Expression"
               s={3}
+              defaultValue={tab.expression}
+              onChange={this.handleTabExpChange}
+            />
+            <Input
+              label="Length (ms)"
+              s={2}
               defaultValue={tab.length}
               onChange={this.handleTabLenChange}
             />
+            <div style={{textAlign: "center", marginTop: "-5px"}} className={"col s5"}><h5>Tex</h5><Tex texContent={`\\LARGE ${tab.tex}`} /></div>
           </Row>
         </Panel>
       );
@@ -91,7 +101,7 @@ export class App extends React.Component<object, State> {
 
     return (
       <div>
-        <Navbar brand={<span style={textStyle}>TuneScript</span>} href="" right>
+        <Navbar brand={<span style={textOffset}>TuneScript</span>} href="" right>
           <NavItem onClick={this.handlePlay}>
             <Icon>play_arrow</Icon>
           </NavItem>
@@ -138,7 +148,7 @@ export class App extends React.Component<object, State> {
             displayModeBar: false
           }}
         />
-        <h5 style={textStyle}>Draggable Timeline</h5>
+        <h5 style={textOffset}>Expression Timeline</h5>
         <Tabs
           activeIndex={this.state.activeTabIndex}
           onTabChange={this.handleTabChange}
@@ -185,6 +195,11 @@ export class App extends React.Component<object, State> {
     this.setState({ tabs: updateTabs });
   };
 
+  private handleTabExpChange = (e: Event, val: string) => {
+    const updateTabs = [...this.state.tabs];
+    
+  };
+
   private handleTabLenChange = (e: Event, val: string) => {
     const updateTabs = [...this.state.tabs];
     updateTabs[this.state.activeTabIndex].length = Number(val);
@@ -212,8 +227,9 @@ export class App extends React.Component<object, State> {
       ...this.state.tabs,
       {
         title: "New Tab",
-        expression: "x^new",
-        length: 420
+        expression: "x",
+        length: 420,
+        tex: "error"
       }
     ];
 
