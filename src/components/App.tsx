@@ -24,10 +24,11 @@ import { arrayMove } from "react-sortable-hoc";
 
 import PlotlyChart from "react-plotlyjs-ts";
 import {Tex, InlineTex} from "react-tex";
+var math = require("mathjs");
 
 interface ExampleTab {
   title: string;
-  expression: string;
+  equation: string;
   length: number;
   tex: string;
 }
@@ -37,16 +38,16 @@ const initialState = {
   activeTabIndex: 0 as number,
   tabs: [
     {
-      title: "Tab1",
-      expression: "x",
+      title: "Tab 1",
+      equation: "500",
       length: 500,
-      tex: "error"
+      tex: "\\LARGE f(x)=500"
     },
     {
-      title: "Tab2",
-      expression: "x",
+      title: "Tab 2",
+      equation: "2000",
       length: 250,
-      tex: "error"
+      tex: "\\LARGE f(x)=2000"
     }
   ] as ExampleTab[],
   fs: 44100 as number
@@ -82,9 +83,9 @@ export class App extends React.Component<object, State> {
               onChange={this.handleTabTitleChange}
             />
             <Input
-              label="Expression"
+              label="Equation f(x)"
               s={3}
-              defaultValue={tab.expression}
+              defaultValue={tab.equation}
               onChange={this.handleTabExpChange}
             />
             <Input
@@ -93,7 +94,7 @@ export class App extends React.Component<object, State> {
               defaultValue={tab.length}
               onChange={this.handleTabLenChange}
             />
-            <div style={{textAlign: "center", marginTop: "-5px"}} className={"col s5"}><h5>Tex</h5><Tex texContent={`\\LARGE ${tab.tex}`} /></div>
+            <div style={{textAlign: "center", marginTop: "-10px"}} className={"col s5"}><h5>Tex</h5><Tex texContent={tab.tex} /></div>
           </Row>
         </Panel>
       );
@@ -148,7 +149,7 @@ export class App extends React.Component<object, State> {
             displayModeBar: false
           }}
         />
-        <h5 style={textOffset}>Expression Timeline</h5>
+        <h5 style={textOffset}>Equation Timeline</h5>
         <Tabs
           activeIndex={this.state.activeTabIndex}
           onTabChange={this.handleTabChange}
@@ -197,7 +198,21 @@ export class App extends React.Component<object, State> {
 
   private handleTabExpChange = (e: Event, val: string) => {
     const updateTabs = [...this.state.tabs];
-    
+
+    try {
+      const parsedMath = math.parse(val);
+      //compiled.eval();
+
+      updateTabs[this.state.activeTabIndex].equation = val;
+      updateTabs[this.state.activeTabIndex].tex = `\\LARGE f(x)=${parsedMath.toTex()}`;
+      // Update graph
+    }
+
+    catch (e) {
+      updateTabs[this.state.activeTabIndex].tex = `${e}`;
+    }
+
+    this.setState({tabs: updateTabs});
   };
 
   private handleTabLenChange = (e: Event, val: string) => {
@@ -226,10 +241,10 @@ export class App extends React.Component<object, State> {
     const updateTabs = [
       ...this.state.tabs,
       {
-        title: "New Tab",
-        expression: "x",
-        length: 420,
-        tex: "error"
+        title: `Tab ${this.state.tabs.length + 1}`,
+        equation: "x + 1000",
+        length: 500,
+        tex: "\\LARGE f(x)=x+1000"
       }
     ];
 
