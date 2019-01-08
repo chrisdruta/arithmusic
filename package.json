@@ -1,7 +1,7 @@
 {
   "name": "arithmusic",
   "version": "1.0.0",
-  "description": "Make music with math! (and TypeScript!)",
+  "description": "Make music with math!",
   "main": "index.js",
   "dependencies": {
     "@types/mathjs": "^4.4.4",
