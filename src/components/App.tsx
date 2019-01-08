@@ -20,8 +20,9 @@ import PlotlyChart from "react-plotlyjs-ts";
 import { Tex } from "react-tex";
 
 var math = require("mathjs");
+import * as _ from "lodash";
 
-interface ExampleTab {
+interface TabData {
   title: string;
   equation: string;
   length: number;
@@ -34,17 +35,17 @@ const initialState = {
   tabs: [
     {
       title: "Tab 1",
-      equation: "500",
+      equation: "x*1000",
       length: 500,
-      tex: "\\LARGE f(x)=500"
+      tex: "\\LARGE f(x)=x"
     },
     {
       title: "Tab 2",
-      equation: "2000",
+      equation: "5000",
       length: 250,
       tex: "\\LARGE f(x)=2000"
     }
-  ] as ExampleTab[],
+  ] as TabData[],
   fs: 44100 as number
 };
 
@@ -84,7 +85,7 @@ export class App extends React.Component<object, State> {
     const tabsTemplate: JSX.Element[] = [];
     const panelTemplate: JSX.Element[] = [];
 
-    this.state.tabs.forEach((tab: ExampleTab, index: number) => {
+    this.state.tabs.forEach((tab: TabData, index: number) => {
       tabsTemplate.push(<DragTab key={index}>{tab.title}</DragTab>);
       panelTemplate.push(
         <Panel key={index}>
@@ -118,7 +119,24 @@ export class App extends React.Component<object, State> {
 
     const plotData: object[] = [];
 
-    this.state.tabs.forEach((tab: ExampleTab) => {});
+    this.state.tabs.forEach((tab: TabData, index: number) => {
+      let offset: number = 0;
+      for (let i = 0; i < index; i++) {
+        offset += this.state.tabs[i].length/1000
+      };
+      let sample = _.range(0, tab.length/1000, 1/1000);
+      const code = math.compile(`${tab.equation}`);
+      const output = _.map(sample, (x: number) => code.eval({x: x}));
+      sample = _.map(sample, (point: number) => point + offset);
+
+      plotData.push({
+        x: sample,
+        y: output,
+        mode: "lines"
+      });
+    });
+
+    console.log(plotData);
 
     return (
       <div>
@@ -159,20 +177,7 @@ export class App extends React.Component<object, State> {
         </Modal>
 
         <PlotlyChart
-          data={[
-            {
-              x: [1, 2, 3],
-              y: [2, 6, 3],
-              type: "scatter",
-              mode: "lines",
-              marker: { color: "red" }
-            },
-            {
-              type: "line",
-              x: [1, 2, 3],
-              y: [2, 5, 3]
-            }
-          ]}
+          data={plotData}
           config={{
             displayModeBar: false
           }}

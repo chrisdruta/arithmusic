@@ -4,6 +4,7 @@
   "description": "Make music with math!",
   "main": "index.js",
   "dependencies": {
+    "@types/lodash": "^4.14.119",
     "@types/mathjs": "^4.4.4",
     "@types/react": "^16.7.18",
     "@types/react-dom": "^16.0.11",
