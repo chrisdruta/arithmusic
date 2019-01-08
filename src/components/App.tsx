@@ -10,20 +10,15 @@ import {
   Button
 } from "react-materialize";
 
-import {
-  Tabs,
-  DragTabList,
-  DragTab,
-  PanelList,
-  Panel
-} from "react-tabtab";
+import { Tabs, DragTabList, DragTab, PanelList, Panel } from "react-tabtab";
 
-import * as md from "react-tabtab/lib/themes/material-design";
+import * as MaterialTab from "react-tabtab/lib/themes/material-design";
 
 import { arrayMove } from "react-sortable-hoc";
 
 import PlotlyChart from "react-plotlyjs-ts";
-import {Tex, InlineTex} from "react-tex";
+import { Tex } from "react-tex";
+
 var math = require("mathjs");
 
 interface ExampleTab {
@@ -55,6 +50,25 @@ const initialState = {
 
 type State = Readonly<typeof initialState>;
 
+const AppStyle: any = {
+  headerFont: {
+    fontFamily: "Cookie, cursive",
+    fontWeight: "400",
+    fontSize: "50px"
+  },
+  textOffset: {
+    paddingLeft: "10px"
+  },
+  texTitle: {
+    textAlign: "center",
+    marginTop: "-10px"
+  },
+  tabsButton: {
+    bottom: "45px",
+    right: "24px"
+  }
+};
+
 export class App extends React.Component<object, State> {
   readonly state: State = initialState;
 
@@ -67,7 +81,6 @@ export class App extends React.Component<object, State> {
   }
 
   render() {
-    const textOffset: any = { paddingLeft: "10px" };
     const tabsTemplate: JSX.Element[] = [];
     const panelTemplate: JSX.Element[] = [];
 
@@ -94,15 +107,30 @@ export class App extends React.Component<object, State> {
               defaultValue={tab.length}
               onChange={this.handleTabLenChange}
             />
-            <div style={{textAlign: "center", marginTop: "-10px"}} className={"col s5"}><h5>Tex</h5><Tex texContent={tab.tex} /></div>
+            <div style={AppStyle.texTitle} className={"col s5"}>
+              <h5>Tex</h5>
+              <Tex texContent={tab.tex} />
+            </div>
           </Row>
         </Panel>
       );
     });
 
+    const plotData: object[] = [];
+
+    this.state.tabs.forEach((tab: ExampleTab) => {});
+
     return (
       <div>
-        <Navbar brand={<span style={textOffset}>TuneScript</span>} href="" right>
+        <Navbar
+          brand={
+            <span style={{ ...AppStyle.headerFont, ...AppStyle.textOffset }}>
+              Arithmusic
+            </span>
+          }
+          href=""
+          right
+        >
           <NavItem onClick={this.handlePlay}>
             <Icon>play_arrow</Icon>
           </NavItem>
@@ -149,24 +177,27 @@ export class App extends React.Component<object, State> {
             displayModeBar: false
           }}
         />
-        <h5 style={textOffset}>Equation Timeline</h5>
+
+        <h5 style={AppStyle.textOffset}>Equation Timeline</h5>
+
         <Tabs
           activeIndex={this.state.activeTabIndex}
           onTabChange={this.handleTabChange}
           onTabSequenceChange={this.handleTabOrderChange}
           showModalButton={false}
-          customStyle={md}
+          customStyle={MaterialTab}
         >
           <DragTabList>{tabsTemplate}</DragTabList>
           <PanelList>{panelTemplate}</PanelList>
         </Tabs>
+
         <Button
           floating
           fab="vertical"
           icon="edit"
           className="red"
           large
-          style={{ bottom: "45px", right: "24px" }}
+          style={AppStyle.tabsButton}
         >
           <Button
             floating
@@ -204,15 +235,15 @@ export class App extends React.Component<object, State> {
       //compiled.eval();
 
       updateTabs[this.state.activeTabIndex].equation = val;
-      updateTabs[this.state.activeTabIndex].tex = `\\LARGE f(x)=${parsedMath.toTex()}`;
+      updateTabs[
+        this.state.activeTabIndex
+      ].tex = `\\LARGE f(x)=${parsedMath.toTex()}`;
       // Update graph
-    }
-
-    catch (e) {
+    } catch (e) {
       updateTabs[this.state.activeTabIndex].tex = `${e}`;
     }
 
-    this.setState({tabs: updateTabs});
+    this.setState({ tabs: updateTabs });
   };
 
   private handleTabLenChange = (e: Event, val: string) => {
