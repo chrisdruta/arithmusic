@@ -35,7 +35,7 @@ const initialState = {
   tabs: [
     {
       title: "Tab 1",
-      equation: "x*1000",
+      equation: "x",
       length: 500,
       tex: "\\LARGE f(x)=x"
     },
@@ -43,7 +43,7 @@ const initialState = {
       title: "Tab 2",
       equation: "5000",
       length: 250,
-      tex: "\\LARGE f(x)=2000"
+      tex: "\\LARGE f(x)=5000"
     }
   ] as TabData[],
   fs: 44100 as number
@@ -82,6 +82,30 @@ export class App extends React.Component<object, State> {
   }
 
   render() {
+    const plotData: object[] = [];
+
+    this.state.tabs.forEach((tab: TabData, index: number) => {
+      let offset: number = 0;
+      for (let i = 0; i < index; i++) {
+        offset += this.state.tabs[i].length / 1000;
+      }
+      let sample = _.range(0, tab.length / 1000, 1/1000);
+
+      try {
+        const code = math.compile(math.simplify(tab.equation).toString());
+        const output = _.map(sample, (x: number) => code.eval({ x: x * 1000 }));
+        sample = _.map(sample, (point: number) => point + offset);
+
+        plotData.push({
+          x: sample,
+          y: output,
+          mode: "lines"
+        });
+      } catch (e) {
+        this.state.tabs[index].tex = e.message;
+      }
+    });
+
     const tabsTemplate: JSX.Element[] = [];
     const panelTemplate: JSX.Element[] = [];
 
@@ -109,34 +133,13 @@ export class App extends React.Component<object, State> {
               onChange={this.handleTabLenChange}
             />
             <div style={AppStyle.texTitle} className={"col s5"}>
-              <h5>Tex</h5>
+              <h5>Input</h5>
               <Tex texContent={tab.tex} />
             </div>
           </Row>
         </Panel>
       );
     });
-
-    const plotData: object[] = [];
-
-    this.state.tabs.forEach((tab: TabData, index: number) => {
-      let offset: number = 0;
-      for (let i = 0; i < index; i++) {
-        offset += this.state.tabs[i].length/1000
-      };
-      let sample = _.range(0, tab.length/1000, 1/1000);
-      const code = math.compile(`${tab.equation}`);
-      const output = _.map(sample, (x: number) => code.eval({x: x}));
-      sample = _.map(sample, (point: number) => point + offset);
-
-      plotData.push({
-        x: sample,
-        y: output,
-        mode: "lines"
-      });
-    });
-
-    console.log(plotData);
 
     return (
       <div>
@@ -180,6 +183,23 @@ export class App extends React.Component<object, State> {
           data={plotData}
           config={{
             displayModeBar: false
+          }}
+          layout={{
+            showlegend: false,
+            xaxis: {
+              title: "Time (s)"
+            },
+            yaxis: {
+              title: "Frequency (Hz)<br>&nbsp;",
+              range: [0, 22050]
+            },
+            margin: {
+              l: 85,
+              r: 50,
+              b: 50,
+              t: 25,
+              pad: 10
+            }
           }}
         />
 
@@ -236,16 +256,12 @@ export class App extends React.Component<object, State> {
     const updateTabs = [...this.state.tabs];
 
     try {
-      const parsedMath = math.parse(val);
-      //compiled.eval();
+      const parsedMath = math.simplify(math.parse(val));
 
       updateTabs[this.state.activeTabIndex].equation = val;
-      updateTabs[
-        this.state.activeTabIndex
-      ].tex = `\\LARGE f(x)=${parsedMath.toTex()}`;
-      // Update graph
+      updateTabs[this.state.activeTabIndex].tex = `\\LARGE f(x)=${parsedMath.toTex()}`;
     } catch (e) {
-      updateTabs[this.state.activeTabIndex].tex = `${e}`;
+      updateTabs[this.state.activeTabIndex].tex = e.message;
     }
 
     this.setState({ tabs: updateTabs });
