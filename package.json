@@ -35,13 +35,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chrisdruta/TuneScript.git"
+    "url": "git+https://github.com/chrisdruta/Arithmusic.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/chrisdruta/TuneScript/issues"
+    "url": "https://github.com/chrisdruta/Arithmusic/issues"
   },
-  "homepage": "https://github.com/chrisdruta/TuneScript#readme"
+  "homepage": "https://github.com/chrisdruta/Arithmusic#readme"
 }
