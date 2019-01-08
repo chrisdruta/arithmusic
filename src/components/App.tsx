@@ -26,6 +26,7 @@ interface TabData {
   title: string;
   equation: string;
   length: number;
+  isValid: boolean;
   tex: string;
 }
 
@@ -37,12 +38,14 @@ const initialState = {
       title: "Tab 1",
       equation: "x",
       length: 500,
+      isValid: true,
       tex: "\\LARGE f(x)=x"
     },
     {
       title: "Tab 2",
       equation: "5000",
       length: 250,
+      isValid: true,
       tex: "\\LARGE f(x)=5000"
     }
   ] as TabData[],
@@ -54,7 +57,7 @@ type State = Readonly<typeof initialState>;
 const AppStyle: any = {
   headerFont: {
     fontFamily: "Cookie, cursive",
-    fontWeight: "400",
+    fontWeight: 400,
     fontSize: "50px"
   },
   textOffset: {
@@ -63,6 +66,11 @@ const AppStyle: any = {
   texTitle: {
     textAlign: "center",
     marginTop: "-10px"
+  },
+  inputError: {
+    color: "red",
+    fontSize: "18px",
+    fontWeight: 500
   },
   tabsButton: {
     bottom: "45px",
@@ -103,6 +111,7 @@ export class App extends React.Component<object, State> {
         });
       } catch (e) {
         this.state.tabs[index].tex = e.message;
+        this.state.tabs[index].isValid = false;
       }
     });
 
@@ -110,6 +119,13 @@ export class App extends React.Component<object, State> {
     const panelTemplate: JSX.Element[] = [];
 
     this.state.tabs.forEach((tab: TabData, index: number) => {
+
+      let processedInput;
+      if (tab.isValid)
+        processedInput = <Tex texContent={tab.tex} />;
+      else
+        processedInput = <span style={AppStyle.inputError}>{tab.tex}</span>;
+
       tabsTemplate.push(<DragTab key={index}>{tab.title}</DragTab>);
       panelTemplate.push(
         <Panel key={index}>
@@ -133,8 +149,8 @@ export class App extends React.Component<object, State> {
               onChange={this.handleTabLenChange}
             />
             <div style={AppStyle.texTitle} className={"col s5"}>
-              <h5>Input</h5>
-              <Tex texContent={tab.tex} />
+              <h5>Input:</h5>
+              {processedInput}            
             </div>
           </Row>
         </Panel>
@@ -260,8 +276,10 @@ export class App extends React.Component<object, State> {
 
       updateTabs[this.state.activeTabIndex].equation = val;
       updateTabs[this.state.activeTabIndex].tex = `\\LARGE f(x)=${parsedMath.toTex()}`;
+      updateTabs[this.state.activeTabIndex].isValid = true;
     } catch (e) {
       updateTabs[this.state.activeTabIndex].tex = e.message;
+      updateTabs[this.state.activeTabIndex].isValid = false;
     }
 
     this.setState({ tabs: updateTabs });
@@ -296,6 +314,7 @@ export class App extends React.Component<object, State> {
         title: `Tab ${this.state.tabs.length + 1}`,
         equation: "x + 1000",
         length: 500,
+        isValid: true,
         tex: "\\LARGE f(x)=x+1000"
       }
     ];
