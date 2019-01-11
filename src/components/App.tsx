@@ -69,8 +69,9 @@ const AppStyle: any = {
   },
   inputError: {
     color: "red",
-    fontSize: "18px",
-    fontWeight: 500
+    fontSize: "24px",
+    fontWeight: 600,
+    paddingTop: "5px"
   },
   tabsButton: {
     bottom: "45px",
@@ -97,22 +98,18 @@ export class App extends React.Component<object, State> {
       for (let i = 0; i < index; i++) {
         offset += this.state.tabs[i].length / 1000;
       }
-      let sample = _.range(0, tab.length / 1000, 1/1000);
 
-      try {
-        const code = math.compile(math.simplify(tab.equation).toString());
-        const output = _.map(sample, (x: number) => code.eval({ x: x * 1000 }));
-        sample = _.map(sample, (point: number) => point + offset);
+      let sample: number[] = _.range(0, tab.length / 1000, 1/1000);
+      const code = math.compile(math.simplify(tab.equation).toString());
+      const output = _.map(sample, (x: number) => code.eval({ x: x * 1000 }));
+      sample = _.map(sample, (point: number) => point + offset);
 
-        plotData.push({
-          x: sample,
-          y: output,
-          mode: "lines"
-        });
-      } catch (e) {
-        this.state.tabs[index].tex = e.message;
-        this.state.tabs[index].isValid = false;
-      }
+      plotData.push({
+        x: sample,
+        y: output,
+        mode: "lines"
+      });
+      
     });
 
     const tabsTemplate: JSX.Element[] = [];
@@ -124,7 +121,7 @@ export class App extends React.Component<object, State> {
       if (tab.isValid)
         processedInput = <Tex texContent={tab.tex} />;
       else
-        processedInput = <span style={AppStyle.inputError}>{tab.tex}</span>;
+        processedInput = <div style={AppStyle.inputError}>{tab.tex}</div>;
 
       tabsTemplate.push(<DragTab key={index}>{tab.title}</DragTab>);
       panelTemplate.push(
@@ -220,7 +217,7 @@ export class App extends React.Component<object, State> {
         />
 
         <h5 style={AppStyle.textOffset}>Equation Timeline</h5>
-
+        
         <Tabs
           activeIndex={this.state.activeTabIndex}
           onTabChange={this.handleTabChange}
@@ -257,7 +254,37 @@ export class App extends React.Component<object, State> {
     );
   }
 
-  private handlePlay = () => this.setState(playSegments);
+  private handlePlay = () => {
+    // let seconds: number = 0; 
+    // for (let tab of this.state.tabs) seconds += tab.length;
+    // seconds /= 1000;
+
+    //const buffer: Int16Array = new Int16Array(this.state.fs * seconds);
+    const buffer: number[] = [];
+
+    this.state.tabs.forEach((tab: TabData, index: number) => {
+    
+      let offset: number = 0;
+      for (let i = 0; i < index; i++) {
+        offset += this.state.tabs[i].length;
+      }
+
+      let input: number[] = _.range(0, tab.length / 1000, 1/1000);
+      let code = math.compile(math.simplify(tab.equation).toString());
+      let output = _.map(input, (x: number) => code.eval({x: x * 1000 }));
+      const fs = this.state.fs;
+
+      output.forEach((tone: number, i: number) => {
+        for (let j = 0; j < fs * 1/1000; j++){
+          buffer.push(Math.sin(j/((fs/tone)/(Math.PI * 2))));
+        }
+      });
+      console.log(output)
+    });
+    
+    console.log(buffer);
+
+  };
   private handleStop = () => this.setState(stopAudio);
   private handleOpenSettings = () => this.setState(openSettings);
   private handleCloseSettings = () => this.setState(closeSettings);
@@ -271,8 +298,9 @@ export class App extends React.Component<object, State> {
   private handleTabExpChange = (e: Event, val: string) => {
     const updateTabs = [...this.state.tabs];
 
-    try {
+  try {
       const parsedMath = math.simplify(math.parse(val));
+      parsedMath.eval({x: 1});
 
       updateTabs[this.state.activeTabIndex].equation = val;
       updateTabs[this.state.activeTabIndex].tex = `\\LARGE f(x)=${parsedMath.toTex()}`;
