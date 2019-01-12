@@ -19,8 +19,11 @@ import { arrayMove } from "react-sortable-hoc";
 import PlotlyChart from "react-plotlyjs-ts";
 import { Tex } from "react-tex";
 
-var math = require("mathjs");
+const math = require("mathjs");
 import * as _ from "lodash";
+
+declare var window: any;
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 interface TabData {
   title: string;
@@ -255,36 +258,34 @@ export class App extends React.Component<object, State> {
   }
 
   private handlePlay = () => {
-    // let seconds: number = 0; 
-    // for (let tab of this.state.tabs) seconds += tab.length;
-    // seconds /= 1000;
+    let totalLength: number = 0; 
+    for (let tab of this.state.tabs) totalLength += tab.length;
+    
 
-    //const buffer: Int16Array = new Int16Array(this.state.fs * seconds);
-    const buffer: number[] = [];
+    let buf: number[] = [];
+    const fs = this.state.fs;
 
     this.state.tabs.forEach((tab: TabData, index: number) => {
-    
-      let offset: number = 0;
-      for (let i = 0; i < index; i++) {
-        offset += this.state.tabs[i].length;
-      }
 
       let input: number[] = _.range(0, tab.length / 1000, 1/1000);
       let code = math.compile(math.simplify(tab.equation).toString());
       let output = _.map(input, (x: number) => code.eval({x: x * 1000 }));
-      const fs = this.state.fs;
 
       output.forEach((tone: number, i: number) => {
         for (let j = 0; j < fs * 1/1000; j++){
-          buffer.push(Math.sin(j/((fs/tone)/(Math.PI * 2))));
+          buf.push(Math.sin(j/((fs/tone)/(Math.PI * 2))));
         }
+        
       });
-      console.log(output)
     });
-    
-    console.log(buffer);
-
+    const buffer = audioContext.createBuffer(1, buf.length, fs);
+    buffer.copyToChannel(Float32Array.from(buf), 0);
+    var source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioContext.destination);
+    source.start(0);
   };
+
   private handleStop = () => this.setState(stopAudio);
   private handleOpenSettings = () => this.setState(openSettings);
   private handleCloseSettings = () => this.setState(closeSettings);
