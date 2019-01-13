@@ -238,38 +238,42 @@ export class App extends React.Component<object, State> {
   private handlePlay = async () => {
     let totalLength: number = 0; 
     for (let tab of this.state.tabs) totalLength += tab.length;
-    
-    let buf: number[] = [];
-    const fs = this.state.fs;
-    //const source = this.state.audioNode;
 
+    const fs = this.state.fs;
+    const bufferLength = totalLength * fs/1000;
+    const rawBuffer: Float32Array = new Float32Array(bufferLength);
+    let index = 0;
+    
     this.handleStop();
 
-    this.state.tabs.forEach((tab: TabData, index: number) => {
+    for (let tab of this.state.tabs) {
+      let sample: number[] = _.range(0, tab.length / 1000, 1/1000);
 
-      let input: number[] = _.range(0, tab.length / 1000, 1/1000);
-      let code = math.compile(math.simplify(tab.equation).toString());
-      let output = _.map(input, (x: number) => code.eval({x: x * 1000 }));
+      const equation = math.compile(math.simplify(tab.equation).toString());
 
-      output = _.map(output, (p: number) => (p > fs/2 || p < 0) ? 0 : p );
+      let output = _.map(sample, (x: number) => equation.eval({x: x * 1000 }));
+      output = _.map(output, (y: number) => (y > fs/2 || y < 0) ? 0 : y );
 
-      output.forEach((tone: number, i: number) => {
+      for (let tone of output) {
         for (let j = 0; j < fs * 1/1000; j++){
-          buf.push(Math.sin(j/((fs/tone)/(Math.PI * 2))));
+          rawBuffer[index]=Math.sin(j/((fs/tone)/(Math.PI * 2)));
+          index++;
         }
-        
-      });
-    });
-    const buffer = audioContext.createBuffer(1, buf.length, fs);
-    buffer.copyToChannel(Float32Array.from(buf), 0);
+      }
+    }
+
+    const sourceBuffer = audioContext.createBuffer(1, bufferLength, fs);
+    sourceBuffer.copyToChannel(rawBuffer, 0);
+
     const source = audioContext.createBufferSource();
     this.sources.push(source);
-    source.buffer = buffer;
+
+    source.buffer = sourceBuffer;
     source.connect(audioContext.destination);
     source.start(0);
   };
 
-  private handleStop = () => {
+  private handleStop = async () => {
     for (let source of this.sources) source.stop(0);
   };
   private handleOpenSettings = () => this.setState(openSettings);
