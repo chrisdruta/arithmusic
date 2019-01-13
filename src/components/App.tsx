@@ -44,7 +44,7 @@ const initialState = {
     {
       title: "Tab 2",
       expression: "5000",
-      length: 5000,
+      length: 500,
       volume: 100,
       isValid: true,
       output: GenerateTex("5000")
@@ -136,8 +136,8 @@ export class App extends React.Component<object, State> {
               defaultValue={tab.volume}
               onChange={this.handleTabVolChange}
             />
-            <div  className={`col s6 ${styles.headerOutput}`}>
-              <h5>Input:</h5>
+            <div className={`col s6 ${styles.outputContainer}`}>
+              <div className={styles.outputHeader}>Input:</div>
               {processedInput}            
             </div>
           </Row>

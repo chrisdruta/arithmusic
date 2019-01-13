@@ -8,9 +8,18 @@
     padding-left: 10px;
 }
 
-.headerOutput {
-    text-align: center;
+.outputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.outputHeader {
     margin-top: -10px;
+    font-size: 20px;
+    margin-bottom: 10px;
 }
 
 .inputError {
