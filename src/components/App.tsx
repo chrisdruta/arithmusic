@@ -15,6 +15,11 @@ import * as styles from "../styles/App.css";
 declare var window: any;
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
+const GenerateTex = (expression: string) => {
+  const parsedMath = math.simplify(math.parse(expression));
+  return `\\LARGE f(x)=${parsedMath.toTex()}`;
+}
+
 interface TabData {
   title: string;
   expression: string;
@@ -30,22 +35,31 @@ const initialState = {
   tabs: [
     {
       title: "Tab 1",
-      expression: "x",
+      expression: "10*x",
       length: 500,
       volume: 100,
       isValid: true,
-      output: "\\LARGE f(x)=x"
+      output: GenerateTex("10*x")
     },
     {
       title: "Tab 2",
       expression: "5000",
-      length: 250,
+      length: 5000,
       volume: 100,
       isValid: true,
-      output: "\\LARGE f(x)=5000"
+      output: GenerateTex("5000")
+    },
+    {
+      title: "Tab 3",
+      expression: "abs(sin(x/100))* x^2/1000 + 5000",
+      length: 4000,
+      volume: 100,
+      isValid: true,
+      output: GenerateTex("abs(sin(x/100))* x^2/1000 + 5000")
     }
   ] as TabData[],
-  fs: 44100 as number
+  fs: 44100 as number,
+  xMultiplier: 1000 as number
 };
 
 type State = Readonly<typeof initialState>;
@@ -64,6 +78,7 @@ export class App extends React.Component<object, State> {
 
   render() {
     // Generating Graph Data
+    const multiplier = this.state.xMultiplier;
     const plotData: object[] = [];
     this.state.tabs.forEach((tab: TabData, index: number) => {
       let offset: number = 0;
@@ -73,7 +88,7 @@ export class App extends React.Component<object, State> {
 
       let sample: number[] = _.range(0, tab.length / 1000, 1/1000);
       const equation = math.compile(math.simplify(tab.expression).toString());
-      const output = _.map(sample, (x: number) => equation.eval({ x: x * 1000 }));
+      const output = _.map(sample, (x: number) => equation.eval({ x: x * multiplier }));
       sample = _.map(sample, (point: number) => point + offset);
 
       plotData.push({
@@ -203,6 +218,15 @@ export class App extends React.Component<object, State> {
               label="Sampling Frequency (Hz)"
               s={6}
               defaultValue={this.state.fs}
+              onChange={this.handleFsChange}
+            />
+          </Row>
+          <Row>
+            <Input
+              label="Auto Multipler for variable x of f(x)"
+              s={6}
+              defaultValue={this.state.xMultiplier}
+              onChange={this.handleMultiplierChange}
             />
           </Row>
         </Modal>
@@ -242,6 +266,28 @@ export class App extends React.Component<object, State> {
     this.setState({isModalOpen: false});
   };
 
+  private handleFsChange = (e: Event, val: string) => {
+    const input = Number(val);
+
+    if (input > 0) {
+      this.setState({fs: input});
+    }
+    else {
+      alert("Invalid sampling frequency");
+    }
+  };
+
+  private handleMultiplierChange = (e: Event, val: string) => {
+    const input = Number(val);
+
+    if (input) {
+      this.setState({xMultiplier: input});
+    }
+    else {
+      alert("Invalid multiplier");
+    }
+  };
+
   // Tab Handlers
   private handleTabTitleChange = (e: Event, val: string) => {
     const updateTabs = [...this.state.tabs];
@@ -273,6 +319,7 @@ export class App extends React.Component<object, State> {
 
     if (input >= 0) {
       updateTabs[this.state.activeTabIndex].isValid = true;
+      updateTabs[this.state.activeTabIndex].output = GenerateTex(updateTabs[this.state.activeTabIndex].expression);
       updateTabs[this.state.activeTabIndex].length = Number(val);
     }
     else if (input == NaN) {
@@ -323,11 +370,11 @@ export class App extends React.Component<object, State> {
       ...this.state.tabs,
       {
         title: `Tab ${this.state.tabs.length + 1}`,
-        expression: "x + 1000",
+        expression: "10*x + 10000",
         length: 500,
         volume: 100,
         isValid: true,
-        output: "\\LARGE f(x)=x+1000"
+        output: GenerateTex("10*x + 10000")
       }
     ];
 
@@ -352,6 +399,7 @@ export class App extends React.Component<object, State> {
     for (let tab of this.state.tabs) totalLength += tab.length;
 
     const fs = this.state.fs;
+    const multiplier = this.state.xMultiplier;
     const bufferLength = totalLength * fs/1000;
     const rawBuffer: Float32Array = new Float32Array(bufferLength);
     let index = 0;
@@ -363,7 +411,7 @@ export class App extends React.Component<object, State> {
 
       const equation = math.compile(math.simplify(tab.expression).toString());
 
-      let output = _.map(sample, (x: number) => equation.eval({x: x * 1000 }));
+      let output = _.map(sample, (x: number) => equation.eval({x: x * multiplier }));
       output = _.map(output, (y: number) => (y > fs/2 || y < 0) ? 0 : y );
 
       for (let tone of output) {
@@ -388,9 +436,4 @@ export class App extends React.Component<object, State> {
   private handleStop = async () => {
     for (let source of this.sources) source.stop(0);
   };
-}
-
-const GenerateTex = (expression: string) => {
-  const parsedMath = math.simplify(math.parse(expression));
-  return `\\LARGE f(x)=${parsedMath.toTex()}`;
 }
