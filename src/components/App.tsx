@@ -276,6 +276,7 @@ export class App extends React.Component<object, State> {
   private handleStop = async () => {
     for (let source of this.sources) source.stop(0);
   };
+  
   private handleOpenSettings = () => this.setState(openSettings);
   private handleCloseSettings = () => this.setState(closeSettings);
 
