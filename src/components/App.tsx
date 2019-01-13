@@ -22,6 +22,8 @@ import { Tex } from "react-tex";
 const math = require("mathjs");
 import * as _ from "lodash";
 
+import * as styles from "../styles/App.css";
+
 declare var window: any;
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -56,31 +58,6 @@ const initialState = {
 };
 
 type State = Readonly<typeof initialState>;
-
-const AppStyle: any = {
-  headerFont: {
-    fontFamily: "Cookie, cursive",
-    fontWeight: 400,
-    fontSize: "50px"
-  },
-  textOffset: {
-    paddingLeft: "10px"
-  },
-  texTitle: {
-    textAlign: "center",
-    marginTop: "-10px"
-  },
-  inputError: {
-    color: "red",
-    fontSize: "24px",
-    fontWeight: 600,
-    paddingTop: "5px"
-  },
-  tabsButton: {
-    bottom: "45px",
-    right: "24px"
-  }
-};
 
 export class App extends React.Component<object, State> {
   readonly state: State = initialState;
@@ -124,7 +101,7 @@ export class App extends React.Component<object, State> {
       if (tab.isValid)
         processedInput = <Tex texContent={tab.tex} />;
       else
-        processedInput = <div style={AppStyle.inputError}>{tab.tex}</div>;
+        processedInput = <div className={styles.inputError}>{tab.tex}</div>;
 
       tabsTemplate.push(<DragTab key={index}>{tab.title}</DragTab>);
       panelTemplate.push(
@@ -148,7 +125,7 @@ export class App extends React.Component<object, State> {
               defaultValue={tab.length}
               onChange={this.handleTabLenChange}
             />
-            <div style={AppStyle.texTitle} className={"col s5"}>
+            <div  className={`col s5 ${styles.texTitle}`}>
               <h5>Input:</h5>
               {processedInput}            
             </div>
@@ -161,7 +138,7 @@ export class App extends React.Component<object, State> {
       <div>
         <Navbar
           brand={
-            <span style={{ ...AppStyle.headerFont, ...AppStyle.textOffset }}>
+            <span className={`${styles.headerFont} ${styles.textOffset}`}>
               Arithmusic
             </span>
           }
@@ -219,7 +196,7 @@ export class App extends React.Component<object, State> {
           }}
         />
 
-        <h5 style={AppStyle.textOffset}>Equation Timeline</h5>
+        <h5 className={styles.textOffset}>Equation Timeline</h5>
         
         <Tabs
           activeIndex={this.state.activeTabIndex}
@@ -238,7 +215,7 @@ export class App extends React.Component<object, State> {
           icon="edit"
           className="red"
           large
-          style={AppStyle.tabsButton}
+          style={styles.tabsButton}
         >
           <Button
             floating
