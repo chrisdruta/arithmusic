@@ -61,6 +61,7 @@ type State = Readonly<typeof initialState>;
 
 export class App extends React.Component<object, State> {
   readonly state: State = initialState;
+  private sources: AudioScheduledSourceNode[] = [];
 
   shouldComponentUpdate(nextProps: object, nextState: State) {
     return (
@@ -234,19 +235,23 @@ export class App extends React.Component<object, State> {
     );
   }
 
-  private handlePlay = () => {
+  private handlePlay = async () => {
     let totalLength: number = 0; 
     for (let tab of this.state.tabs) totalLength += tab.length;
     
-
     let buf: number[] = [];
     const fs = this.state.fs;
+    //const source = this.state.audioNode;
+
+    this.handleStop();
 
     this.state.tabs.forEach((tab: TabData, index: number) => {
 
       let input: number[] = _.range(0, tab.length / 1000, 1/1000);
       let code = math.compile(math.simplify(tab.equation).toString());
       let output = _.map(input, (x: number) => code.eval({x: x * 1000 }));
+
+      output = _.map(output, (p: number) => (p > fs/2 || p < 0) ? 0 : p );
 
       output.forEach((tone: number, i: number) => {
         for (let j = 0; j < fs * 1/1000; j++){
@@ -257,13 +262,16 @@ export class App extends React.Component<object, State> {
     });
     const buffer = audioContext.createBuffer(1, buf.length, fs);
     buffer.copyToChannel(Float32Array.from(buf), 0);
-    var source = audioContext.createBufferSource();
+    const source = audioContext.createBufferSource();
+    this.sources.push(source);
     source.buffer = buffer;
     source.connect(audioContext.destination);
     source.start(0);
   };
 
-  private handleStop = () => this.setState(stopAudio);
+  private handleStop = () => {
+    for (let source of this.sources) source.stop(0);
+  };
   private handleOpenSettings = () => this.setState(openSettings);
   private handleCloseSettings = () => this.setState(closeSettings);
 

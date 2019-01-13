@@ -15,7 +15,7 @@
     "babel-preset-react-app": "^3.1.2",
     "google-fonts-webpack-plugin": "^0.4.4",
     "mathjs": "^5.4.0",
-    "plotly.js": "^1.43.1",
+    "plotly.js": "^1.43.2",
     "pondjs": "^0.8.9",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
