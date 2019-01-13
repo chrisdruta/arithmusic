@@ -19,6 +19,7 @@ interface TabData {
   title: string;
   expression: string;
   length: number;
+  volume: number;
   isValid: boolean;
   tex: string;
 }
@@ -31,6 +32,7 @@ const initialState = {
       title: "Tab 1",
       expression: "x",
       length: 500,
+      volume: 100,
       isValid: true,
       tex: "\\LARGE f(x)=x"
     },
@@ -38,6 +40,7 @@ const initialState = {
       title: "Tab 2",
       expression: "5000",
       length: 250,
+      volume: 100,
       isValid: true,
       tex: "\\LARGE f(x)=5000"
     }
@@ -96,7 +99,7 @@ export class App extends React.Component<object, State> {
           <Row>
             <Input
               label="Title"
-              s={2}
+              s={1}
               defaultValue={tab.title}
               onChange={this.handleTabTitleChange}
             />
@@ -108,11 +111,17 @@ export class App extends React.Component<object, State> {
             />
             <Input
               label="Length (ms)"
-              s={2}
+              s={1}
               defaultValue={tab.length}
               onChange={this.handleTabLenChange}
             />
-            <div  className={`col s5 ${styles.texTitle}`}>
+            <Input
+              label="Volume (%)"
+              s={1}
+              defaultValue={tab.volume}
+              onChange={this.handleTabVolChange}
+            />
+            <div  className={`col s6 ${styles.texTitle}`}>
               <h5>Input:</h5>
               {processedInput}            
             </div>
@@ -264,6 +273,12 @@ export class App extends React.Component<object, State> {
     this.setState({ tabs: updateTabs });
   };
 
+  private handleTabVolChange = (e: Event, val: string) => {
+    const updateTabs = [...this.state.tabs];
+    updateTabs[this.state.activeTabIndex].volume = Number(val);
+    this.setState({ tabs: updateTabs} );
+  }
+
   private handleTabChange = (index: number) => {
     this.setState({ activeTabIndex: index });
   };
@@ -281,6 +296,7 @@ export class App extends React.Component<object, State> {
         title: `Tab ${this.state.tabs.length + 1}`,
         expression: "x + 1000",
         length: 500,
+        volume: 100,
         isValid: true,
         tex: "\\LARGE f(x)=x+1000"
       }
@@ -323,7 +339,7 @@ export class App extends React.Component<object, State> {
 
       for (let tone of output) {
         for (let j = 0; j < fs * 1/1000; j++){
-          rawBuffer[index]=Math.sin(j/((fs/tone)/(Math.PI * 2)));
+          rawBuffer[index] = tab.volume/100 * Math.sin(j/((fs/tone)/(Math.PI * 2)));
           index++;
         }
       }
