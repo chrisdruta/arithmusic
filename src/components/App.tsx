@@ -1,26 +1,14 @@
 import * as React from "react";
 
-import {
-  Navbar,
-  NavItem,
-  Icon,
-  Modal,
-  Row,
-  Input,
-  Button
-} from "react-materialize";
-
+import { Navbar, NavItem, Icon, Modal, Row, Input, Button } from "react-materialize";
+import { arrayMove } from "react-sortable-hoc";
 import { Tabs, DragTabList, DragTab, PanelList, Panel } from "react-tabtab";
-
 import * as MaterialTab from "react-tabtab/lib/themes/material-design";
 
-import { arrayMove } from "react-sortable-hoc";
-
+import * as _ from "lodash";
 import PlotlyChart from "react-plotlyjs-ts";
 import { Tex } from "react-tex";
-
 const math = require("mathjs");
-import * as _ from "lodash";
 
 import * as styles from "../styles/App.css";
 
@@ -29,7 +17,7 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 interface TabData {
   title: string;
-  equation: string;
+  expression: string;
   length: number;
   isValid: boolean;
   tex: string;
@@ -41,14 +29,14 @@ const initialState = {
   tabs: [
     {
       title: "Tab 1",
-      equation: "x",
+      expression: "x",
       length: 500,
       isValid: true,
       tex: "\\LARGE f(x)=x"
     },
     {
       title: "Tab 2",
-      equation: "5000",
+      expression: "5000",
       length: 250,
       isValid: true,
       tex: "\\LARGE f(x)=5000"
@@ -72,8 +60,8 @@ export class App extends React.Component<object, State> {
   }
 
   render() {
+    // Generating Graph Data
     const plotData: object[] = [];
-
     this.state.tabs.forEach((tab: TabData, index: number) => {
       let offset: number = 0;
       for (let i = 0; i < index; i++) {
@@ -81,8 +69,8 @@ export class App extends React.Component<object, State> {
       }
 
       let sample: number[] = _.range(0, tab.length / 1000, 1/1000);
-      const code = math.compile(math.simplify(tab.equation).toString());
-      const output = _.map(sample, (x: number) => code.eval({ x: x * 1000 }));
+      const equation = math.compile(math.simplify(tab.expression).toString());
+      const output = _.map(sample, (x: number) => equation.eval({ x: x * 1000 }));
       sample = _.map(sample, (point: number) => point + offset);
 
       plotData.push({
@@ -90,14 +78,12 @@ export class App extends React.Component<object, State> {
         y: output,
         mode: "lines"
       });
-      
     });
 
+    // Generating Tabs
     const tabsTemplate: JSX.Element[] = [];
     const panelTemplate: JSX.Element[] = [];
-
     this.state.tabs.forEach((tab: TabData, index: number) => {
-
       let processedInput;
       if (tab.isValid)
         processedInput = <Tex texContent={tab.tex} />;
@@ -117,7 +103,7 @@ export class App extends React.Component<object, State> {
             <Input
               label="Equation f(x)"
               s={3}
-              defaultValue={tab.equation}
+              defaultValue={tab.expression}
               onChange={this.handleTabExpChange}
             />
             <Input
@@ -156,22 +142,6 @@ export class App extends React.Component<object, State> {
             <Icon>settings</Icon>
           </NavItem>
         </Navbar>
-        <Modal
-          open={this.state.isModalOpen}
-          header="Settings"
-          fixedFooter
-          modalOptions={{
-            complete: this.handleCloseSettings
-          }}
-        >
-          <Row>
-            <Input
-              label="Sampling Frequency (Hz)"
-              s={6}
-              defaultValue={this.state.fs}
-            />
-          </Row>
-        </Modal>
 
         <PlotlyChart
           data={plotData}
@@ -195,7 +165,8 @@ export class App extends React.Component<object, State> {
               pad: 10
             }
           }}
-        />
+        >
+        </PlotlyChart>
 
         <h5 className={styles.textOffset}>Equation Timeline</h5>
         
@@ -209,6 +180,23 @@ export class App extends React.Component<object, State> {
           <DragTabList>{tabsTemplate}</DragTabList>
           <PanelList>{panelTemplate}</PanelList>
         </Tabs>
+        
+        <Modal
+          open={this.state.isModalOpen}
+          header="Settings"
+          fixedFooter
+          modalOptions={{
+            complete: this.handleCloseSettings
+          }}
+        >
+          <Row>
+            <Input
+              label="Sampling Frequency (Hz)"
+              s={6}
+              defaultValue={this.state.fs}
+            />
+          </Row>
+        </Modal>
 
         <Button
           floating
@@ -231,10 +219,89 @@ export class App extends React.Component<object, State> {
             onClick={this.handleTabDeletion}
           />
         </Button>
+      
       </div>
     );
   }
 
+  // Modal Handlers
+  private handleOpenSettings = () => {
+    this.setState({isModalOpen: true});
+  };
+
+  private handleCloseSettings = () => {
+    this.setState({isModalOpen: false});
+  };
+
+  // Tab Handlers
+  private handleTabTitleChange = (e: Event, val: string) => {
+    const updateTabs = [...this.state.tabs];
+    updateTabs[this.state.activeTabIndex].title = val;
+    this.setState({ tabs: updateTabs });
+  };
+
+  private handleTabExpChange = (e: Event, val: string) => {
+    const updateTabs = [...this.state.tabs];
+
+  try {
+      const parsedMath = math.simplify(math.parse(val));
+      parsedMath.eval({x: 1});
+
+      updateTabs[this.state.activeTabIndex].expression = val;
+      updateTabs[this.state.activeTabIndex].tex = `\\LARGE f(x)=${parsedMath.toTex()}`;
+      updateTabs[this.state.activeTabIndex].isValid = true;
+    } catch (e) {
+      updateTabs[this.state.activeTabIndex].tex = e.message;
+      updateTabs[this.state.activeTabIndex].isValid = false;
+    }
+
+    this.setState({ tabs: updateTabs });
+  };
+
+  private handleTabLenChange = (e: Event, val: string) => {
+    const updateTabs = [...this.state.tabs];
+    updateTabs[this.state.activeTabIndex].length = Number(val);
+    this.setState({ tabs: updateTabs });
+  };
+
+  private handleTabChange = (index: number) => {
+    this.setState({ activeTabIndex: index });
+  };
+
+  private handleTabOrderChange = ({oldIndex, newIndex}: {oldIndex: number;newIndex: number;}) => {
+    const tabs = this.state.tabs;
+    const updateTabs = arrayMove(tabs, oldIndex, newIndex);
+    this.setState({ tabs: updateTabs, activeTabIndex: newIndex });
+  };
+
+  private handleTabAddition = () => {
+    const updateTabs = [
+      ...this.state.tabs,
+      {
+        title: `Tab ${this.state.tabs.length + 1}`,
+        expression: "x + 1000",
+        length: 500,
+        isValid: true,
+        tex: "\\LARGE f(x)=x+1000"
+      }
+    ];
+
+    this.setState({ tabs: updateTabs, activeTabIndex: updateTabs.length - 1 });
+  };
+
+  private handleTabDeletion = () => {
+    const updateTabs = [...this.state.tabs];
+    updateTabs.splice(this.state.activeTabIndex, 1);
+
+    if (this.state.activeTabIndex > 0)
+      this.setState({
+        tabs: updateTabs,
+        activeTabIndex: this.state.activeTabIndex - 1
+      });
+    else this.setState({ tabs: updateTabs, activeTabIndex: 0 });
+  };
+
+  // Audio handlers
   private handlePlay = async () => {
     let totalLength: number = 0; 
     for (let tab of this.state.tabs) totalLength += tab.length;
@@ -249,7 +316,7 @@ export class App extends React.Component<object, State> {
     for (let tab of this.state.tabs) {
       let sample: number[] = _.range(0, tab.length / 1000, 1/1000);
 
-      const equation = math.compile(math.simplify(tab.equation).toString());
+      const equation = math.compile(math.simplify(tab.expression).toString());
 
       let output = _.map(sample, (x: number) => equation.eval({x: x * 1000 }));
       output = _.map(output, (y: number) => (y > fs/2 || y < 0) ? 0 : y );
@@ -276,92 +343,4 @@ export class App extends React.Component<object, State> {
   private handleStop = async () => {
     for (let source of this.sources) source.stop(0);
   };
-  
-  private handleOpenSettings = () => this.setState(openSettings);
-  private handleCloseSettings = () => this.setState(closeSettings);
-
-  private handleTabTitleChange = (e: Event, val: string) => {
-    const updateTabs = [...this.state.tabs];
-    updateTabs[this.state.activeTabIndex].title = val;
-    this.setState({ tabs: updateTabs });
-  };
-
-  private handleTabExpChange = (e: Event, val: string) => {
-    const updateTabs = [...this.state.tabs];
-
-  try {
-      const parsedMath = math.simplify(math.parse(val));
-      parsedMath.eval({x: 1});
-
-      updateTabs[this.state.activeTabIndex].equation = val;
-      updateTabs[this.state.activeTabIndex].tex = `\\LARGE f(x)=${parsedMath.toTex()}`;
-      updateTabs[this.state.activeTabIndex].isValid = true;
-    } catch (e) {
-      updateTabs[this.state.activeTabIndex].tex = e.message;
-      updateTabs[this.state.activeTabIndex].isValid = false;
-    }
-
-    this.setState({ tabs: updateTabs });
-  };
-
-  private handleTabLenChange = (e: Event, val: string) => {
-    const updateTabs = [...this.state.tabs];
-    updateTabs[this.state.activeTabIndex].length = Number(val);
-    this.setState({ tabs: updateTabs });
-  };
-
-  private handleTabChange = (index: number) => {
-    this.setState({ activeTabIndex: index });
-  };
-
-  private handleTabOrderChange = ({
-    oldIndex,
-    newIndex
-  }: {
-    oldIndex: number;
-    newIndex: number;
-  }) => {
-    const tabs = this.state.tabs;
-    const updateTabs = arrayMove(tabs, oldIndex, newIndex);
-    this.setState({ tabs: updateTabs, activeTabIndex: newIndex });
-  };
-
-  private handleTabAddition = () => {
-    const updateTabs = [
-      ...this.state.tabs,
-      {
-        title: `Tab ${this.state.tabs.length + 1}`,
-        equation: "x + 1000",
-        length: 500,
-        isValid: true,
-        tex: "\\LARGE f(x)=x+1000"
-      }
-    ];
-
-    this.setState({ tabs: updateTabs, activeTabIndex: updateTabs.length - 1 });
-  };
-
-  private handleTabDeletion = () => {
-    const updateTabs = [...this.state.tabs];
-    updateTabs.splice(this.state.activeTabIndex, 1);
-
-    if (this.state.activeTabIndex > 0)
-      this.setState({
-        tabs: updateTabs,
-        activeTabIndex: this.state.activeTabIndex - 1
-      });
-    else this.setState({ tabs: updateTabs, activeTabIndex: 0 });
-  };
 }
-
-const playSegments = (prevState: State) => ({});
-
-const stopAudio = (prevState: State) => ({});
-
-const openSettings = (prevState: State) => ({
-  isModalOpen: true
-});
-
-const closeSettings = (prevState: State) => ({
-  isModalOpen: false
-});
