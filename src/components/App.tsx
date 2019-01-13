@@ -21,7 +21,7 @@ interface TabData {
   length: number;
   volume: number;
   isValid: boolean;
-  tex: string;
+  output: string;
 }
 
 const initialState = {
@@ -34,7 +34,7 @@ const initialState = {
       length: 500,
       volume: 100,
       isValid: true,
-      tex: "\\LARGE f(x)=x"
+      output: "\\LARGE f(x)=x"
     },
     {
       title: "Tab 2",
@@ -42,7 +42,7 @@ const initialState = {
       length: 250,
       volume: 100,
       isValid: true,
-      tex: "\\LARGE f(x)=5000"
+      output: "\\LARGE f(x)=5000"
     }
   ] as TabData[],
   fs: 44100 as number
@@ -89,9 +89,9 @@ export class App extends React.Component<object, State> {
     this.state.tabs.forEach((tab: TabData, index: number) => {
       let processedInput;
       if (tab.isValid)
-        processedInput = <Tex texContent={tab.tex} />;
+        processedInput = <Tex texContent={tab.output} />;
       else
-        processedInput = <div className={styles.inputError}>{tab.tex}</div>;
+        processedInput = <div className={styles.inputError}>{tab.output}</div>;
 
       tabsTemplate.push(<DragTab key={index}>{tab.title}</DragTab>);
       panelTemplate.push(
@@ -121,7 +121,7 @@ export class App extends React.Component<object, State> {
               defaultValue={tab.volume}
               onChange={this.handleTabVolChange}
             />
-            <div  className={`col s6 ${styles.texTitle}`}>
+            <div  className={`col s6 ${styles.headerOutput}`}>
               <h5>Input:</h5>
               {processedInput}            
             </div>
@@ -257,25 +257,54 @@ export class App extends React.Component<object, State> {
       parsedMath.eval({x: 1});
 
       updateTabs[this.state.activeTabIndex].expression = val;
-      updateTabs[this.state.activeTabIndex].tex = `\\LARGE f(x)=${parsedMath.toTex()}`;
+      updateTabs[this.state.activeTabIndex].output = GenerateTex(val);
       updateTabs[this.state.activeTabIndex].isValid = true;
-    } catch (e) {
-      updateTabs[this.state.activeTabIndex].tex = e.message;
+  } catch (e) {
+      updateTabs[this.state.activeTabIndex].output = e.message;
       updateTabs[this.state.activeTabIndex].isValid = false;
-    }
+  }
 
     this.setState({ tabs: updateTabs });
   };
 
   private handleTabLenChange = (e: Event, val: string) => {
+    const input = Number(val);
     const updateTabs = [...this.state.tabs];
-    updateTabs[this.state.activeTabIndex].length = Number(val);
+
+    if (input >= 0) {
+      updateTabs[this.state.activeTabIndex].isValid = true;
+      updateTabs[this.state.activeTabIndex].length = Number(val);
+    }
+    else if (input == NaN) {
+      updateTabs[this.state.activeTabIndex].isValid = false;
+      updateTabs[this.state.activeTabIndex].output = "Invalid Length";
+    }
+    else {
+      updateTabs[this.state.activeTabIndex].isValid = false;
+      updateTabs[this.state.activeTabIndex].output = "Length must be >= 0";
+    }
+    
     this.setState({ tabs: updateTabs });
   };
 
   private handleTabVolChange = (e: Event, val: string) => {
+    const input = Number(val);
     const updateTabs = [...this.state.tabs];
-    updateTabs[this.state.activeTabIndex].volume = Number(val);
+    if (input >= 0) {
+      updateTabs[this.state.activeTabIndex].isValid = true;
+      updateTabs[this.state.activeTabIndex].output = GenerateTex(updateTabs[this.state.activeTabIndex].expression);
+      updateTabs[this.state.activeTabIndex].volume = input;
+
+    }
+    else if (input == NaN) {
+      updateTabs[this.state.activeTabIndex].isValid = false;
+      updateTabs[this.state.activeTabIndex].output = "Invalid volume";
+    }
+    else {
+      updateTabs[this.state.activeTabIndex].isValid = false;
+      updateTabs[this.state.activeTabIndex].output = "Volume must be >= 0";
+    }
+    
     this.setState({ tabs: updateTabs} );
   }
 
@@ -298,7 +327,7 @@ export class App extends React.Component<object, State> {
         length: 500,
         volume: 100,
         isValid: true,
-        tex: "\\LARGE f(x)=x+1000"
+        output: "\\LARGE f(x)=x+1000"
       }
     ];
 
@@ -359,4 +388,9 @@ export class App extends React.Component<object, State> {
   private handleStop = async () => {
     for (let source of this.sources) source.stop(0);
   };
+}
+
+const GenerateTex = (expression: string) => {
+  const parsedMath = math.simplify(math.parse(expression));
+  return `\\LARGE f(x)=${parsedMath.toTex()}`;
 }

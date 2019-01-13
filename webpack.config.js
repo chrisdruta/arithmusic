@@ -44,6 +44,6 @@ module.exports = {
     },
     mode: "development",
     watchOptions: {
-        ignored: ['files/**/*.js', 'node_modules', '/css\.d\.ts$/']
+        ignored: ['files/**/*.js', 'node_modules']
     }
 };
