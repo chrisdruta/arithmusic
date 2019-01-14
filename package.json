@@ -42,7 +42,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx webpack --mode production",
-    "deploy": "gh-pages -d dist",
+    "deploy": "npx gh-pages -d dist",
     "publish-demo": "npm run build && npm run deploy"
   },
   "repository": {
