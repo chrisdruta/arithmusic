@@ -40,9 +40,10 @@
     "webpack-cli": "^3.2.1"
   },
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx webpack --mode production",
     "deploy": "gh-pages -d dist",
-    "build": "npx webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "publish-demo": "npm run build && npm run deploy"
   },
   "repository": {
     "type": "git",

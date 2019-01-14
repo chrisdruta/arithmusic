@@ -1,15 +1,22 @@
+const path = require('path');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const htmlWebpackPlugin = new HtmlWebpackPlugin({
+    template: path.join(__dirname, "src/index.html"),
+    filename: "./index.html"
+});
+
 module.exports = {
     entry: "./src/index.tsx",
     output: {
         filename: "bundle.js",
-        path: __dirname + "/dist",
-        publicPath: "/Arithmusic/",
+        path: path.join(__dirname, "/dist"),
+        //publicPath: "/Arithmusic/",
         
     },
 
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
-
+    plugins: [htmlWebpackPlugin],
     resolve: {
         // Add '.ts' and '.tsx' as resolvable extensions.
         extensions: [".ts", ".tsx", ".js", ".json"]
@@ -44,7 +51,7 @@ module.exports = {
         "react": "React",
         "react-dom": "ReactDOM"
     },
-    mode: "production",
+    mode: "development",
     watchOptions: {
         ignored: ['files/**/*.js', 'node_modules']
     }
