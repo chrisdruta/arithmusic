@@ -2,7 +2,9 @@ module.exports = {
     entry: "./src/index.tsx",
     output: {
         filename: "bundle.js",
-        path: __dirname + "/dist"
+        path: __dirname + "/dist",
+        publicPath: "/Arithmusic/",
+        
     },
 
     // Enable sourcemaps for debugging webpack's output.
@@ -42,7 +44,7 @@ module.exports = {
         "react": "React",
         "react-dom": "ReactDOM"
     },
-    mode: "development",
+    mode: "production",
     watchOptions: {
         ignored: ['files/**/*.js', 'node_modules']
     }
