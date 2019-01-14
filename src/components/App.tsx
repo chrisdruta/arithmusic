@@ -59,7 +59,8 @@ const initialState = {
     }
   ] as TabData[],
   fs: 44100 as number,
-  xMultiplier: 1000 as number
+  xMultiplier: 1000 as number,
+  masterVolume: 10 as number
 };
 
 type State = Readonly<typeof initialState>;
@@ -192,7 +193,7 @@ export class App extends React.Component<object, State> {
         >
         </PlotlyChart>
 
-        <h5 className={styles.textOffset}>Equation Timeline</h5>
+        <h5 className={styles.textOffset}>Rearrangeable Equation Timeline</h5>
         
         <Tabs
           activeIndex={this.state.activeTabIndex}
@@ -215,18 +216,26 @@ export class App extends React.Component<object, State> {
         >
           <Row>
             <Input
-              label="Sampling Frequency (Hz)"
-              s={6}
+              label="Sampling frequency (Hz)"
+              s={4}
               defaultValue={this.state.fs}
               onChange={this.handleFsChange}
             />
           </Row>
           <Row>
             <Input
-              label="Auto Multipler for variable x of f(x)"
-              s={6}
+              label="Auto Multipler for function input (x)"
+              s={4}
               defaultValue={this.state.xMultiplier}
               onChange={this.handleMultiplierChange}
+            />
+          </Row>
+          <Row>
+            <Input
+              label="Master volume (%)"
+              s={4}
+              defaultValue={this.state.masterVolume}
+              onChange={this.handleMasterVolChange}
             />
           </Row>
         </Modal>
@@ -285,6 +294,17 @@ export class App extends React.Component<object, State> {
     }
     else {
       alert("Invalid multiplier");
+    }
+  };
+
+  private handleMasterVolChange = (e: Event, val: string) => {
+    const input = Number(val);
+
+    if (input != NaN && input >= 0) {
+      this.setState({masterVolume: input});
+    }
+    else {
+      alert("Invalid master volume");
     }
   };
 
@@ -399,7 +419,6 @@ export class App extends React.Component<object, State> {
     for (let tab of this.state.tabs) totalLength += tab.length;
 
     const fs = this.state.fs;
-    const multiplier = this.state.xMultiplier;
     const bufferLength = totalLength * fs/1000;
     const rawBuffer: Float32Array = new Float32Array(bufferLength);
     let index = 0;
@@ -411,12 +430,12 @@ export class App extends React.Component<object, State> {
 
       const equation = math.compile(math.simplify(tab.expression).toString());
 
-      let output = _.map(sample, (x: number) => equation.eval({x: x * multiplier }));
+      let output = _.map(sample, (x: number) => equation.eval({x: x * this.state.xMultiplier }));
       output = _.map(output, (y: number) => (y > fs/2 || y < 0) ? 0 : y );
 
       for (let tone of output) {
         for (let j = 0; j < fs * 1/1000; j++){
-          rawBuffer[index] = tab.volume/100 * Math.sin(j/((fs/tone)/(Math.PI * 2)));
+          rawBuffer[index] = this.state.masterVolume/100 * tab.volume/100 * Math.sin(j/((fs/tone)/(Math.PI * 2)));
           index++;
         }
       }
