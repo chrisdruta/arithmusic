@@ -1,4 +1,6 @@
+export const redBg: string;
 export const headerFont: string;
+export const grow: string;
 export const textOffset: string;
 export const horizontalContainer: string;
 export const outputContainer: string;

@@ -1,6 +1,7 @@
 import * as React from "react";
 
-import { Navbar, NavItem, Icon, Modal, Row, Col, Input, Button } from "react-materialize";
+import Button from "@material-ui/core/Button";
+
 import { arrayMove } from "react-sortable-hoc";
 import { Tabs, DragTabList, DragTab, PanelList, Panel } from "react-tabtab";
 import * as MaterialTab from "react-tabtab/lib/themes/material-design";
@@ -11,6 +12,8 @@ import { Tex } from "react-tex";
 const math = require("mathjs");
 
 import * as styles from "../styles/App.css";
+import { AppBar, Toolbar, IconButton } from "@material-ui/core";
+import { Play, Stop, Tune } from 'mdi-material-ui';
 
 declare var window: any;
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -115,61 +118,24 @@ export class App extends React.Component<object, State> {
       tabsTemplate.push(<DragTab key={index}>{tab.title}</DragTab>);
       panelTemplate.push(
         <Panel key={index}>
-          <Row>
-            <Input
-              label="Title"
-              s={1}
-              defaultValue={tab.title}
-              onChange={this.handleTabTitleChange}
-            />
-            <Input
-              label="Equation f(x)"
-              s={3}
-              defaultValue={tab.expression}
-              onChange={this.handleTabExpChange}
-            />
-            <Input
-              label="Length (ms)"
-              s={1}
-              defaultValue={tab.length}
-              onChange={this.handleTabLenChange}
-            />
-            <Input
-              label="Volume (%)"
-              s={1}
-              defaultValue={tab.volume}
-              onChange={this.handleTabVolChange}
-            />
-            <div className={`col s6 ${styles.outputContainer}`}>
-              <div className={styles.outputHeader}>Input:</div>
-              {processedInput}            
-            </div>
-          </Row>
+          
         </Panel>
       );
     });
 
     return (
       <div>
-        <Navbar
-          brand={
-            <span className={`${styles.headerFont} ${styles.textOffset}`}>
+        <AppBar position='static'>
+          <Toolbar className={styles.redBg}>
+            <span className={styles.headerFont}>
               Arithmusic
             </span>
-          }
-          href=""
-          right
-        >
-          <NavItem onClick={this.handlePlay}>
-            <Icon>play_arrow</Icon>
-          </NavItem>
-          <NavItem onClick={this.handleStop}>
-            <Icon>stop</Icon>
-          </NavItem>
-          <NavItem onClick={this.handleOpenSettings}>
-            <Icon>settings</Icon>
-          </NavItem>
-        </Navbar>
+            <div className={styles.grow}></div>
+            <IconButton color="inherit"><Play /></IconButton>
+            <IconButton color="inherit"><Stop /></IconButton>
+            <IconButton color="inherit"><Tune /></IconButton>
+          </Toolbar>
+        </AppBar>
 
         <PlotlyChart
           data={plotData}
@@ -209,66 +175,8 @@ export class App extends React.Component<object, State> {
           <PanelList>{panelTemplate}</PanelList>
         </Tabs>
         
-        <Modal
-          open={this.state.isModalOpen}
-          header="Settings"
-          fixedFooter
-          modalOptions={{
-            complete: this.handleCloseSettings
-          }}
-        >
         
-          <Row>
-            <Input
-              label="Master volume (%)" s={4}
-              defaultValue={this.state.masterVolume}
-              onChange={this.handleMasterVolChange}
-            />
-            <Input
-              label="Sampling frequency (Hz)" s={4}
-              defaultValue={this.state.fs}
-              onChange={this.handleFsChange}
-            />
-            <Input
-              label="Auto multipler for function input (x)"
-              s={4}
-              defaultValue={this.state.xMultiplier}
-              onChange={this.handleMultiplierChange}
-            />
-          </Row>
-          <Row>
-            <Col s={2}>Enable Aliasing:</Col>
-            <Col s={2}>
-              <Input
-                type="switch"
-                checked={this.state.enableAliasing}
-                onChange={this.handleAliasingChange}
-              />
-            </Col>
-          </Row>
-        </Modal>
-
-        <Button
-          floating
-          fab="vertical"
-          icon="edit"
-          className="red"
-          large
-          style={styles.tabsButton}
-        >
-          <Button
-            floating
-            icon="add"
-            className="green"
-            onClick={this.handleTabAddition}
-          />
-          <Button
-            floating
-            icon="remove"
-            className="blue"
-            onClick={this.handleTabDeletion}
-          />
-        </Button>
+        
       
       </div>
     );

@@ -1,7 +1,16 @@
+.redBg {
+    background: #EE6E73;
+}
+
 .headerFont {
     font-family: Cookie, cursive;
     font-weight: 400;
     font-Size: 50px;
+    cursor: default;
+}
+
+.grow {
+    flex-grow: 1;
 }
 
 .textOffset {
