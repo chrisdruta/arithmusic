@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Navbar, NavItem, Icon, Modal, Row, Input, Button } from "react-materialize";
+import { Navbar, NavItem, Icon, Modal, Row, Col, Input, Button } from "react-materialize";
 import { arrayMove } from "react-sortable-hoc";
 import { Tabs, DragTabList, DragTab, PanelList, Panel } from "react-tabtab";
 import * as MaterialTab from "react-tabtab/lib/themes/material-design";
@@ -60,7 +60,8 @@ const initialState = {
   ] as TabData[],
   fs: 44100 as number,
   xMultiplier: 1000 as number,
-  masterVolume: 10 as number
+  masterVolume: 10 as number,
+  enableAliasing: true as boolean
 };
 
 type State = Readonly<typeof initialState>;
@@ -72,6 +73,7 @@ export class App extends React.Component<object, State> {
   shouldComponentUpdate(nextProps: object, nextState: State) {
     return (
       this.state.isModalOpen !== nextState.isModalOpen ||
+      this.state.enableAliasing !== nextState.enableAliasing ||
       this.state.activeTabIndex !== nextState.activeTabIndex ||
       this.state.tabs !== nextState.tabs
     );
@@ -214,22 +216,7 @@ export class App extends React.Component<object, State> {
             complete: this.handleCloseSettings
           }}
         >
-          <Row>
-            <Input
-              label="Sampling frequency (Hz)"
-              s={4}
-              defaultValue={this.state.fs}
-              onChange={this.handleFsChange}
-            />
-          </Row>
-          <Row>
-            <Input
-              label="Auto Multipler for function input (x)"
-              s={4}
-              defaultValue={this.state.xMultiplier}
-              onChange={this.handleMultiplierChange}
-            />
-          </Row>
+        
           <Row>
             <Input
               label="Master volume (%)"
@@ -237,6 +224,28 @@ export class App extends React.Component<object, State> {
               defaultValue={this.state.masterVolume}
               onChange={this.handleMasterVolChange}
             />
+            <Input
+              label="Sampling frequency (Hz)"
+              s={4}
+              defaultValue={this.state.fs}
+              onChange={this.handleFsChange}
+            />
+            <Input
+              label="Auto multipler for function input (x)"
+              s={4}
+              defaultValue={this.state.xMultiplier}
+              onChange={this.handleMultiplierChange}
+            />
+          </Row>
+          <Row>
+            <Col s={2}>Allow Aliasing:</Col>
+            <Col s={2}>
+              <Input
+                type="switch"
+                checked={this.state.enableAliasing}
+                onChange={this.handleAliasingChange}
+              />
+            </Col>
           </Row>
         </Modal>
 
@@ -306,6 +315,10 @@ export class App extends React.Component<object, State> {
     else {
       alert("Invalid master volume");
     }
+  };
+
+  private handleAliasingChange = (e: Event, val: string) => {
+    this.setState({enableAliasing: !this.state.enableAliasing});
   };
 
   // Tab Handlers
@@ -431,7 +444,9 @@ export class App extends React.Component<object, State> {
       const equation = math.compile(math.simplify(tab.expression).toString());
 
       let output = _.map(sample, (x: number) => equation.eval({x: x * this.state.xMultiplier }));
-      output = _.map(output, (y: number) => (y > fs/2 || y < 0) ? 0 : y );
+
+      if (!this.state.enableAliasing)
+        output = _.map(output, (y: number) => (y > fs/2 || y < 0) ? 0 : y );
 
       for (let tone of output) {
         for (let j = 0; j < fs * 1/1000; j++){
