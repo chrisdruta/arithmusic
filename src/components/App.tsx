@@ -61,7 +61,8 @@ const initialState = {
   fs: 44100 as number,
   xMultiplier: 1000 as number,
   masterVolume: 10 as number,
-  enableAliasing: true as boolean
+  enableAliasing: true as boolean,
+  tabBuffer: "" as string
 };
 
 type State = Readonly<typeof initialState>;
@@ -219,14 +220,12 @@ export class App extends React.Component<object, State> {
         
           <Row>
             <Input
-              label="Master volume (%)"
-              s={4}
+              label="Master volume (%)" s={4}
               defaultValue={this.state.masterVolume}
               onChange={this.handleMasterVolChange}
             />
             <Input
-              label="Sampling frequency (Hz)"
-              s={4}
+              label="Sampling frequency (Hz)" s={4}
               defaultValue={this.state.fs}
               onChange={this.handleFsChange}
             />
@@ -238,7 +237,7 @@ export class App extends React.Component<object, State> {
             />
           </Row>
           <Row>
-            <Col s={2}>Allow Aliasing:</Col>
+            <Col s={2}>Enable Aliasing:</Col>
             <Col s={2}>
               <Input
                 type="switch"
@@ -247,6 +246,19 @@ export class App extends React.Component<object, State> {
               />
             </Col>
           </Row>
+          <Row>
+            <Input
+              type="textarea"
+              s={12}
+              value={this.state.tabBuffer}
+              onChange={this.handleTabsIoChange}
+            />
+          </Row>
+          <div className={styles.horizontalContainer}>
+            <Button waves="light" > Save </Button>
+            <Button waves="light" > Load </Button>
+            <Button waves="light" > Reset </Button>
+          </div>
         </Modal>
 
         <Button
@@ -319,6 +331,10 @@ export class App extends React.Component<object, State> {
 
   private handleAliasingChange = (e: Event, val: string) => {
     this.setState({enableAliasing: !this.state.enableAliasing});
+  };
+
+  private handleTabsIoChange = (e: Event, val: string) => {
+    this.setState({tabBuffer: val});
   };
 
   // Tab Handlers
