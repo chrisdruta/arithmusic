@@ -246,19 +246,6 @@ export class App extends React.Component<object, State> {
               />
             </Col>
           </Row>
-          <Row>
-            <Input
-              type="textarea"
-              s={12}
-              value={this.state.tabBuffer}
-              onChange={this.handleTabsIoChange}
-            />
-          </Row>
-          <div className={styles.horizontalContainer}>
-            <Button waves="light" > Save </Button>
-            <Button waves="light" > Load </Button>
-            <Button waves="light" > Reset </Button>
-          </div>
         </Modal>
 
         <Button
