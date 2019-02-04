@@ -12,7 +12,7 @@ import { Tex } from "react-tex";
 const math = require("mathjs");
 
 import * as styles from "../styles/App.css";
-import { AppBar, Toolbar, IconButton } from "@material-ui/core";
+import { AppBar, Toolbar, IconButton, Modal, Typography } from "@material-ui/core";
 import { Play, Stop, Tune } from 'mdi-material-ui';
 
 declare var window: any;
@@ -74,14 +74,14 @@ export class App extends React.Component<object, State> {
   readonly state: State = initialState;
   private sources: AudioScheduledSourceNode[] = [];
 
-  shouldComponentUpdate(nextProps: object, nextState: State) {
-    return (
-      this.state.isModalOpen !== nextState.isModalOpen ||
-      this.state.enableAliasing !== nextState.enableAliasing ||
-      this.state.activeTabIndex !== nextState.activeTabIndex ||
-      this.state.tabs !== nextState.tabs
-    );
-  }
+  // shouldComponentUpdate(nextProps: object, nextState: State) {
+  //   return (
+  //     this.state.isModalOpen !== nextState.isModalOpen ||
+  //     this.state.enableAliasing !== nextState.enableAliasing ||
+  //     this.state.activeTabIndex !== nextState.activeTabIndex ||
+  //     this.state.tabs !== nextState.tabs
+  //   );
+  // }
 
   render() {
     // Generating Graph Data
@@ -131,9 +131,9 @@ export class App extends React.Component<object, State> {
               Arithmusic
             </span>
             <div className={styles.grow}></div>
-            <IconButton color="inherit"><Play /></IconButton>
-            <IconButton color="inherit"><Stop /></IconButton>
-            <IconButton color="inherit"><Tune /></IconButton>
+            <IconButton color="inherit" onClick={this.handlePlay}><Play /></IconButton>
+            <IconButton color="inherit" onClick={this.handleStop}><Stop /></IconButton>
+            <IconButton color="inherit" onClick={this.handleSettings}><Tune /></IconButton>
           </Toolbar>
         </AppBar>
 
@@ -175,7 +175,21 @@ export class App extends React.Component<object, State> {
           <PanelList>{panelTemplate}</PanelList>
         </Tabs>
         
-        
+        <Modal
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          open={this.state.isModalOpen}
+          onClose={this.handleSettings}
+        >
+          <div>
+            <Typography variant="h6" id="modal-title">
+              Settings
+            </Typography>
+            <Typography variant="subtitle1" id="simple-modal-description">
+              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+            </Typography>
+          </div>
+        </Modal>
         
       
       </div>
@@ -189,6 +203,10 @@ export class App extends React.Component<object, State> {
 
   private handleCloseSettings = () => {
     this.setState({isModalOpen: false});
+  };
+
+  private handleSettings = () => {
+    this.setState({isModalOpen: !this.state.isModalOpen});
   };
 
   private handleFsChange = (e: Event, val: string) => {
