@@ -6,18 +6,36 @@ class Editor extends Component {
 
     constructor(props) {
         super(props);
+        this.idCount = props.tabs.reduce((count, row) => (count + row.length), 0);
+    }
+
+    getNewId = () => {
+        return ++this.idCount;
     }
 
     render() {
-        return (<div>
-            <TrackTimeline
-                selectedTabId={this.props.selectedTabId}
-                onTabSelection={this.props.onTabSelection}
-            />
+        const trackTimelines = [];
+        this.props.tabs.forEach((row, index) => {
+            trackTimelines.push(
+                <TrackTimeline
+                    tabs={row}
+                    selectedTabId={this.props.selectedTabId}
+                    onTabSelection={this.props.onTabSelection}
+                    onAddTab={this.handleTabAddition}
+                    idGenerator={this.getNewId}
+                    key={index}
+                />
+            );
+        });
+
+        return (
+        <div>
+            {trackTimelines}
             <div>
                 {this.props.selectedTabId}
             </div>
-        </div>);
+        </div>
+        );
     }
 
 }

@@ -50,7 +50,7 @@ class TrackTimeline extends Component {
     super(props);
     this.count = 69;
     this.state = {
-      items: getItems(6)
+      items: props.tabs
     };
   }
 
@@ -76,8 +76,11 @@ class TrackTimeline extends Component {
     this.setState({
       items: [...items,
       {
-        id: this.count,
-        content: this.count,
+        id: `t${this.props.idGenerator()}`,
+        title: "New Tab",
+        expression: "10*x",
+        length: 500,
+        volume: 100
       }
       ]
     });
@@ -94,8 +97,10 @@ class TrackTimeline extends Component {
               style={getListStyle(snapshot.isDraggingOver)}
               {...provided.droppableProps}
             >
-              {this.state.items.map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
+              {this.state.items.map((tab, index) => {
+                //alert(JSON.stringify(tab));
+                return (
+                <Draggable key={tab.id} draggableId={tab.id} index={index}>
                   {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}
@@ -104,15 +109,15 @@ class TrackTimeline extends Component {
                       style={getItemStyle(
                         snapshot.isDragging,
                         provided.draggableProps.style,
-                        this.props.selectedTabId == item.id
+                        this.props.selectedTabId === tab.id
                       )}
-                      onClick={() => this.props.onTabSelection(item.id)}
+                      onClick={() => this.props.onTabSelection(tab.id)}
                     >
-                      {item.content}
+                      {tab.title}
                     </div>
                   )}
-                </Draggable>
-              ))}
+                </Draggable>)
+            })}
               {provided.placeholder}
               <div onClick={this.addTab}>Add</div>
             </div>
