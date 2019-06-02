@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-
-const getItems = count =>
-  Array.from({ length: count }, (v, k) => k).map(k => ({
-    id: `${k}`,
-    content: `item ${k}`,
-  }));
+import { IconButton } from "@material-ui/core";
+import { Plus } from 'mdi-material-ui';
 
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -22,26 +18,29 @@ const grid = 8;
 const getItemStyle = (isDragging, draggableStyle, isSelected) => ({
   // some basic styles to make the items look a bit nicer
   userSelect: 'none',
-  padding: grid * 2,
-  margin: `0 ${grid}px 0 0`,
-
+  marginLeft: 5,
+  padding: 5,
+  minHeight: 20,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  alignSelf: 'center',
   // change background colour if dragging
-  background: isDragging ? 'lightgreen' : isSelected ? 'orange' : 'grey',
+  background: '#ffa4a2',
+  borderBottom: isSelected ? '2px solid #EE6E73' : '2px solid #ffa4a2',
 
   // styles we need to apply on draggables
   ...draggableStyle,
 });
 
 const getListStyle = isDraggingOver => ({
-  background: isDraggingOver ? 'lightblue' : 'lightgrey',
+  background: isDraggingOver ? '#af4448' : '#ffa4a2',
   display: 'flex',
   justifyContent: 'flex-start',
   padding: grid,
   overflow: 'auto',
-  minWidth: '50%',
-  maxWidth: '95%',
-  marginLeft: 10,
-  marginRight: 10
+  flexGrow: 1,
+  width: '100%'
 });
 
 class TrackTimeline extends Component {
@@ -119,7 +118,8 @@ class TrackTimeline extends Component {
                 </Draggable>)
             })}
               {provided.placeholder}
-              <div onClick={this.addTab}>Add</div>
+              <div className="verticalDivider"></div>
+              <IconButton onClick={this.addTab} size='small'><Plus /></IconButton>
             </div>
           )}
         </Droppable>

@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import { AppBar, Toolbar, IconButton, Modal, Typography } from "@material-ui/core";
+
+import { Play, Stop, Tune, Plus } from 'mdi-material-ui';
+
 import Graph from './components/graph';
 import Editor from './components/editor';
 
@@ -59,10 +63,18 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <AppBar position="static">
+          <Toolbar className="AppBar">
+            <span className="title">
+              Arithmusic
+            </span>
+            <div style={{flexGrow: 1}}></div>
+            <IconButton color="inherit" onClick={this.handlePlay}><Play /></IconButton>
+            <IconButton color="inherit" onClick={this.handleStop}><Stop /></IconButton>
+            <IconButton color="inherit" onClick={this.handleSettings}><Tune /></IconButton>
+          </Toolbar>
+        </AppBar>
         <img src={logo} className="App-logo" alt="logo" />
-        <p className='title'>
-          Test 123
-        </p>
         <Editor
           tabs={this.state.tabs}
           selectedTabId={this.state.selectedTabId}
