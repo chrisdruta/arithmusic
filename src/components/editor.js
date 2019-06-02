@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 
 import Divider from '@material-ui/core/Divider';
 
+
 import TrackTimeline from './track-timeline';
+import TrackControls from './track-controls';
 
 class Editor extends Component {
 
@@ -20,7 +22,7 @@ class Editor extends Component {
         this.props.tabs.forEach((row, index) => {
             trackTimelines.push(
                 <div key={index} className="EditorRow">
-                    <div style={{color: 'red'}}>Test</div>
+                    <TrackControls />
                     <TrackTimeline
                         tabs={row}
                         selectedTabId={this.props.selectedTabId}

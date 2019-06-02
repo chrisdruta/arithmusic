@@ -4,7 +4,7 @@ import './App.css';
 
 import { AppBar, Toolbar, IconButton, Modal, Typography } from "@material-ui/core";
 
-import { Play, Stop, Tune, Plus } from 'mdi-material-ui';
+import { Play, Stop, Tune } from 'mdi-material-ui';
 
 import Graph from './components/graph';
 import Editor from './components/editor';
@@ -75,6 +75,7 @@ class App extends Component {
           </Toolbar>
         </AppBar>
         <img src={logo} className="App-logo" alt="logo" />
+        <span>Timeline</span>
         <Editor
           tabs={this.state.tabs}
           selectedTabId={this.state.selectedTabId}
