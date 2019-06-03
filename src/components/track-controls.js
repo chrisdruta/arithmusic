@@ -9,7 +9,7 @@ class TrackControls extends Component {
     render() {
         return(
             <div className="TrackControl">
-                <InputBase defaultValue="Untitled Track"/>
+                <InputBase defaultValue="Untitled Track" className="trackTitle" inputProps={{style: {fontSize: 15} }}/>
                 <ToggleButtonGroup size="small" exclusive={true}>
                     <ToggleButton size="small" selected={true} value='sine'>
                         <CurrentAc />

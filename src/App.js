@@ -75,7 +75,6 @@ class App extends Component {
           </Toolbar>
         </AppBar>
         <img src={logo} className="App-logo" alt="logo" />
-        <span>Timeline</span>
         <Editor
           tabs={this.state.tabs}
           selectedTabId={this.state.selectedTabId}
