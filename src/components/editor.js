@@ -46,7 +46,11 @@ class Editor extends Component {
   render() {
     const { classes } = this.props;
     const trackTimelines = [];
+
+    let selectedTabData = null;
+
     this.props.timelines.forEach((tl, index) => {
+      tl.segments.forEach((segment) => {if (segment.id === this.props.selectedTabId) selectedTabData = segment})
       trackTimelines.push(
         <div key={index} className="EditorRow">
           <TrackControls
@@ -70,15 +74,20 @@ class Editor extends Component {
     return (
       <ExpansionPanel defaultExpanded={true} classes={{root: classes.root}}>
         <ExpansionPanelSummary
-        expandIcon={<ChevronUp />}
-          
+          expandIcon={<ChevronUp />}
         >
           <Typography className={classes.heading}>Timeline</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails classes={{root: classes.details}}>
           <div className="Editor">
             {trackTimelines}
-            <EditorPanel />
+            <EditorPanel
+              title={selectedTabData.title}
+              expression={selectedTabData.expression}
+              length={selectedTabData.length}
+              volume={selectedTabData.volume}
+              onDataChange={this.props.onDataChange}
+            />
           </div>
         </ExpansionPanelDetails>
       </ExpansionPanel>

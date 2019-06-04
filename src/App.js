@@ -44,6 +44,22 @@ class App extends Component {
     this.setState({timelines: timelines});
   }
 
+  handleDataChange = (field, value) => {
+    //TODO: find better method than looping through all tabs (if slow)
+    console.log("in handledatachange")
+    this.state.timelines.forEach((tl, i) => {
+      tl.segments.forEach((segment, j) => {
+        if (segment.id === this.state.selectedTabId) {
+          console.log("hit")
+          console.log(`${field},${value}`)
+          const { timelines } = this.state;
+          timelines[i].segments[j][field] = value;
+          this.setState({timelines: timelines})
+        }
+      })
+    })
+  }
+
   render() {
     return (
       <div className="App">
@@ -63,10 +79,10 @@ class App extends Component {
           timelines={this.state.timelines}
           selectedTabId={this.state.selectedTabId}
           onTabSelection={this.handleTabSelection}
-          onTabDataChange={this.handleTabDataChange}
           onTrackTypeChange={this.handleTrackTypeChange}
           onTrackMuteToggle={this.handleTrackMuteToggle}
           onTrackTitleChange={this.handleTrackTitleChange}
+          onDataChange={this.handleDataChange}
         />
       </div>
     );
