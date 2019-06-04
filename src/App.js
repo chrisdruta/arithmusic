@@ -23,6 +23,27 @@ class App extends Component {
     });
   }
 
+  handleTrackMuteToggle = (index) => {
+    const { timelines } = this.state;
+    timelines[index].options.mute = !timelines[index].options.mute;
+    this.setState({timelines: timelines});
+  }
+
+  handleTrackTypeChange = (index, value) => {
+    const { timelines } = this.state;
+    if (value === null)
+      timelines[index].options.type = 'sine';
+    else
+      timelines[index].options.type = value;
+    this.setState({timelines: timelines});
+  }
+
+  handleTrackTitleChange = (index, value) => {
+    const { timelines } = this.state;
+    timelines[index].options.title = value;
+    this.setState({timelines: timelines});
+  }
+
   render() {
     return (
       <div className="App">
@@ -43,6 +64,9 @@ class App extends Component {
           selectedTabId={this.state.selectedTabId}
           onTabSelection={this.handleTabSelection}
           onTabDataChange={this.handleTabDataChange}
+          onTrackTypeChange={this.handleTrackTypeChange}
+          onTrackMuteToggle={this.handleTrackMuteToggle}
+          onTrackTitleChange={this.handleTrackTitleChange}
         />
       </div>
     );

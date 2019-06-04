@@ -19,7 +19,7 @@ const styles = theme => ({
   },
   heading: {
     fontSize: theme.typography.pxToRem(20),
-    fontWeight: theme.typography.fontWeightRegular
+    fontWeight: 600
   },
   details: {
     wdith: "100%",
@@ -49,7 +49,13 @@ class Editor extends Component {
     this.props.timelines.forEach((tl, index) => {
       trackTimelines.push(
         <div key={index} className="EditorRow">
-          <TrackControls />
+          <TrackControls
+            options={tl.options}
+            handleMuteToggle={this.props.onTrackMuteToggle}
+            handleTypeChange={this.props.onTrackTypeChange}
+            handleTitleChange={this.props.onTrackTitleChange}
+            index={index}
+          />
           <TrackTimeline
             tabs={tl.segments}
             selectedTabId={this.props.selectedTabId}

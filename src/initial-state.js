@@ -1,8 +1,13 @@
 export default {
 
-  selectedTabId: 't1',
+  selectedTabId: 't0',
   timelines: [
     {
+      options: {
+        title: 'Untitled Track 1',
+        type: 'sine',
+        mute: false
+      },
       segments: [
         {
           id: "t0",
@@ -18,10 +23,14 @@ export default {
           length: 500,
           volume: 100
         }
-      ],
-      otherStuff: "blah"
+      ]
     },
     {
+      options: {
+        title: 'Untitled Track 2',
+        type: 'saw',
+        mute: true
+      },
       segments: [
         {
           id: "t2",
@@ -37,8 +46,7 @@ export default {
           length: 500,
           volume: 100
         }
-      ],
-      otherStuff: "poop"
+      ]
     }
 
   ]

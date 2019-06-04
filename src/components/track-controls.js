@@ -6,23 +6,36 @@ import { VolumeMute, CurrentAc, HandSaw, SquareOutline } from 'mdi-material-ui';
 
 class TrackControls extends Component {
 
+    constructor(props) {
+        super(props);
+    }
+
     render() {
         return(
             <div className="TrackControl">
-                <InputBase defaultValue="Untitled Track" className="trackTitle" inputProps={{style: {fontSize: 15} }}/>
-                <ToggleButtonGroup size="small" exclusive={true}>
-                    <ToggleButton size="small" selected={true} value='sine'>
+                <InputBase value={this.props.options.title} className="trackTitle"
+                    inputProps={{style: {fontSize: 15} }}
+                    onChange={(event) =>  this.props.handleTitleChange(this.props.index, event.target.value)}
+                />
+                <ToggleButtonGroup size="small" exclusive={true}
+                    value={this.props.options.type}
+                    onChange={(e, val) => {this.props.handleTypeChange(this.props.index, val)}}
+                >
+                    <ToggleButton size="small" value='sine'>
                         <CurrentAc />
                     </ToggleButton>
-                    <ToggleButton size="small" selected={false} value='square'>
+                    <ToggleButton size="small" value='square'>
                         <SquareOutline />
                     </ToggleButton>
-                    <ToggleButton size="small" selected={false} value='saw'>
+                    <ToggleButton size="small" value='saw'>
                         <HandSaw />
                     </ToggleButton>
                 </ToggleButtonGroup>
                 <ToggleButtonGroup size="small" style={{marginLeft: 5}}>
-                    <ToggleButton size="small" selected={false} value='mute'>
+                    <ToggleButton size="small"
+                        selected={this.props.options.mute}
+                        value='mute' onClick={() => this.props.handleMuteToggle(this.props.index)}
+                    >
                         <VolumeMute />
                     </ToggleButton>
                 </ToggleButtonGroup>
