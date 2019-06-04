@@ -50,6 +50,16 @@
   margin-top: 5px;
 }
 
+.EditorPanel {
+  background-color: whitesmoke;
+  width: 100%;
+  color: black;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-bottom: 5px;
+}
+
 .TrackControl {
   display: flex;
   justify-content: center;
@@ -59,8 +69,15 @@
   padding-right: 5px;
 }
 
+.output {
+  display: felx;
+  align-self: center;
+}
+
 .trackTitle {
-  width: 100px;
+  width: 115px;
+  border: 1px black solid;
+  margin-right: 5px;
 }
 
 .verticalDivider {
