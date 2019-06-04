@@ -32,7 +32,11 @@ class Editor extends Component {
 
   constructor(props) {
     super(props);
-    this.idCount = props.tabs.reduce((count, row) => (count + row.length), 0);
+    let count = 0;
+    for (let tl of props.timelines) {
+      count += tl.segments.length;
+    }
+    this.idCount = count;
   }
 
   getNewId = () => {
@@ -42,12 +46,12 @@ class Editor extends Component {
   render() {
     const { classes } = this.props;
     const trackTimelines = [];
-    this.props.tabs.forEach((row, index) => {
+    this.props.timelines.forEach((tl, index) => {
       trackTimelines.push(
         <div key={index} className="EditorRow">
           <TrackControls />
           <TrackTimeline
-            tabs={row}
+            tabs={tl.segments}
             selectedTabId={this.props.selectedTabId}
             onTabSelection={this.props.onTabSelection}
             onAddTab={this.handleTabAddition}
@@ -78,4 +82,3 @@ class Editor extends Component {
 }
 
 export default withStyles(styles)(Editor);
-

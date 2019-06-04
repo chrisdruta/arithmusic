@@ -47,7 +47,6 @@ class TrackTimeline extends Component {
 
   constructor(props) {
     super(props);
-    this.count = 69;
     this.state = {
       items: props.tabs
     };
@@ -74,16 +73,15 @@ class TrackTimeline extends Component {
     const items = this.state.items;
     this.setState({
       items: [...items,
-      {
-        id: `t${this.props.idGenerator()}`,
-        title: "New Tab",
-        expression: "10*x",
-        length: 500,
-        volume: 100
-      }
+        {
+          id: `t${this.props.idGenerator()}`,
+          title: "New Tab",
+          expression: "10*x",
+          length: 500,
+          volume: 100
+        }
       ]
     });
-    this.count++;
   }
 
   render() {
@@ -99,24 +97,24 @@ class TrackTimeline extends Component {
               {this.state.items.map((tab, index) => {
                 //alert(JSON.stringify(tab));
                 return (
-                <Draggable key={tab.id} draggableId={tab.id} index={index}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps.style,
-                        this.props.selectedTabId === tab.id
-                      )}
-                      onClick={() => this.props.onTabSelection(tab.id)}
-                    >
-                      {tab.title}
-                    </div>
-                  )}
-                </Draggable>)
-            })}
+                  <Draggable key={tab.id} draggableId={tab.id} index={index}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        style={getItemStyle(
+                          snapshot.isDragging,
+                          provided.draggableProps.style,
+                          this.props.selectedTabId === tab.id
+                        )}
+                        onClick={() => this.props.onTabSelection(tab.id)}
+                      >
+                        {tab.title}
+                      </div>
+                    )}
+                  </Draggable>)
+              })}
               {provided.placeholder}
               <div className="verticalDivider"></div>
               <IconButton onClick={this.addTab} size='small'><Plus /></IconButton>
