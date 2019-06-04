@@ -48,7 +48,7 @@ class TrackTimeline extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: props.tabs
+      items: props.segments
     };
   }
 
@@ -69,7 +69,7 @@ class TrackTimeline extends Component {
     });
   }
 
-  addTab = () => {
+  addSegment = () => {
     const items = this.state.items;
     this.setState({
       items: [...items,
@@ -94,10 +94,9 @@ class TrackTimeline extends Component {
               style={getListStyle(snapshot.isDraggingOver)}
               {...provided.droppableProps}
             >
-              {this.state.items.map((tab, index) => {
-                //alert(JSON.stringify(tab));
+              {this.state.items.map((segment, index) => {
                 return (
-                  <Draggable key={tab.id} draggableId={tab.id} index={index}>
+                  <Draggable key={segment.id} draggableId={segment.id} index={index}>
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
@@ -106,18 +105,18 @@ class TrackTimeline extends Component {
                         style={getItemStyle(
                           snapshot.isDragging,
                           provided.draggableProps.style,
-                          this.props.selectedTabId === tab.id
+                          this.props.selectedSegmentId === segment.id
                         )}
-                        onClick={() => this.props.onTabSelection(tab.id)}
+                        onClick={() => this.props.onSegmentSelection(segment.id)}
                       >
-                        {tab.title}
+                        {segment.title}
                       </div>
                     )}
                   </Draggable>)
               })}
               {provided.placeholder}
               <div className="verticalDivider"></div>
-              <IconButton onClick={this.addTab} size='small'><Plus /></IconButton>
+              <IconButton onClick={this.addSegment} size='small'><Plus /></IconButton>
             </div>
           )}
         </Droppable>

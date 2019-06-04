@@ -17,9 +17,9 @@ class App extends Component {
     this.state = initialState;
   }
 
-  handleTabSelection = (selectedTabId) => {
+  handleSegmentSelection = (selectedSegmentId) => {
     this.setState({
-      selectedTabId: selectedTabId
+      selectedSegmentId: selectedSegmentId
     });
   }
 
@@ -40,10 +40,10 @@ class App extends Component {
   }
 
   handleDataChange = (field, value) => {
-    //TODO: find better method than looping through all tabs (if slow)
+    //TODO: find better method than looping through all segments (if slow)
     this.state.timelines.forEach((tl, i) => {
       tl.segments.forEach((segment, j) => {
-        if (segment.id === this.state.selectedTabId) {
+        if (segment.id === this.state.selectedSegmentId) {
           const { timelines } = this.state;
           timelines[i].segments[j][field] = value;
           this.setState({ timelines: timelines });
@@ -70,8 +70,8 @@ class App extends Component {
         <img src={logo} className="App-logo" alt="logo" />
         <Editor
           timelines={this.state.timelines}
-          selectedTabId={this.state.selectedTabId}
-          onTabSelection={this.handleTabSelection}
+          selectedSegmentId={this.state.selectedSegmentId}
+          onSegmentSelection={this.handleSegmentSelection}
           onTrackDataChange={this.handleTrackDataChange}
           onDataChange={this.handleDataChange}
         />

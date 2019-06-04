@@ -46,10 +46,12 @@ class Editor extends Component {
   render() {
     const { classes } = this.props;
     const trackTimelines = [];
-    let selectedTabData = null;
+    let selectedSegmentData = null;
 
     this.props.timelines.forEach((tl, index) => {
-      tl.segments.forEach((segment) => {if (segment.id === this.props.selectedTabId) selectedTabData = segment})
+      tl.segments.forEach((segment) => {
+        if (segment.id === this.props.selectedSegmentId) selectedSegmentData = segment
+      });
       trackTimelines.push(
         <div key={index} className="EditorRow">
           <TrackControls
@@ -58,10 +60,10 @@ class Editor extends Component {
             index={index}
           />
           <TrackTimeline
-            tabs={tl.segments}
-            selectedTabId={this.props.selectedTabId}
-            onTabSelection={this.props.onTabSelection}
-            onAddTab={this.handleTabAddition}
+            segments={tl.segments}
+            selectedSegmentId={this.props.selectedSegmentId}
+            onSegmentSelection={this.props.onSegmentSelection}
+            onAddSegment={this.handleSegmentAddition}
             idGenerator={this.getNewId}
           />
         </div>
@@ -77,10 +79,10 @@ class Editor extends Component {
           <div className="Editor">
             {trackTimelines}
             <EditorPanel
-              title={selectedTabData.title}
-              expression={selectedTabData.expression}
-              length={selectedTabData.length}
-              volume={selectedTabData.volume}
+              title={selectedSegmentData.title}
+              expression={selectedSegmentData.expression}
+              length={selectedSegmentData.length}
+              volume={selectedSegmentData.volume}
               onDataChange={this.props.onDataChange}
             />
           </div>

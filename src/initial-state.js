@@ -1,6 +1,6 @@
 export default {
 
-  selectedTabId: 't0',
+  selectedSegmentId: 't0',
   timelines: [
     {
       options: {
