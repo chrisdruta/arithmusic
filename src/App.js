@@ -23,41 +23,34 @@ class App extends Component {
     });
   }
 
-  handleTrackMuteToggle = (index) => {
+  handleTrackDataChange = (index, field, value) => {
     const { timelines } = this.state;
-    timelines[index].options.mute = !timelines[index].options.mute;
-    this.setState({timelines: timelines});
-  }
-
-  handleTrackTypeChange = (index, value) => {
-    const { timelines } = this.state;
-    if (value === null)
-      timelines[index].options.type = 'sine';
-    else
-      timelines[index].options.type = value;
-    this.setState({timelines: timelines});
-  }
-
-  handleTrackTitleChange = (index, value) => {
-    const { timelines } = this.state;
-    timelines[index].options.title = value;
-    this.setState({timelines: timelines});
+    if (field === 'title') {
+      timelines[index].options.title = value;
+    } else if (field === 'type') {
+      if (value === null)
+        timelines[index].options.type = 'sine';
+      else
+        timelines[index].options.type = value;
+    } else if (field === 'mute') {
+      timelines[index].options.mute = !timelines[index].options.mute;
+    }
+    
+    this.setState({ timelines: timelines });
   }
 
   handleDataChange = (field, value) => {
     //TODO: find better method than looping through all tabs (if slow)
-    console.log("in handledatachange")
     this.state.timelines.forEach((tl, i) => {
       tl.segments.forEach((segment, j) => {
         if (segment.id === this.state.selectedTabId) {
-          console.log("hit")
-          console.log(`${field},${value}`)
           const { timelines } = this.state;
           timelines[i].segments[j][field] = value;
-          this.setState({timelines: timelines})
+          this.setState({ timelines: timelines });
+          return;
         }
-      })
-    })
+      });
+    });
   }
 
   render() {
@@ -79,9 +72,7 @@ class App extends Component {
           timelines={this.state.timelines}
           selectedTabId={this.state.selectedTabId}
           onTabSelection={this.handleTabSelection}
-          onTrackTypeChange={this.handleTrackTypeChange}
-          onTrackMuteToggle={this.handleTrackMuteToggle}
-          onTrackTitleChange={this.handleTrackTitleChange}
+          onTrackDataChange={this.handleTrackDataChange}
           onDataChange={this.handleDataChange}
         />
       </div>
