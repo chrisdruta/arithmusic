@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Button, InputBase } from '@material-ui/core/';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab/'
-import { VolumeMute, CurrentAc, HandSaw, SquareOutline, Plus, Minus } from 'mdi-material-ui';
+import { VolumeMute, CurrentAc, HandSaw, SquareOutline, Minus } from 'mdi-material-ui';
 
 class TrackControls extends Component {
 
