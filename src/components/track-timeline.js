@@ -45,11 +45,6 @@ const getListStyle = isDraggingOver => ({
 
 class TrackTimeline extends Component {
 
-  constructor(props) {
-    super(props);
-  }
-
-
   onDragEnd = (result) => {
     // dropped outside the list
     if (!result.destination) {

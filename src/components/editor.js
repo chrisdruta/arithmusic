@@ -30,10 +30,6 @@ const styles = theme => ({
 
 class Editor extends Component {
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { classes } = this.props;
     const trackTimelines = [];

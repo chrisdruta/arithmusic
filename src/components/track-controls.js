@@ -6,10 +6,6 @@ import { VolumeMute, CurrentAc, HandSaw, SquareOutline } from 'mdi-material-ui';
 
 class TrackControls extends Component {
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <div className="TrackControl">
