@@ -8,6 +8,7 @@ import { Play, Stop, Tune } from 'mdi-material-ui';
 
 import Graph from './components/graph';
 import Editor from './components/editor';
+import { SaveModal, LoadModal, SettingsModal } from './components/modals';
 import initialState from './initial-state';
 
 class App extends Component {

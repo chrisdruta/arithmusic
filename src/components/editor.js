@@ -6,10 +6,10 @@ import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@m
 import Typography from '@material-ui/core/Typography';
 import { ChevronUp } from 'mdi-material-ui';
 
-import EditorControls from './editor-controls';
-import EditorPanel from './editor-panel';
-import TrackTimeline from './track-timeline';
-import TrackControls from './track-controls';
+import EditorControls from './editor/editor-controls';
+import EditorPanel from './editor/editor-panel';
+import TrackTimeline from './editor/track-timeline';
+import TrackControls from './editor/track-controls';
 
 const styles = theme => ({
   root: {
