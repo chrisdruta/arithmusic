@@ -38,7 +38,7 @@ class Editor extends Component {
         if (segment.id === this.props.selectedSegmentId) selectedSegmentData = segment
       });
       trackTimelines.push(
-        <div key={index} className="EditorRow">
+        <div key={index} className="EditorTimelineRow">
           <TrackControls
             options={tl.options}
             onTrackDataChange={this.props.onTrackDataChange}
@@ -66,25 +66,27 @@ class Editor extends Component {
             <div className="EditorOptions">
               <Button
                 variant="contained" size="medium"
-                style={{backgroundColor: '#f5f5f5', fontWeight: 600}}
+                style={{backgroundColor: '#f5f5f5', fontWeight: 500}}
               >
                 Track&nbsp;<Plus />
               </Button>
               <div style={{ flexGrow: 1 }}></div>
               <Button
                 variant="contained" size="medium"
-                style={{backgroundColor: '#f5f5f5', fontWeight: 600}}
+                style={{backgroundColor: '#f5f5f5', fontWeight: 500}}
               >
                 Load&nbsp;<Upload />
               </Button>
               <Button
                 variant="contained" size="medium"
-                style={{backgroundColor: '#f5f5f5', fontWeight: 600}}
+                style={{backgroundColor: '#f5f5f5', fontWeight: 500}}
               >
                 Save&nbsp;<ContentSave />
               </Button>
             </div>
-            {trackTimelines}
+            <div className="EditorTimelineContainer">
+              {trackTimelines}
+            </div>
             { selectedSegmentData
               ? <EditorPanel
                   title={selectedSegmentData.title}

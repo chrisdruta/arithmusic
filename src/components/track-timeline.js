@@ -20,7 +20,7 @@ const getStyle = (isDragging, draggableStyle, isSelected) => ({
   userSelect: 'none',
   marginLeft: 5,
   padding: 5,
-  minHeight: 20,
+  minHeight: 16,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',

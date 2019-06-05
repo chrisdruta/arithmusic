@@ -53,12 +53,17 @@
   padding-bottom: 10px;
 }
 
-.EditorRow {
+.EditorTimelineRow {
   display: flex;
   justify-content: flex-start;
   width: 100%;
   background-color: #af4448;
+  margin-top: 5px;
+}
+
+.EditorTimelineContainer {
   margin-bottom: 5px;
+  width: 100%;
 }
 
 .EditorPanel {
@@ -74,6 +79,7 @@
 
 .EmptyEditorPanel {
   height: 10vh;
+  padding-bottom: 5px;
 }
 
 .TrackControl {
@@ -101,7 +107,7 @@
   border-right-style: solid;
   height: 100%;
   margin-left: 5px;
-  margin-right: 2px;
+  margin-right: 5px;
 }
 
 @keyframes App-logo-spin {
