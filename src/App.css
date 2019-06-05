@@ -42,12 +42,23 @@
   flex-grow: 1;
 }
 
+.EditorOptions {
+  background-color: #ffa4a2;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 10px;
+  padding-right: 200px;
+  margin-right: 10px;
+  padding-bottom: 10px;
+}
+
 .EditorRow {
   display: flex;
   justify-content: flex-start;
   width: 100%;
   background-color: #af4448;
-  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .EditorPanel {
@@ -70,8 +81,8 @@
   justify-content: center;
   align-items: center;
   background-color: #af4448;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .output {
@@ -80,9 +91,8 @@
 }
 
 .trackTitle {
-  width: 115px;
-  border: 1px black solid;
-  margin-right: 5px;
+  width: 150px;
+  margin-right: 10px;
 }
 
 .verticalDivider {

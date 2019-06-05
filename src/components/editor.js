@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 
 import { withStyles } from "@material-ui/core/styles";
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import { Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@material-ui/core/';
 
 import Typography from '@material-ui/core/Typography';
-import { ChevronUp } from 'mdi-material-ui';
+import { ChevronUp, Plus, ContentSave,  Upload } from 'mdi-material-ui';
 
 import EditorPanel from './editor-panel';
 import TrackTimeline from './track-timeline';
@@ -61,10 +59,31 @@ class Editor extends Component {
     return (
       <ExpansionPanel defaultExpanded={true} classes={{root: classes.root}}>
         <ExpansionPanelSummary expandIcon={<ChevronUp />}>
-          <Typography className={classes.heading}>Timeline</Typography>
+          <Typography className={classes.heading}>Timeline Editor</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails classes={{root: classes.details}}>
           <div className="Editor">
+            <div className="EditorOptions">
+              <Button
+                variant="contained" size="medium"
+                style={{backgroundColor: '#f5f5f5', fontWeight: 600}}
+              >
+                Track&nbsp;<Plus />
+              </Button>
+              <div style={{ flexGrow: 1 }}></div>
+              <Button
+                variant="contained" size="medium"
+                style={{backgroundColor: '#f5f5f5', fontWeight: 600}}
+              >
+                Load&nbsp;<Upload />
+              </Button>
+              <Button
+                variant="contained" size="medium"
+                style={{backgroundColor: '#f5f5f5', fontWeight: 600}}
+              >
+                Save&nbsp;<ContentSave />
+              </Button>
+            </div>
             {trackTimelines}
             { selectedSegmentData
               ? <EditorPanel
