@@ -32,15 +32,6 @@ class Editor extends Component {
 
   constructor(props) {
     super(props);
-    let count = 0;
-    for (let tl of props.timelines) {
-      count += tl.segments.length;
-    }
-    this.idCount = count;
-  }
-
-  getNewId = () => {
-    return ++this.idCount;
   }
 
   render() {
@@ -63,8 +54,9 @@ class Editor extends Component {
             segments={tl.segments}
             selectedSegmentId={this.props.selectedSegmentId}
             onSegmentSelection={this.props.onSegmentSelection}
-            onAddSegment={this.handleSegmentAddition}
-            idGenerator={this.getNewId}
+            onSegmentRearrange={this.props.onSegmentRearrange}
+            onAddSegment={this.props.onAddSegment}
+            index={index}
           />
         </div>
       );
@@ -78,13 +70,17 @@ class Editor extends Component {
         <ExpansionPanelDetails classes={{root: classes.details}}>
           <div className="Editor">
             {trackTimelines}
-            <EditorPanel
-              title={selectedSegmentData.title}
-              expression={selectedSegmentData.expression}
-              length={selectedSegmentData.length}
-              volume={selectedSegmentData.volume}
-              onDataChange={this.props.onDataChange}
-            />
+            { selectedSegmentData
+              ? <EditorPanel
+                  title={selectedSegmentData.title}
+                  expression={selectedSegmentData.expression}
+                  length={selectedSegmentData.length}
+                  volume={selectedSegmentData.volume}
+                  onDataChange={this.props.onDataChange}
+                  onDeleteSegment={this.props.onDeleteSegment}
+                />
+              : <div className="EmptyEditorPanel"/>
+              }
           </div>
         </ExpansionPanelDetails>
       </ExpansionPanel>

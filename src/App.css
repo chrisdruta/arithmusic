@@ -53,11 +53,16 @@
 .EditorPanel {
   background-color: whitesmoke;
   width: 100%;
+  height: 10vh;
   color: black;
   display: flex;
   justify-content: space-around;
   align-items: center;
   padding-bottom: 5px;
+}
+
+.EmptyEditorPanel {
+  height: 10vh;
 }
 
 .TrackControl {

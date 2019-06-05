@@ -63,7 +63,7 @@ class EditorPanel extends Component {
           style={style.volume}
         />
         <EditorOutput />
-        <IconButton>
+        <IconButton onClick={() => this.props.onDeleteSegment()}>
           <Delete />
         </IconButton>
       </div>

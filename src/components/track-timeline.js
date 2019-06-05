@@ -15,7 +15,7 @@ const reorder = (list, startIndex, endIndex) => {
 
 const grid = 8;
 
-const getItemStyle = (isDragging, draggableStyle, isSelected) => ({
+const getStyle = (isDragging, draggableStyle, isSelected) => ({
   // some basic styles to make the items look a bit nicer
   userSelect: 'none',
   marginLeft: 5,
@@ -47,10 +47,8 @@ class TrackTimeline extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      items: props.segments
-    };
   }
+
 
   onDragEnd = (result) => {
     // dropped outside the list
@@ -58,30 +56,14 @@ class TrackTimeline extends Component {
       return;
     }
 
-    const items = reorder(
-      this.state.items,
+    const segments = reorder(
+      this.props.segments,
       result.source.index,
       result.destination.index
     );
 
-    this.setState({
-      items,
-    });
-  }
-
-  addSegment = () => {
-    const items = this.state.items;
-    this.setState({
-      items: [...items,
-        {
-          id: `t${this.props.idGenerator()}`,
-          title: "New Tab",
-          expression: "10*x",
-          length: 500,
-          volume: 100
-        }
-      ]
-    });
+    this.props.onSegmentRearrange(this.props.index, segments);
+    //this.setState({ segments });
   }
 
   render() {
@@ -94,7 +76,7 @@ class TrackTimeline extends Component {
               style={getListStyle(snapshot.isDraggingOver)}
               {...provided.droppableProps}
             >
-              {this.state.items.map((segment, index) => {
+              {this.props.segments.map((segment, index) => {
                 return (
                   <Draggable key={segment.id} draggableId={segment.id} index={index}>
                     {(provided, snapshot) => (
@@ -102,7 +84,7 @@ class TrackTimeline extends Component {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        style={getItemStyle(
+                        style={getStyle(
                           snapshot.isDragging,
                           provided.draggableProps.style,
                           this.props.selectedSegmentId === segment.id
@@ -116,7 +98,7 @@ class TrackTimeline extends Component {
               })}
               {provided.placeholder}
               <div className="verticalDivider"></div>
-              <IconButton onClick={this.addSegment} size='small'><Plus /></IconButton>
+              <IconButton onClick={() => this.props.onAddSegment(this.props.index)} size='small'><Plus /></IconButton>
             </div>
           )}
         </Droppable>

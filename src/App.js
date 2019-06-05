@@ -15,6 +15,16 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = initialState;
+
+    let count = 0;
+    for (let tl of this.state.timelines) {
+      count += tl.segments.length;
+    }
+    this.idCount = count;
+  }
+
+  idGenerator = () => {
+    return ++this.idCount;
   }
 
   handleSegmentSelection = (selectedSegmentId) => {
@@ -35,8 +45,14 @@ class App extends Component {
     } else if (field === 'mute') {
       timelines[index].options.mute = !timelines[index].options.mute;
     }
-    
+
     this.setState({ timelines: timelines });
+  }
+
+  handleSegmentRearrange = (index, segments) => {
+    const { timelines } = this.state;
+    timelines[index].segments = segments;
+    this.setState( {timelines: timelines} );
   }
 
   handleDataChange = (field, value) => {
@@ -53,7 +69,46 @@ class App extends Component {
     });
   }
 
+  handleAddSegment = (index) => {
+    const { timelines } = this.state;
+
+    timelines[index].segments = [...timelines[index].segments,
+      {
+        id: `t${this.idGenerator()}`,
+        title: "New Tab",
+        expression: "10*x",
+        length: 500,
+        volume: 100
+      }
+    ];
+    this.setState({timelines: timelines}, () => {this.forceUpdate()});
+  }
+
+  handleDeleteSegment = () => {
+    const { timelines } = this.state;
+    let prevSegmentId = null;
+
+    timelines.forEach((tl, tlIndex) => {
+      tl.segments.forEach((segment, segmentIndex) => {
+
+        if (segment.id === this.state.selectedSegmentId) {
+          const updateSegments = [...tl.segments];
+          updateSegments.splice(segmentIndex, 1);
+          timelines[tlIndex].segments = updateSegments;
+          
+          this.setState({
+            selectedSegmentId: prevSegmentId,
+            timelines: timelines
+          });
+          
+        }
+        prevSegmentId = segment.id;
+      });
+    });
+  }
+
   render() {
+    const { timelines } = this.state;
     return (
       <div className="App">
         <AppBar position="static">
@@ -69,11 +124,14 @@ class App extends Component {
         </AppBar>
         <img src={logo} className="App-logo" alt="logo" />
         <Editor
-          timelines={this.state.timelines}
+          timelines={timelines}
           selectedSegmentId={this.state.selectedSegmentId}
           onSegmentSelection={this.handleSegmentSelection}
+          onSegmentRearrange={this.handleSegmentRearrange}
           onTrackDataChange={this.handleTrackDataChange}
           onDataChange={this.handleDataChange}
+          onAddSegment={this.handleAddSegment}
+          onDeleteSegment={this.handleDeleteSegment}
         />
       </div>
     );
