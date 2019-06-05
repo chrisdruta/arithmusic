@@ -43,6 +43,7 @@ class Editor extends Component {
           <TrackControls
             options={tl.options}
             onTrackDataChange={this.props.onTrackDataChange}
+            onDeleteTrack={this.props.onDeleteTrack}
             index={index}
           />
           <TrackTimeline
@@ -64,7 +65,9 @@ class Editor extends Component {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails classes={{root: classes.details}}>
           <div className="Editor">
-            <EditorControls />
+            <EditorControls
+              onAddTrack={this.props.onAddTrack}
+            />
             <div className="EditorTimelineContainer">
               {trackTimelines}
             </div>

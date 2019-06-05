@@ -15,7 +15,7 @@ class EditorControls extends Component {
   render() {
     return (
       <div className="EditorOptions">
-        <Button variant="contained" size="medium" style={styles.button}>
+        <Button variant="contained" size="medium" style={styles.button} onClick={this.props.onAddTrack}>
           Track&nbsp;<Plus />
         </Button>
         <div style={{flexGrow: 1}} />

@@ -52,7 +52,7 @@ class App extends Component {
   handleSegmentRearrange = (index, segments) => {
     const { timelines } = this.state;
     timelines[index].segments = segments;
-    this.setState( {timelines: timelines} );
+    this.setState({ timelines: timelines });
   }
 
   handleDataChange = (field, value) => {
@@ -73,15 +73,15 @@ class App extends Component {
     const { timelines } = this.state;
 
     timelines[index].segments = [...timelines[index].segments,
-      {
-        id: `t${this.idGenerator()}`,
-        title: "New Tab",
-        expression: "10*x",
-        length: 500,
-        volume: 100
-      }
+    {
+      id: `t${this.idGenerator()}`,
+      title: "New Tab",
+      expression: "10*x",
+      length: 500,
+      volume: 100
+    }
     ];
-    this.setState({timelines: timelines}, () => {this.forceUpdate()});
+    this.setState({ timelines: timelines }, () => { this.forceUpdate() });
   }
 
   handleDeleteSegment = () => {
@@ -95,16 +95,38 @@ class App extends Component {
           const updateSegments = [...tl.segments];
           updateSegments.splice(segmentIndex, 1);
           timelines[tlIndex].segments = updateSegments;
-          
+
           this.setState({
             selectedSegmentId: prevSegmentId,
             timelines: timelines
           });
-          
+          return;
         }
         prevSegmentId = segment.id;
       });
     });
+  }
+
+  handleAddTrack = () => {
+    const { timelines } = this.state;
+
+    timelines.push({
+      options: {
+        title: 'Untitled Track',
+        type: 'sine',
+        mute: false
+      },
+      segments: []
+    });
+
+    this.setState({ timelines: timelines });
+  }
+
+  handleDeleteTrack = (trackIndex) => {
+    const { timelines } = this.state;
+
+    timelines.splice(trackIndex, 1);
+    this.setState({ timelines: timelines });
   }
 
   render() {
@@ -132,6 +154,8 @@ class App extends Component {
           onDataChange={this.handleDataChange}
           onAddSegment={this.handleAddSegment}
           onDeleteSegment={this.handleDeleteSegment}
+          onAddTrack={this.handleAddTrack}
+          onDeleteTrack={this.handleDeleteTrack}
         />
       </div>
     );

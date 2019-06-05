@@ -10,7 +10,7 @@ class TrackControls extends Component {
     return (
       <div className="TrackControl">
         { this.props.index !== 0
-          ? <Button variant="contained" size="medium"
+          ? <Button variant="contained" size="medium" onClick={() => this.props.onDeleteTrack(this.props.index)}
               style={{marginRight: 10, backgroundColor: '#f5f5f5', fontWeight: 500}}
             >
               Track&nbsp; <Minus />
