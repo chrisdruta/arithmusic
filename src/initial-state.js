@@ -1,6 +1,9 @@
 export default {
 
   selectedSegmentId: 't0',
+  showLoadModal: false,
+  showSaveModal: false,
+  showSettingsModal: false,
   timelines: [
     {
       options: {

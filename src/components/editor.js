@@ -67,6 +67,8 @@ class Editor extends Component {
           <div className="Editor">
             <EditorControls
               onAddTrack={this.props.onAddTrack}
+              onToggleLoadModal={this.props.onToggleLoadModal}
+              onToggleSaveModal={this.props.onToggleSaveModal}
             />
             <div className="EditorTimelineContainer">
               {trackTimelines}

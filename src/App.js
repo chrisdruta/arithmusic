@@ -130,6 +130,18 @@ class App extends Component {
     this.setState({ timelines: timelines });
   }
 
+  handleToggleLoadModal = () => {
+    this.setState({ showLoadModal: !this.state.showLoadModal});
+  }
+
+  handleToggleSaveModal = () => {
+    this.setState({ showSaveModal: !this.state.showSaveModal});
+  }
+
+  handleToggleSettingsModal =() => {
+    this.setState({ showSettingsModal: !this.state.showSettingsModal});
+  }
+
   render() {
     const { timelines } = this.state;
     return (
@@ -142,7 +154,7 @@ class App extends Component {
             <div style={{ flexGrow: 1 }}></div>
             <IconButton color="inherit" onClick={this.handlePlay}><Play /></IconButton>
             <IconButton color="inherit" onClick={this.handleStop}><Stop /></IconButton>
-            <IconButton color="inherit" onClick={this.handleSettings}><Tune /></IconButton>
+            <IconButton color="inherit" onClick={this.handleToggleSettingsModal}><Tune /></IconButton>
           </Toolbar>
         </AppBar>
         <img src={logo} className="App-logo" alt="logo" />
@@ -157,7 +169,12 @@ class App extends Component {
           onDeleteSegment={this.handleDeleteSegment}
           onAddTrack={this.handleAddTrack}
           onDeleteTrack={this.handleDeleteTrack}
+          onToggleLoadModal={this.handleToggleLoadModal}
+          onToggleSaveModal={this.handleToggleSaveModal}
         />
+        <LoadModal open={this.state.showLoadModal} toggleLoadModal={this.handleToggleLoadModal}/>
+        <SaveModal open={this.state.showSaveModal}/>
+        <SettingsModal open={this.state.showSettingsModal}/>
       </div>
     );
   }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { Button } from '@material-ui/core/';
-import { Plus, ContentSave,  Upload } from 'mdi-material-ui';
+import { Plus, ContentSave, Upload } from 'mdi-material-ui';
 
 const styles = {
   button: {
@@ -18,13 +18,15 @@ class EditorControls extends Component {
         <Button variant="contained" size="medium" style={styles.button} onClick={this.props.onAddTrack}>
           Track&nbsp;<Plus />
         </Button>
-        <div style={{flexGrow: 1}} />
-        <Button variant="contained" size="medium"
-          style={Object.assign({marginRight: 10}, styles.button)}
+        <div style={{ flexGrow: 1 }} />
+        <Button variant="contained" size="medium" style={Object.assign({ marginRight: 10 }, styles.button)}
+          onClick={this.props.onToggleLoadModal}
         >
           Load&nbsp;<Upload />
         </Button>
-        <Button variant="contained" size="medium" style={styles.button}>
+        <Button variant="contained" size="medium" style={styles.button}
+          onClick={this.props.onToggleSaveModal}
+        >
           Save&nbsp;<ContentSave />
         </Button>
       </div>
