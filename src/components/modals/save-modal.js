@@ -13,7 +13,7 @@ export default function SaveModal(props) {
       open={props.open}
     >
       <div style={modalStyle} className={classes.paper}>
-        <Typography variant="h6">
+        <Typography variant="h5">
           Save Composition
         </Typography>
         <Typography variant="subtitle1">

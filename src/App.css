@@ -104,6 +104,12 @@
   justify-content: flex-end;
 }
 
+.settingsColumn {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
 .output {
   display: felx;
   align-self: center;

@@ -1,7 +1,7 @@
-import React, {useState, useCallback} from 'react';
+import React, { useState, useCallback } from 'react';
 
 import { Button, Modal, TextField, Typography } from '@material-ui/core/';
-import Dropzone, {useDropzone} from 'react-dropzone';
+import { useDropzone } from 'react-dropzone';
 
 import { getModalStyle, useStyles } from '../modals';
 
@@ -23,14 +23,14 @@ export default function LoadModal(props) {
     acceptedFiles.forEach(file => reader.readAsText(file));
   }, [])
 
-  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, accept: ".json", multiple: false})
+  const { getRootProps, getInputProps } = useDropzone({ onDrop, accept: ".json", multiple: false })
 
   return (
     <Modal
       open={props.open}
     >
       <div style={modalStyle} className={classes.paper}>
-        <Typography variant="h6">
+        <Typography variant="h5">
           Load Composition
         </Typography>
         <Typography variant="subtitle1">
@@ -52,7 +52,7 @@ export default function LoadModal(props) {
         </div>
         <br />
         <div className="modalActions">
-          <Button variant="contained" style={{marginRight: 10}} onClick={props.toggleLoadModal}>Cancel</Button>
+          <Button variant="contained" style={{ marginRight: 10 }} onClick={props.toggleLoadModal}>Cancel</Button>
           <Button variant="contained" onClick={() => props.onLoadJson(text)}>Load</Button>
         </div>
       </div>

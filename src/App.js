@@ -186,7 +186,9 @@ class App extends Component {
           toggleSaveModal={this.handleToggleSaveModal}
           currentComposition={JSON.stringify(this.state.timelines)}
         />
-        <SettingsModal open={this.state.showSettingsModal}/>
+        <SettingsModal open={this.state.showSettingsModal}
+          toggleSettingsModal={this.handleToggleSettingsModal}
+        />
       </div>
     );
   }

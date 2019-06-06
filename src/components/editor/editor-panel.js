@@ -34,7 +34,6 @@ class EditorPanel extends Component {
           style={style.title}
         />
         <TextField
-          id="standard-name"
           label="Equation f(x)"
           value={this.props.expression}
           onChange={(event) => this.props.onDataChange('expression', event.target.value)}
@@ -42,7 +41,6 @@ class EditorPanel extends Component {
           style={style.equation}
         />
         <TextField
-          id="standard-name"
           label="Length (ms)"
           value={this.props.length}
           onChange={(event) => this.props.onDataChange('length', event.target.value)}
@@ -50,7 +48,6 @@ class EditorPanel extends Component {
           style={style.length}
         />
         <TextField
-          id="standard-name"
           label="Volume (%)"
           value={this.props.volume}
           onChange={(event) => this.props.onDataChange('volume', event.target.value)}
