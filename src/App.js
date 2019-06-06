@@ -138,8 +138,14 @@ class App extends Component {
     this.setState({ showSaveModal: !this.state.showSaveModal});
   }
 
-  handleToggleSettingsModal =() => {
+  handleToggleSettingsModal = () => {
     this.setState({ showSettingsModal: !this.state.showSettingsModal});
+  }
+
+  handleLoadJson = (text) => {
+    const json = JSON.parse(text);
+    
+    this.setState({timelines: json});
   }
 
   render() {
@@ -172,7 +178,10 @@ class App extends Component {
           onToggleLoadModal={this.handleToggleLoadModal}
           onToggleSaveModal={this.handleToggleSaveModal}
         />
-        <LoadModal open={this.state.showLoadModal} toggleLoadModal={this.handleToggleLoadModal}/>
+        <LoadModal open={this.state.showLoadModal} 
+          toggleLoadModal={this.handleToggleLoadModal}
+          onLoadJson={this.handleLoadJson}
+        />
         <SaveModal open={this.state.showSaveModal}/>
         <SettingsModal open={this.state.showSettingsModal}/>
       </div>

@@ -91,6 +91,19 @@
   padding-right: 10px;
 }
 
+.LoadModalFileZone {
+  border: dashed #eeeeee 2px;
+  border-radius: 2px;
+  background-color: #fafafa;
+  color: #bdbdbd;
+  padding: 20px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .output {
   display: felx;
   align-self: center;
