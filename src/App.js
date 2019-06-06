@@ -182,7 +182,10 @@ class App extends Component {
           toggleLoadModal={this.handleToggleLoadModal}
           onLoadJson={this.handleLoadJson}
         />
-        <SaveModal open={this.state.showSaveModal}/>
+        <SaveModal open={this.state.showSaveModal}
+          toggleSaveModal={this.handleToggleSaveModal}
+          currentComposition={JSON.stringify(this.state.timelines)}
+        />
         <SettingsModal open={this.state.showSettingsModal}/>
       </div>
     );

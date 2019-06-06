@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Modal, Typography } from '@material-ui/core/';
+import { Button, Modal, TextField, Typography } from '@material-ui/core/';
 
 import { getModalStyle, useStyles } from '../modals';
 
@@ -10,16 +10,33 @@ export default function SaveModal(props) {
 
   return (
     <Modal
-    open={props.open}
-    //onClose={handleClose}
+      open={props.open}
     >
       <div style={modalStyle} className={classes.paper}>
         <Typography variant="h6">
-          Text in a modal
+          Save Composition
         </Typography>
         <Typography variant="subtitle1">
-          Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          Copy the text below
         </Typography>
+        <TextField
+          label="Output" multiline className={classes.textField} disabled
+          rows="7" value={props.currentComposition} margin="normal" variant="filled"
+        />
+        <br />
+        <Typography variant="subtitle1">
+          or
+        </Typography>
+        <Button variant="contained" download="composition.txt" target="_blank"
+          href={`data:text/plain;charset=utf-u,${encodeURIComponent(props.currentComposition)}`}
+          style={{maxWidth: 200, alignSelf: "center"}}
+        >
+          Save Json
+        </Button>
+        <br />
+        <div className="modalActions">
+          <Button variant="contained" onClick={props.toggleSaveModal}>Close</Button>
+        </div>
       </div>
     </Modal>
   );

@@ -23,7 +23,7 @@ export default function LoadModal(props) {
     acceptedFiles.forEach(file => reader.readAsText(file));
   }, [])
 
-  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, accept: ".json"})
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, accept: ".json", multiple: false})
 
   return (
     <Modal
@@ -41,9 +41,11 @@ export default function LoadModal(props) {
           rows="7" value={text} margin="normal" variant="filled"
           onChange={(e) => setText(e.target.value)}
         />
+        <br />
         <Typography variant="subtitle1">
-          Or
+          or
         </Typography>
+        <br />
         <div {...getRootProps()} className={"LoadModalFileZone"}>
           <input {...getInputProps()} />
           <p>Drag 'n' drop a file here, or click to select file</p>
