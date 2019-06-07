@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Button, FormControlLabel, Modal, Switch, TextField, Typography } from '@material-ui/core/';
+import { Box, Button, FormControlLabel, Link, Modal, Switch, TextField, Typography } from '@material-ui/core/';
+import { borders } from '@material-ui/system';
 
 import { getModalStyle, useStyles } from '../modals';
 
@@ -26,7 +27,7 @@ export default function SettingsModal(props) {
     //onClose={handleClose}
     >
       <div style={modalStyle} className={classes.paper}>
-        <div style={{display: "flex", flexDirection: "row"}}>
+        <div style={{ display: "flex", flexDirection: "row" }}>
           <div className="settingsColumn">
             <Typography variant="h5">
               Settings
@@ -59,14 +60,22 @@ export default function SettingsModal(props) {
               labelPlacement="start"
             />
           </div>
-          <div className="settingsColumn" style={{alignItems: "center"}}>
-            <Typography variant="h6">
-              About
+          <div className="aboutBorder">
+            <Typography variant="h6" style={{ alignSelf: "center" }}>
+              About Arithmusic
             </Typography>
-            <Typography variant="h6">
+            <Typography>
+              Version: 1.0.0<br />
+              Last updated: June 6, 2019<br />
+              <Link href="https://github.com/chrisdruta/arithmusic">
+                github.com/chrisdruta/arithmusic
+            </Link>
+            <br />
+            </Typography>
+            <Typography>
+              Made with <span role="img" style={{ fontSize: 20 }} aria-label="heart">❤️</span>,<br />
               Chris Druta
             </Typography>
-            
           </div>
         </div>
 

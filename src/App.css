@@ -110,6 +110,18 @@
   width: 50%;
 }
 
+.aboutBorder {
+  align-self: center;
+  width: 50%;
+  height: 230px;
+  padding: 16px;
+  border: solid grey 1px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .output {
   display: felx;
   align-self: center;

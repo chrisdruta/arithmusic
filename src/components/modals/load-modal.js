@@ -34,7 +34,7 @@ export default function LoadModal(props) {
           Load Composition
         </Typography>
         <Typography variant="subtitle1">
-          Paste JSON below
+          Paste json below
         </Typography>
         <TextField
           label="Input" multiline className={classes.textField}
