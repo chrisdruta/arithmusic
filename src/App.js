@@ -148,6 +148,18 @@ class App extends Component {
     this.setState({timelines: json});
   }
 
+  handleSettingsChange = (field, value) => {
+    if (field === 'volume') {
+      this.setState({ volume: parseInt(value) });
+    } else if (field === 'multipler') {
+      this.setState({ multiplier: parseInt(value)});
+    } else if (field === 'fs') {
+      this.setState({ fs: parseInt(value) });
+    } else if (field === 'aliasing') {
+      this.setState({ aliasing: !this.state.aliasing});
+    }
+  }
+
   render() {
     const { timelines } = this.state;
     return (
@@ -188,6 +200,9 @@ class App extends Component {
         />
         <SettingsModal open={this.state.showSettingsModal}
           toggleSettingsModal={this.handleToggleSettingsModal}
+          volume={this.state.volume} multiplier={this.state.multiplier}
+          fs={this.state.fs} aliasing={this.state.aliasing}
+          onChange={this.handleSettingsChange}
         />
       </div>
     );

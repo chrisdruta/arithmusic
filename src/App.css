@@ -97,6 +97,7 @@
   background-color: #fafafa;
   color: #bdbdbd;
   padding: 20px;
+  cursor: pointer;
 }
 
 .modalActions {

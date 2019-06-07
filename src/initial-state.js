@@ -1,5 +1,8 @@
 export default {
-
+  fs: 44100,
+  volume: 100,
+  multiplier: 1,
+  aliasing: true,
   selectedSegmentId: 't0',
   showLoadModal: false,
   showSaveModal: false,

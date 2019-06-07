@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { Box, Button, FormControlLabel, Link, Modal, Switch, TextField, Typography } from '@material-ui/core/';
-import { borders } from '@material-ui/system';
+import { Button, FormControlLabel, Link, Modal, Switch, TextField, Typography } from '@material-ui/core/';
 
 import { getModalStyle, useStyles } from '../modals';
 
@@ -33,29 +32,29 @@ export default function SettingsModal(props) {
               Settings
             </Typography>
             <TextField
-              label="Master Volume (%)"
-              value={props.masterVolume}
-              onChange={() => { }}
+              label="Master volume (%)"
+              value={props.volume}
+              onChange={(e) => props.onChange('volume', e.target.value) }
               margin="normal"
               style={style.volume}
             />
             <TextField
               label="Auto multipler for function input (x)"
               value={props.multiplier}
-              onChange={() => { }}
+              onChange={(e) => props.onChange('multiplier', e.target.value) }
               margin="normal"
               style={style.multiplier}
             />
             <TextField
               label="Sampling frequency (Hz)"
               value={props.fs}
-              onChange={() => { }}
+              onChange={(e) => props.onChange('fs', e.target.value) }
               margin="normal"
               style={style.fs}
             />
             <FormControlLabel
               style={{ alignSelf: "flex-start", marginLeft: 0, marginTop: 30 }}
-              control={<Switch />}
+              control={<Switch checked={props.aliasing} onChange={() => props.onChange('aliasing')}/>}
               label="Enable Aliasing"
               labelPlacement="start"
             />
@@ -67,9 +66,11 @@ export default function SettingsModal(props) {
             <Typography>
               Version: 1.0.0<br />
               Last updated: June 6, 2019<br />
-              <Link href="https://github.com/chrisdruta/arithmusic">
+              <Link href="https://github.com/chrisdruta/arithmusic" target="_blank">
                 github.com/chrisdruta/arithmusic
             </Link>
+            <br />
+            GPL v3.0
             <br />
             </Typography>
             <Typography>
