@@ -14,7 +14,11 @@ import TrackControls from './editor/track-controls';
 const styles = theme => ({
   root: {
     width: "100%",
-    backgroundColor: "#ffa4a2"
+    backgroundColor: "#ffa4a2",
+    flex: 0,
+    '&$expanded': {
+      margin: 0,
+    }
   },
   heading: {
     fontSize: theme.typography.pxToRem(20),
@@ -24,10 +28,23 @@ const styles = theme => ({
     wdith: "100%",
     backgroundColor: "black",
     padding: 0
+  },
+  expanded: {
+    margin: 0
   }
 });
 
 class Editor extends Component {
+
+  constructor(props) {
+    super(props);
+    this.timer = null;
+  }
+
+  animate = () => {
+    this.props.refreshGraph();
+    this.timer = setTimeout(this.animate, 0);
+  }
 
   render() {
     const { classes } = this.props;
@@ -59,7 +76,12 @@ class Editor extends Component {
     });
 
     return (
-      <ExpansionPanel defaultExpanded={true} classes={{root: classes.root}}>
+      <ExpansionPanel defaultExpanded={true} classes={{root: classes.root, expanded: classes.expanded}}
+        TransitionProps={{
+          onEnter: () => {}, onEntered: () => this.props.refreshGraph(),//clearTimeout(this.timer),
+          onExit: () => {}, onExited: () => this.props.refreshGraph()//clearTimeout(this.timer)
+        }}
+      >
         <ExpansionPanelSummary expandIcon={<ChevronUp />}>
           <Typography className={classes.heading}>Timeline Editor</Typography>
         </ExpansionPanelSummary>

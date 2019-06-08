@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 import { AppBar, Toolbar, IconButton } from "@material-ui/core";
-
 import { Play, Stop, Tune } from 'mdi-material-ui';
 
 import Graph from './components/graph';
@@ -16,12 +14,14 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = initialState;
+    this.state.revision = 0;
 
     let count = 0;
     for (let tl of this.state.timelines) {
       count += tl.segments.length;
     }
     this.idCount = count;
+    this.graphRevision = 0;
   }
 
   idGenerator = () => {
@@ -175,8 +175,10 @@ class App extends Component {
             <IconButton color="inherit" onClick={this.handleToggleSettingsModal}><Tune /></IconButton>
           </Toolbar>
         </AppBar>
-        <img src={logo} className="App-logo" alt="logo" />
+        <div className="AppContainer">
+        <Graph getRevision={() => (++this.graphRevision)}/>
         <Editor
+          refreshGraph={() => this.setState({revision: ++this.state.revision})}
           timelines={timelines}
           selectedSegmentId={this.state.selectedSegmentId}
           onSegmentSelection={this.handleSegmentSelection}
@@ -204,6 +206,7 @@ class App extends Component {
           fs={this.state.fs} aliasing={this.state.aliasing}
           onChange={this.handleSettingsChange}
         />
+        </div>
       </div>
     );
   }
