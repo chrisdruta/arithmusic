@@ -131,33 +131,36 @@ class App extends Component {
   }
 
   handleToggleLoadModal = () => {
-    this.setState({ showLoadModal: !this.state.showLoadModal});
+    this.setState({ showLoadModal: !this.state.showLoadModal });
   }
 
   handleToggleSaveModal = () => {
-    this.setState({ showSaveModal: !this.state.showSaveModal});
+    this.setState({ showSaveModal: !this.state.showSaveModal });
   }
 
   handleToggleSettingsModal = () => {
-    this.setState({ showSettingsModal: !this.state.showSettingsModal});
+    this.setState({ showSettingsModal: !this.state.showSettingsModal });
   }
 
   handleLoadJson = (text) => {
     const json = JSON.parse(text);
-    
-    this.setState({timelines: json});
+    this.setState({ timelines: json });
   }
 
   handleSettingsChange = (field, value) => {
     if (field === 'volume') {
       this.setState({ volume: parseInt(value) });
     } else if (field === 'multipler') {
-      this.setState({ multiplier: parseInt(value)});
+      this.setState({ multiplier: parseInt(value) });
     } else if (field === 'fs') {
       this.setState({ fs: parseInt(value) });
     } else if (field === 'aliasing') {
-      this.setState({ aliasing: !this.state.aliasing});
+      this.setState({ aliasing: !this.state.aliasing });
     }
+  }
+
+  handleAnimateGraph = () => {
+    this.setState({ revision: this.state.revision + 1 });
   }
 
   render() {
@@ -176,36 +179,36 @@ class App extends Component {
           </Toolbar>
         </AppBar>
         <div className="AppContainer">
-        <Graph getRevision={() => (++this.graphRevision)}/>
-        <Editor
-          refreshGraph={() => this.setState({revision: ++this.state.revision})}
-          timelines={timelines}
-          selectedSegmentId={this.state.selectedSegmentId}
-          onSegmentSelection={this.handleSegmentSelection}
-          onSegmentRearrange={this.handleSegmentRearrange}
-          onTrackDataChange={this.handleTrackDataChange}
-          onDataChange={this.handleDataChange}
-          onAddSegment={this.handleAddSegment}
-          onDeleteSegment={this.handleDeleteSegment}
-          onAddTrack={this.handleAddTrack}
-          onDeleteTrack={this.handleDeleteTrack}
-          onToggleLoadModal={this.handleToggleLoadModal}
-          onToggleSaveModal={this.handleToggleSaveModal}
-        />
-        <LoadModal open={this.state.showLoadModal} 
-          toggleLoadModal={this.handleToggleLoadModal}
-          onLoadJson={this.handleLoadJson}
-        />
-        <SaveModal open={this.state.showSaveModal}
-          toggleSaveModal={this.handleToggleSaveModal}
-          currentComposition={JSON.stringify(this.state.timelines)}
-        />
-        <SettingsModal open={this.state.showSettingsModal}
-          toggleSettingsModal={this.handleToggleSettingsModal}
-          volume={this.state.volume} multiplier={this.state.multiplier}
-          fs={this.state.fs} aliasing={this.state.aliasing}
-          onChange={this.handleSettingsChange}
-        />
+          <Graph revision={this.state.revision} />
+          <Editor
+            animateGraph={this.handleAnimateGraph}
+            timelines={timelines}
+            selectedSegmentId={this.state.selectedSegmentId}
+            onSegmentSelection={this.handleSegmentSelection}
+            onSegmentRearrange={this.handleSegmentRearrange}
+            onTrackDataChange={this.handleTrackDataChange}
+            onDataChange={this.handleDataChange}
+            onAddSegment={this.handleAddSegment}
+            onDeleteSegment={this.handleDeleteSegment}
+            onAddTrack={this.handleAddTrack}
+            onDeleteTrack={this.handleDeleteTrack}
+            onToggleLoadModal={this.handleToggleLoadModal}
+            onToggleSaveModal={this.handleToggleSaveModal}
+          />
+          <LoadModal open={this.state.showLoadModal}
+            toggleLoadModal={this.handleToggleLoadModal}
+            onLoadJson={this.handleLoadJson}
+          />
+          <SaveModal open={this.state.showSaveModal}
+            toggleSaveModal={this.handleToggleSaveModal}
+            currentComposition={JSON.stringify(this.state.timelines)}
+          />
+          <SettingsModal open={this.state.showSettingsModal}
+            toggleSettingsModal={this.handleToggleSettingsModal}
+            volume={this.state.volume} multiplier={this.state.multiplier}
+            fs={this.state.fs} aliasing={this.state.aliasing}
+            onChange={this.handleSettingsChange}
+          />
         </div>
       </div>
     );

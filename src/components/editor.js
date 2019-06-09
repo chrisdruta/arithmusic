@@ -42,8 +42,7 @@ class Editor extends Component {
   }
 
   animate = () => {
-    this.props.refreshGraph();
-    this.timer = setTimeout(this.animate, 0);
+    this.timer = setInterval(this.props.animateGraph, 16);
   }
 
   render() {
@@ -78,8 +77,8 @@ class Editor extends Component {
     return (
       <ExpansionPanel defaultExpanded={true} classes={{root: classes.root, expanded: classes.expanded}}
         TransitionProps={{
-          onEnter: () => {}, onEntered: () => this.props.refreshGraph(),//clearTimeout(this.timer),
-          onExit: () => {}, onExited: () => this.props.refreshGraph()//clearTimeout(this.timer)
+          onEnter: this.animate, onEntered: () => clearInterval(this.timer),
+          onExit: this.animate, onExited: () => clearInterval(this.timer)
         }}
       >
         <ExpansionPanelSummary expandIcon={<ChevronUp />}>
