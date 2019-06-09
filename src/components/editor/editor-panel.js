@@ -10,7 +10,7 @@ const style = {
     width: 100
   },
   equation: {
-
+    width: "25%"
   },
   length: {
     width: 100

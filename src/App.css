@@ -125,6 +125,13 @@
 .EditorOutput {
   display: flex;
   align-items: center;
+  width: 30%;
+}
+
+.EditorOutputError {
+  color: red;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .trackTitle {
