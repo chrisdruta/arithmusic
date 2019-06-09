@@ -4,6 +4,9 @@ import './App.css';
 import { AppBar, Toolbar, IconButton } from "@material-ui/core";
 import { Play, Stop, Tune } from 'mdi-material-ui';
 
+import { range, map } from 'lodash';
+import { parse, simplify } from 'mathjs';
+
 import Graph from './components/graph';
 import Editor from './components/editor';
 import { SaveModal, LoadModal, SettingsModal } from './components/modals';
@@ -21,7 +24,6 @@ class App extends Component {
       count += tl.segments.length;
     }
     this.idCount = count;
-    this.graphRevision = 0;
   }
 
   idGenerator = () => {
@@ -62,7 +64,49 @@ class App extends Component {
       tl.segments.forEach((segment, j) => {
         if (segment.id === this.state.selectedSegmentId) {
           const { timelines } = this.state;
-          timelines[i].segments[j][field] = value;
+          timelines[i].segments[j][field].value = value;
+
+          if (field === "title") {
+            if (value.length > 0) {
+              timelines[i].segments[j].title.error = "";
+            } else {
+              timelines[i].segments[j].title.error = "Too short"
+            }
+          } else if (field === "expression") {
+            try {
+              const parsedMath = simplify(parse(value));
+              parsedMath.evaluate({ x:1 });
+              timelines[i].segments[j].expression.error = "";
+            } catch (e) {
+              timelines[i].segments[j].expression.error = e.message;
+            }
+            if (value.length === 0) {
+              timelines[i].segments[j].expression.error = "Undefined";
+            }
+            
+          } else if (field === "length") {
+            const parsedVal = parseInt(value);
+            if (parsedVal >= 0) {
+              timelines[i].segments[j].length.value = parsedVal;
+              timelines[i].segments[j].length.error = "";
+            } else if (isNaN(parsedVal)) {
+              timelines[i].segments[j].length.error = "Not a number";
+            } else {
+              timelines[i].segments[j].length.error = "Can't be negative"
+            }
+
+          } else if (field === "volume") {
+            const parsedVal = parseInt(value);
+            if (parsedVal >= 0) {
+              timelines[i].segments[j].volume.value = parsedVal;
+              timelines[i].segments[j].volume.error = "";
+            } else if (isNaN(parsedVal)) {
+              timelines[i].segments[j].volume.error = "Not a number";
+            } else {
+              timelines[i].segments[j].volume.error = "Can't be negative"
+            }
+          }
+
           this.setState({ timelines: timelines });
           return;
         }
@@ -76,13 +120,13 @@ class App extends Component {
     timelines[index].segments = [...timelines[index].segments,
     {
       id: `t${this.idGenerator()}`,
-      title: "New Tab",
-      expression: "10*x",
-      length: 500,
-      volume: 100
+      title: { value: "New Tab", error: "" },
+      expression: { value: "10*x", error: "" },
+      length: { value: 500, error: "" },
+      volume: { value: 100, error: "" }
     }
     ];
-    this.setState({ timelines: timelines }, () => { this.forceUpdate() });
+    this.setState({ timelines: timelines });
   }
 
   handleDeleteSegment = () => {

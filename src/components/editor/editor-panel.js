@@ -28,33 +28,44 @@ class EditorPanel extends Component {
         <TextField
           id="standard-name"
           label="Title"
-          value={this.props.title}
+          value={this.props.title.value}
+          error={!!this.props.title.error}
+          helperText={this.props.title.error}
           onChange={(event) => this.props.onDataChange('title', event.target.value)}
           margin="normal"
           style={style.title}
         />
         <TextField
           label="Equation f(x)"
-          value={this.props.expression}
+          value={this.props.expression.value}
+          error={!!this.props.expression.error}
+          helperText={!!this.props.expression.error ? "See output" : ""}
           onChange={(event) => this.props.onDataChange('expression', event.target.value)}
           margin="normal"
           style={style.equation}
         />
         <TextField
           label="Length (ms)"
-          value={this.props.length}
+          value={this.props.length.value}
+          error={!!this.props.length.error}
+          helperText={this.props.length.error}
           onChange={(event) => this.props.onDataChange('length', event.target.value)}
           margin="normal"
           style={style.length}
         />
         <TextField
           label="Volume (%)"
-          value={this.props.volume}
+          value={this.props.volume.value}
+          error={!!this.props.volume.error}
+          helperText={this.props.volume.error}
           onChange={(event) => this.props.onDataChange('volume', event.target.value)}
           margin="normal"
           style={style.volume}
         />
-        <EditorOutput />
+        <EditorOutput
+          output={!!this.props.expression.error ? this.props.expression.error : this.props.expression.value}
+          error={!!this.props.expression.error}
+        />
         <IconButton onClick={() => this.props.onDeleteSegment()}>
           <Delete />
         </IconButton>

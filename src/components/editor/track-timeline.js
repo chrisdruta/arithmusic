@@ -58,7 +58,6 @@ class TrackTimeline extends Component {
     );
 
     this.props.onSegmentRearrange(this.props.index, segments);
-    //this.setState({ segments });
   }
 
   render() {
@@ -86,7 +85,7 @@ class TrackTimeline extends Component {
                         )}
                         onClick={() => this.props.onSegmentSelection(segment.id)}
                       >
-                        {segment.title}
+                        {segment.title.value}
                       </div>
                     )}
                   </Draggable>)
