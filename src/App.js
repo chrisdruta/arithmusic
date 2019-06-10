@@ -4,7 +4,6 @@ import './App.css';
 import { AppBar, Toolbar, IconButton } from "@material-ui/core";
 import { Play, Stop, Tune } from 'mdi-material-ui';
 
-import { range, map } from 'lodash';
 import { parse, simplify } from 'mathjs';
 
 import Graph from './components/graph';
@@ -30,8 +29,9 @@ class App extends Component {
     return ++this.idCount;
   }
 
-  handleSegmentSelection = (selectedSegmentId) => {
+  handleSegmentSelection = (selectedRowIndex, selectedSegmentId) => {
     this.setState({
+      selectedRowIndex: selectedRowIndex,
       selectedSegmentId: selectedSegmentId
     });
   }
@@ -121,7 +121,7 @@ class App extends Component {
     {
       id: `t${this.idGenerator()}`,
       title: { value: "New Tab", error: "" },
-      expression: { value: "10*x", error: "" },
+      expression: { value: "40000 * x", error: "" },
       length: { value: 500, error: "" },
       volume: { value: 100, error: "" }
     }
@@ -223,7 +223,12 @@ class App extends Component {
           </Toolbar>
         </AppBar>
         <div className="AppContainer">
-          <Graph revision={this.state.revision} />
+          <Graph 
+            revision={this.state.revision} 
+            data={this.state.timelines[this.state.selectedRowIndex]
+                  ? this.state.timelines[this.state.selectedRowIndex].segments : null
+                }
+          />
           <Editor
             animateGraph={this.handleAnimateGraph}
             timelines={timelines}

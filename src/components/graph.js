@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import createPlotlyComponent from 'react-plotly.js/factory';
 
+import { SynthesizeGraphData } from '../synthesize';
+
 var Plotly = require('plotly.js/lib/core');
 const Plot = createPlotlyComponent(Plotly);
 
@@ -16,29 +18,21 @@ class Graph extends Component {
         config={{
           displayModeBar: false
         }}
-        data={[
-          {
-            x: [1, 2, 3],
-            y: [2, 6, 3],
-            type: 'scatter',
-            mode: 'lines+points',
-            marker: { color: 'red' },
-          },
-          { type: 'bar', x: [1, 2, 3], y: [2, 5, 3] },
-        ]}
+        data={SynthesizeGraphData(this.props.data)}
         layout={{
           showlegend: false,
           autosize: true,
           xaxis: { title: "Time (s)" },
           yaxis: {
-            title: "Frequency (Hz)",
+            title: "Frequency (Hz)<br />&nbsp;",
             range: [0, 22050]
           },
           margin: {
-            t: 10,
-            l: 80,
-            r: 80,
-            b: 80
+            t: 40,
+            l: 85,
+            r: 50,
+            b: 80,
+            pad: 5
           }
         }}
       />

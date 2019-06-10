@@ -17,7 +17,7 @@ class TrackControls extends Component {
             </Button>
           : <div style={{width: 120}}/>}
         <InputBase value={this.props.options.title} className="trackTitle"
-          inputProps={{ style: { fontSize: 16, paddingLeft: 3, paddingRight: 3, fontWeight: 400, backgroundColor: "#f5f5f5" } }}
+          inputProps={{ style: { fontSize: 16, padding: "6px 3px 5px", backgroundColor: "#f5f5f5" } }}
           onChange={(event) => this.props.onTrackDataChange(this.props.index, 'title', event.target.value)}
         />
         <ToggleButtonGroup size="small" exclusive={true}

@@ -3,6 +3,7 @@ export default {
   volume: 100,
   multiplier: 1,
   aliasing: true,
+  selectedRowIndex: 0,
   selectedSegmentId: 't0',
   showLoadModal: false,
   showSaveModal: false,

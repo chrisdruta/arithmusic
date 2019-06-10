@@ -83,7 +83,7 @@ class TrackTimeline extends Component {
                           provided.draggableProps.style,
                           this.props.selectedSegmentId === segment.id
                         )}
-                        onClick={() => this.props.onSegmentSelection(segment.id)}
+                        onClick={() => this.props.onSegmentSelection(this.props.index, segment.id)}
                       >
                         {segment.title.value}
                       </div>
