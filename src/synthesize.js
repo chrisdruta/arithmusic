@@ -5,7 +5,7 @@ const hasErrors = (segment) => {
     return !!segment.length.error || !!segment.expression.error;
 }
 
-const SynthesizeGraphData = (segments) => {
+const SynthesizeGraphData = (segments, multiplier) => {
     const plotData = [];
     if (segments === null) return;
     segments.forEach((seg, index) => {
@@ -17,7 +17,7 @@ const SynthesizeGraphData = (segments) => {
 
             const sampleInput = range(0, seg.length.value / 1000, 1 / 1000);
             const func = simplify(parse(seg.expression.value)).compile();
-            const sampleOutput = map(sampleInput, (x) => func.evaluate({ x: x }));
+            const sampleOutput = map(sampleInput, (x) => func.evaluate({ x: multiplier * x }));
             const shiftedSampleInput = map(sampleInput, (x) => (x + offset));
 
             plotData.push({

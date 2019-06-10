@@ -18,7 +18,7 @@ class Graph extends Component {
         config={{
           displayModeBar: false
         }}
-        data={SynthesizeGraphData(this.props.data)}
+        data={SynthesizeGraphData(this.props.data, this.props.multiplier)}
         layout={{
           showlegend: false,
           autosize: true,

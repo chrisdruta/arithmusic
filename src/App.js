@@ -194,7 +194,7 @@ class App extends Component {
   handleSettingsChange = (field, value) => {
     if (field === 'volume') {
       this.setState({ volume: parseInt(value) });
-    } else if (field === 'multipler') {
+    } else if (field === 'multiplier') {
       this.setState({ multiplier: parseInt(value) });
     } else if (field === 'fs') {
       this.setState({ fs: parseInt(value) });
@@ -224,7 +224,7 @@ class App extends Component {
         </AppBar>
         <div className="AppContainer">
           <Graph 
-            revision={this.state.revision} 
+            revision={this.state.revision} multiplier={this.state.multiplier}
             data={this.state.timelines[this.state.selectedRowIndex]
                   ? this.state.timelines[this.state.selectedRowIndex].segments : null
                 }
