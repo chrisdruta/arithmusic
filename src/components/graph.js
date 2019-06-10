@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 
-import Plot from 'react-plotly.js';
+import createPlotlyComponent from 'react-plotly.js/factory';
+
+var Plotly = require('plotly.js/lib/core');
+const Plot = createPlotlyComponent(Plotly);
 
 class Graph extends Component {
 
