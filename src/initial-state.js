@@ -1,6 +1,6 @@
 export default {
   fs: 44100,
-  volume: 100,
+  volume: 10,
   multiplier: 1,
   aliasing: true,
   selectedRowIndex: 0,

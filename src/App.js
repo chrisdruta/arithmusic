@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import { AppBar, Toolbar, IconButton } from "@material-ui/core";
+import { AppBar, Toolbar, IconButton } from '@material-ui/core';
 import { Play, Stop, Tune } from 'mdi-material-ui';
 
 import { parse, simplify } from 'mathjs';
@@ -10,6 +10,8 @@ import Graph from './components/graph';
 import Editor from './components/editor';
 import { SaveModal, LoadModal, SettingsModal } from './components/modals';
 import initialState from './initial-state';
+
+import { SynthesizeComposition } from './synthesize';
 
 class App extends Component {
 
@@ -23,10 +25,28 @@ class App extends Component {
       count += tl.segments.length;
     }
     this.idCount = count;
+
+    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    this.audioSources = [];
   }
 
-  idGenerator = () => {
-    return ++this.idCount;
+  handlePlay = () => {
+    const rawBuffer = SynthesizeComposition(this.state.timelines, this.state.volume, 
+                          this.state.multiplier, this.state.fs, this.state.aliasing);
+    const audioSourceBuffer = this.audioContext.createBuffer(1, rawBuffer.length, this.state.fs);
+    audioSourceBuffer.copyToChannel(rawBuffer, 0);
+    console.log(rawBuffer)
+    const audioSource = this.audioContext.createBufferSource();
+    audioSource.buffer = audioSourceBuffer;
+
+    this.audioSources.push(audioSource);
+
+    audioSource.connect(this.audioContext.destination);
+    audioSource.start(0);
+  }
+
+  handleStop = () => {
+    this.audioSources.forEach((source) => source.stop(0));
   }
 
   handleSegmentSelection = (selectedRowIndex, selectedSegmentId) => {
@@ -119,7 +139,7 @@ class App extends Component {
 
     timelines[index].segments = [...timelines[index].segments,
     {
-      id: `t${this.idGenerator()}`,
+      id: `t${++this.idCount}`,
       title: { value: "New Tab", error: "" },
       expression: { value: "40000 * x", error: "" },
       length: { value: 500, error: "" },
