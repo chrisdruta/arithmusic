@@ -208,7 +208,7 @@ class App extends Component {
 
   handleLoadJson = (text) => {
     const json = JSON.parse(text);
-    this.setState({ timelines: json });
+    this.setState({ timelines: json }, () => this.setState({ showLoadModal: false }));
   }
 
   handleSettingsChange = (field, value) => {

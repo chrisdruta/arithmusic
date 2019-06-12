@@ -21,9 +21,9 @@ export default function LoadModal(props) {
     }
 
     acceptedFiles.forEach(file => reader.readAsText(file));
-  }, [])
+  }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop, accept: ".json", multiple: false })
+  const { getRootProps, getInputProps } = useDropzone({ onDrop, accept: ".json", multiple: false });
 
   return (
     <Modal
