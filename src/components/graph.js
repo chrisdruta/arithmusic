@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import createPlotlyComponent from 'react-plotly.js/factory';
 
-import { SynthesizeGraphData } from '../synthesize';
+import { SampleTrackGraph } from '../synthesize';
 
 var Plotly = require('plotly.js/lib/core');
 const Plot = createPlotlyComponent(Plotly);
@@ -18,7 +18,7 @@ class Graph extends Component {
         config={{
           displayModeBar: false
         }}
-        data={SynthesizeGraphData(this.props.data, this.props.multiplier)}
+        data={SampleTrackGraph(this.props.data, this.props.multiplier)}
         layout={{
           showlegend: false,
           autosize: true,

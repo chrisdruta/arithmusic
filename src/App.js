@@ -35,7 +35,6 @@ class App extends Component {
                           this.state.multiplier, this.state.fs, this.state.aliasing);
     const audioSourceBuffer = this.audioContext.createBuffer(1, rawBuffer.length, this.state.fs);
     audioSourceBuffer.copyToChannel(rawBuffer, 0);
-    console.log(rawBuffer)
     const audioSource = this.audioContext.createBufferSource();
     audioSource.buffer = audioSourceBuffer;
 
