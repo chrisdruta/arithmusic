@@ -21,10 +21,7 @@ export default function SettingsModal(props) {
   const classes = useStyles();
 
   return (
-    <Modal
-      open={props.open}
-    //onClose={handleClose}
-    >
+    <Modal open={props.open}>
       <div style={modalStyle} className={classes.paper}>
         <div style={{ display: "flex", flexDirection: "row" }}>
           <div className="settingsColumn">
@@ -82,7 +79,7 @@ export default function SettingsModal(props) {
 
         <br />
         <div className="modalActions">
-          <Button variant="contained" onClick={props.toggleSettingsModal}>Close</Button>
+          <Button variant="contained" onClick={() => props.toggleModal("settings")}>Close</Button>
         </div>
       </div>
     </Modal>

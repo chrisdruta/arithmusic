@@ -20,12 +20,12 @@ class EditorControls extends Component {
         </Button>
         <div style={{ flexGrow: 1 }} />
         <Button variant="contained" size="medium" style={Object.assign({ marginRight: 10 }, styles.button)}
-          onClick={this.props.onToggleLoadModal}
+          onClick={() => this.props.toggleModal("load")}
         >
           Load&nbsp;<Upload />
         </Button>
         <Button variant="contained" size="medium" style={styles.button}
-          onClick={this.props.onToggleSaveModal}
+          onClick={() => this.props.toggleModal("save")}
         >
           Save&nbsp;<ContentSave />
         </Button>

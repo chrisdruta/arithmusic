@@ -52,7 +52,7 @@ export default function LoadModal(props) {
         </div>
         <br />
         <div className="modalActions">
-          <Button variant="contained" style={{ marginRight: 10 }} onClick={props.toggleLoadModal}>Cancel</Button>
+          <Button variant="contained" style={{ marginRight: 10 }} onClick={() => props.toggleModal("load")}>Cancel</Button>
           <Button variant="contained" onClick={() => props.onLoadJson(text)}>Load</Button>
         </div>
       </div>

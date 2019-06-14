@@ -31,7 +31,7 @@ class EditorPanel extends Component {
           value={this.props.title.value}
           error={!!this.props.title.error}
           helperText={this.props.title.error}
-          onChange={(event) => this.props.onDataChange('title', event.target.value)}
+          onChange={(event) => this.props.onTrackDataChange('title', event.target.value)}
           margin="normal"
           style={style.title}
         />
@@ -40,7 +40,7 @@ class EditorPanel extends Component {
           value={this.props.expression.value}
           error={!!this.props.expression.error}
           helperText={!!this.props.expression.error ? "See output" : ""}
-          onChange={(event) => this.props.onDataChange('expression', event.target.value)}
+          onChange={(event) => this.props.onTrackDataChange('expression', event.target.value)}
           margin="normal"
           style={style.equation}
         />
@@ -49,7 +49,7 @@ class EditorPanel extends Component {
           value={this.props.length.value}
           error={!!this.props.length.error}
           helperText={this.props.length.error}
-          onChange={(event) => this.props.onDataChange('length', event.target.value)}
+          onChange={(event) => this.props.onTrackDataChange('length', event.target.value)}
           margin="normal"
           style={style.length}
         />
@@ -58,7 +58,7 @@ class EditorPanel extends Component {
           value={this.props.volume.value}
           error={!!this.props.volume.error}
           helperText={this.props.volume.error}
-          onChange={(event) => this.props.onDataChange('volume', event.target.value)}
+          onChange={(event) => this.props.onTrackDataChange('volume', event.target.value)}
           margin="normal"
           style={style.volume}
         />

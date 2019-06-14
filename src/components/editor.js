@@ -57,18 +57,17 @@ class Editor extends Component {
       trackTimelines.push(
         <div key={index} className="EditorTimelineRow">
           <TrackControls
-            options={tl.options}
-            onTrackDataChange={this.props.onTrackDataChange}
+            options={tl.options} index={index}
+            onTrackOptionChange={this.props.onTrackOptionChange}
             onDeleteTrack={this.props.onDeleteTrack}
-            index={index}
+            
           />
           <TrackTimeline
-            segments={tl.segments}
+            segments={tl.segments} index={index}
             selectedSegmentId={this.props.selectedSegmentId}
             onSegmentSelection={this.props.onSegmentSelection}
             onSegmentRearrange={this.props.onSegmentRearrange}
             onAddSegment={this.props.onAddSegment}
-            index={index}
           />
         </div>
       );
@@ -88,8 +87,7 @@ class Editor extends Component {
           <div className="Editor">
             <EditorControls
               onAddTrack={this.props.onAddTrack}
-              onToggleLoadModal={this.props.onToggleLoadModal}
-              onToggleSaveModal={this.props.onToggleSaveModal}
+              toggleModal={this.props.toggleModal}
             />
             <div className="EditorTimelineContainer">
               {trackTimelines}
@@ -100,7 +98,7 @@ class Editor extends Component {
                   expression={selectedSegmentData.expression}
                   length={selectedSegmentData.length}
                   volume={selectedSegmentData.volume}
-                  onDataChange={this.props.onDataChange}
+                  onTrackDataChange={this.props.onTrackDataChange}
                   onDeleteSegment={this.props.onDeleteSegment}
                 />
               : <div className="EmptyEditorPanel"/>

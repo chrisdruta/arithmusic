@@ -27,15 +27,15 @@ export default function SaveModal(props) {
         <Typography variant="subtitle1">
           or
         </Typography>
-        <Button variant="contained" download="composition.txt" target="_blank"
-          href={`data:text/plain;charset=utf-u,${encodeURIComponent(props.currentComposition)}`}
+        <Button variant="contained" download="composition.json" target="_blank"
+          href={`data:text/json;charset=utf-8,${encodeURIComponent(props.currentComposition)}`}
           style={{maxWidth: 200, alignSelf: "center"}}
         >
           Save Json
         </Button>
         <br />
         <div className="modalActions">
-          <Button variant="contained" onClick={props.toggleSaveModal}>Close</Button>
+          <Button variant="contained" onClick={() => props.toggleModal("save")}>Close</Button>
         </div>
       </div>
     </Modal>

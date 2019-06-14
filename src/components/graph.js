@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import createPlotlyComponent from 'react-plotly.js/factory';
 
-import { SampleTrackGraph } from '../synthesize';
+import { SampleTrackGraph } from '../api/synthesize';
 
 var Plotly = require('plotly.js/lib/core');
 const Plot = createPlotlyComponent(Plotly);
@@ -25,7 +25,7 @@ class Graph extends Component {
           xaxis: { title: "Time (s)" },
           yaxis: {
             title: "Frequency (Hz)<br />&nbsp;",
-            range: [0, 22050]
+            range: [0, 11025]
           },
           margin: {
             t: 40,

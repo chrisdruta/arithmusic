@@ -4,14 +4,15 @@ import './App.css';
 import { AppBar, Toolbar, IconButton } from '@material-ui/core';
 import { Play, Stop, Tune } from 'mdi-material-ui';
 
-import { parse, simplify } from 'mathjs';
+import { SynthesizeComposition } from './api/synthesize';
+import { settingsChange, trackDataChange, loadJson, toggleModal, segmentSelection, segmentRearrange,
+         addSegment, deleteSegment, trackOptionChange, addTrack, deleteTrack 
+} from './api/handlers';
 
 import Graph from './components/graph';
 import Editor from './components/editor';
 import { SaveModal, LoadModal, SettingsModal } from './components/modals';
 import initialState from './initial-state';
-
-import { SynthesizeComposition } from './synthesize';
 
 class App extends Component {
 
@@ -19,6 +20,18 @@ class App extends Component {
     super(props);
     this.state = initialState;
     this.state.revision = 0;
+
+    this.settingsChange = settingsChange.bind(this);
+    this.trackDataChange = trackDataChange.bind(this);
+    this.loadJson = loadJson.bind(this);
+    this.toggleModal = toggleModal.bind(this);
+    this.segmentSelection = segmentSelection.bind(this);
+    this.segmentRearrange = segmentRearrange.bind(this);
+    this.addSegment = addSegment.bind(this);
+    this.deleteSegment = deleteSegment.bind(this);
+    this.trackOptionChange = trackOptionChange.bind(this);
+    this.addTrack = addTrack.bind(this);
+    this.deleteTrack = deleteTrack.bind(this);
 
     let count = 0;
     for (let tl of this.state.timelines) {
@@ -31,9 +44,15 @@ class App extends Component {
   }
 
   handlePlay = () => {
-    const rawBuffer = SynthesizeComposition(this.state.timelines, this.state.volume, 
-                          this.state.multiplier, this.state.fs, this.state.aliasing);
-    const audioSourceBuffer = this.audioContext.createBuffer(1, rawBuffer.length, this.state.fs);
+
+    // Check for editor errors before synthesizing
+    if (this.state.compositionHasError) {
+      alert("Please fix errors in the editor and try again");
+      return;
+    }
+
+    const rawBuffer = SynthesizeComposition(this.state.timelines, this.state.settings);
+    const audioSourceBuffer = this.audioContext.createBuffer(1, rawBuffer.length, this.state.settings.fs);
     audioSourceBuffer.copyToChannel(rawBuffer, 0);
     const audioSource = this.audioContext.createBufferSource();
     audioSource.buffer = audioSourceBuffer;
@@ -46,180 +65,6 @@ class App extends Component {
 
   handleStop = () => {
     this.audioSources.forEach((source) => source.stop(0));
-  }
-
-  handleSegmentSelection = (selectedRowIndex, selectedSegmentId) => {
-    this.setState({
-      selectedRowIndex: selectedRowIndex,
-      selectedSegmentId: selectedSegmentId
-    });
-  }
-
-  handleTrackDataChange = (index, field, value) => {
-    const { timelines } = this.state;
-    if (field === 'title') {
-      timelines[index].options.title = value;
-    } else if (field === 'type') {
-      if (value === null)
-        timelines[index].options.type = 'sine';
-      else
-        timelines[index].options.type = value;
-    } else if (field === 'mute') {
-      timelines[index].options.mute = !timelines[index].options.mute;
-    }
-
-    this.setState({ timelines: timelines });
-  }
-
-  handleSegmentRearrange = (index, segments) => {
-    const { timelines } = this.state;
-    timelines[index].segments = segments;
-    this.setState({ timelines: timelines });
-  }
-
-  handleDataChange = (field, value) => {
-    //TODO: find better method than looping through all segments (if slow)
-    this.state.timelines.forEach((tl, i) => {
-      tl.segments.forEach((segment, j) => {
-        if (segment.id === this.state.selectedSegmentId) {
-          const { timelines } = this.state;
-          timelines[i].segments[j][field].value = value;
-
-          if (field === "title") {
-            if (value.length > 0) {
-              timelines[i].segments[j].title.error = "";
-            } else {
-              timelines[i].segments[j].title.error = "Too short"
-            }
-          } else if (field === "expression") {
-            try {
-              const parsedMath = simplify(parse(value));
-              parsedMath.evaluate({ x:1 });
-              timelines[i].segments[j].expression.error = "";
-            } catch (e) {
-              timelines[i].segments[j].expression.error = e.message;
-            }
-            if (value.length === 0) {
-              timelines[i].segments[j].expression.error = "Undefined";
-            }
-            
-          } else if (field === "length") {
-            const parsedVal = parseInt(value);
-            if (parsedVal >= 0) {
-              timelines[i].segments[j].length.value = parsedVal;
-              timelines[i].segments[j].length.error = "";
-            } else if (isNaN(parsedVal)) {
-              timelines[i].segments[j].length.error = "Not a number";
-            } else {
-              timelines[i].segments[j].length.error = "Can't be negative"
-            }
-
-          } else if (field === "volume") {
-            const parsedVal = parseInt(value);
-            if (parsedVal >= 0) {
-              timelines[i].segments[j].volume.value = parsedVal;
-              timelines[i].segments[j].volume.error = "";
-            } else if (isNaN(parsedVal)) {
-              timelines[i].segments[j].volume.error = "Not a number";
-            } else {
-              timelines[i].segments[j].volume.error = "Can't be negative"
-            }
-          }
-
-          this.setState({ timelines: timelines });
-          return;
-        }
-      });
-    });
-  }
-
-  handleAddSegment = (index) => {
-    const { timelines } = this.state;
-
-    timelines[index].segments = [...timelines[index].segments,
-    {
-      id: `t${++this.idCount}`,
-      title: { value: "New Tab", error: "" },
-      expression: { value: "40000 * x", error: "" },
-      length: { value: 500, error: "" },
-      volume: { value: 100, error: "" }
-    }
-    ];
-    this.setState({ timelines: timelines });
-  }
-
-  handleDeleteSegment = () => {
-    const { timelines } = this.state;
-    let prevSegmentId = null;
-
-    timelines.forEach((tl, tlIndex) => {
-      tl.segments.forEach((segment, segmentIndex) => {
-
-        if (segment.id === this.state.selectedSegmentId) {
-          const updateSegments = [...tl.segments];
-          updateSegments.splice(segmentIndex, 1);
-          timelines[tlIndex].segments = updateSegments;
-
-          this.setState({
-            selectedSegmentId: prevSegmentId,
-            timelines: timelines
-          });
-          return;
-        }
-        prevSegmentId = segment.id;
-      });
-    });
-  }
-
-  handleAddTrack = () => {
-    const { timelines } = this.state;
-
-    timelines.push({
-      options: {
-        title: 'Untitled Track',
-        type: 'sine',
-        mute: false
-      },
-      segments: []
-    });
-
-    this.setState({ timelines: timelines });
-  }
-
-  handleDeleteTrack = (trackIndex) => {
-    const { timelines } = this.state;
-
-    timelines.splice(trackIndex, 1);
-    this.setState({ timelines: timelines });
-  }
-
-  handleToggleLoadModal = () => {
-    this.setState({ showLoadModal: !this.state.showLoadModal });
-  }
-
-  handleToggleSaveModal = () => {
-    this.setState({ showSaveModal: !this.state.showSaveModal });
-  }
-
-  handleToggleSettingsModal = () => {
-    this.setState({ showSettingsModal: !this.state.showSettingsModal });
-  }
-
-  handleLoadJson = (text) => {
-    const json = JSON.parse(text);
-    this.setState({ timelines: json }, () => this.setState({ showLoadModal: false }));
-  }
-
-  handleSettingsChange = (field, value) => {
-    if (field === 'volume') {
-      this.setState({ volume: parseInt(value) });
-    } else if (field === 'multiplier') {
-      this.setState({ multiplier: parseInt(value) });
-    } else if (field === 'fs') {
-      this.setState({ fs: parseInt(value) });
-    } else if (field === 'aliasing') {
-      this.setState({ aliasing: !this.state.aliasing });
-    }
   }
 
   handleAnimateGraph = () => {
@@ -238,44 +83,40 @@ class App extends Component {
             <div style={{ flexGrow: 1 }}></div>
             <IconButton color="inherit" onClick={this.handlePlay}><Play /></IconButton>
             <IconButton color="inherit" onClick={this.handleStop}><Stop /></IconButton>
-            <IconButton color="inherit" onClick={this.handleToggleSettingsModal}><Tune /></IconButton>
+            <IconButton color="inherit" onClick={() => this.toggleModal("settings")}><Tune /></IconButton>
           </Toolbar>
         </AppBar>
         <div className="AppContainer">
-          <Graph 
-            revision={this.state.revision} multiplier={this.state.multiplier}
+          <Graph
+            revision={this.state.revision} multiplier={this.state.settings.multiplier.value}
             data={this.state.timelines[this.state.selectedRowIndex]
-                  ? this.state.timelines[this.state.selectedRowIndex].segments : null
-                }
+              ? this.state.timelines[this.state.selectedRowIndex].segments : null
+            }
           />
           <Editor
             animateGraph={this.handleAnimateGraph}
             timelines={timelines}
             selectedSegmentId={this.state.selectedSegmentId}
-            onSegmentSelection={this.handleSegmentSelection}
-            onSegmentRearrange={this.handleSegmentRearrange}
-            onTrackDataChange={this.handleTrackDataChange}
-            onDataChange={this.handleDataChange}
-            onAddSegment={this.handleAddSegment}
-            onDeleteSegment={this.handleDeleteSegment}
-            onAddTrack={this.handleAddTrack}
-            onDeleteTrack={this.handleDeleteTrack}
-            onToggleLoadModal={this.handleToggleLoadModal}
-            onToggleSaveModal={this.handleToggleSaveModal}
+            onSegmentSelection={this.segmentSelection}
+            onSegmentRearrange={this.segmentRearrange}
+            onAddTrack={this.addTrack}
+            onDeleteTrack={this.deleteTrack}
+            onTrackOptionChange={this.trackOptionChange}
+            onTrackDataChange={this.trackDataChange}
+            onAddSegment={this.addSegment}
+            onDeleteSegment={this.deleteSegment}
+            toggleModal={this.toggleModal}
           />
-          <LoadModal open={this.state.showLoadModal}
-            toggleLoadModal={this.handleToggleLoadModal}
-            onLoadJson={this.handleLoadJson}
+          <LoadModal open={this.state.showingModals.load}
+            toggleModal={this.toggleModal}
+            onLoadJson={this.loadJson}
           />
-          <SaveModal open={this.state.showSaveModal}
-            toggleSaveModal={this.handleToggleSaveModal}
+          <SaveModal open={this.state.showingModals.save}
+            toggleModal={this.toggleModal}
             currentComposition={JSON.stringify(this.state.timelines)}
           />
-          <SettingsModal open={this.state.showSettingsModal}
-            toggleSettingsModal={this.handleToggleSettingsModal}
-            volume={this.state.volume} multiplier={this.state.multiplier}
-            fs={this.state.fs} aliasing={this.state.aliasing}
-            onChange={this.handleSettingsChange}
+          <SettingsModal open={this.state.showingModals.settings} settings={this.state.settings}
+            toggleModal={this.toggleModal} onChange={this.settingsChange}
           />
         </div>
       </div>

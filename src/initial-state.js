@@ -1,13 +1,19 @@
 export default {
-  fs: 44100,
-  volume: 10,
-  multiplier: 1,
-  aliasing: true,
   selectedRowIndex: 0,
   selectedSegmentId: 't0',
-  showLoadModal: false,
-  showSaveModal: false,
-  showSettingsModal: false,
+  compositionHasError: false,
+  settings: {
+    fs: { value: 44100, error: "" },
+    volume: { value: 10, error: "" },
+    multiplier: { value: 1, error: "" },
+    range: { value: 11050, error: "" },
+    aliasing: false
+  },
+  showingModals: {
+    load: false,
+    save: false,
+    settings: false
+  },
   timelines: [
     {
       options: {
@@ -55,6 +61,5 @@ export default {
     //     }
     //   ]
     // }
-
   ]
 };

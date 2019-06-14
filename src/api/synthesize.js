@@ -27,7 +27,8 @@ const SampleTrackGraph = (segments, multiplier) => {
   return data;
 };
 
-const SynthesizeComposition = (timelines, masterVolume, multiplier, fs, aliasing) => {
+const SynthesizeComposition = (timelines, settings) => {
+  const { volume, multiplier, fs, aliasing } = settings;
   // Find buffer size
   let maxLengthMs = 0;
   const trackLengthsMs = [];
@@ -66,30 +67,10 @@ const SynthesizeComposition = (timelines, masterVolume, multiplier, fs, aliasing
   });
   
   // TODO: Exponentially decress gain near end
-
+  
   return rawBuffer;
 
 };
 
-// const poop = (timelines, masterVolume, multiplier, fs, aliasing) => {
-//   timelines.forEach((timeline) => {
-//     let bufferIndex = 0;
-//     const sampledSegments = SampleTrack(timeline.segments, multiplier, fs);
-
-//     sampledSegments.forEach((sample, index) => {
-//       let volumeMultiplier = masterVolume * (!timeline.segments[index].volume.error ? timeline.segments[index].volume.value : 0) / 100 / 100;
-//       sample.y.forEach((tone) => {
-//         //for (let j = 0; j < fs / 1000; j++) {
-//           // TODO: assign wave type to a const and use to evaluate instead of just sinusoidal wave
-//           rawBuffer[bufferIndex] += volumeMultiplier * Math.cos(2 * Math.PI * tone * bufferIndex / fs)
-//           bufferIndex++;
-//         //}
-//       });
-//     });
-//   });
-
-//   return rawBuffer;
-
-// };
 
 export { SampleTrackGraph, SynthesizeComposition };

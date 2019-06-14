@@ -18,11 +18,11 @@ class TrackControls extends Component {
           : <div style={{width: 120}}/>}
         <InputBase value={this.props.options.title} className="trackTitle"
           inputProps={{ style: { fontSize: 16, padding: "6px 3px 5px", backgroundColor: "#f5f5f5" } }}
-          onChange={(event) => this.props.onTrackDataChange(this.props.index, 'title', event.target.value)}
+          onChange={(event) => this.props.onTrackOptionChange(this.props.index, 'title', event.target.value)}
         />
         <ToggleButtonGroup size="small" exclusive={true}
           value={this.props.options.type}
-          onChange={(e, val) => this.props.onTrackDataChange(this.props.index, 'type', val)}
+          onChange={(e, val) => this.props.onTrackOptionChange(this.props.index, 'type', val)}
         >
           <ToggleButton size="small" value='sine'>
             <CurrentAc />
@@ -37,7 +37,7 @@ class TrackControls extends Component {
         <ToggleButtonGroup size="small" style={{ marginLeft: 10 }}>
           <ToggleButton size="small"
             selected={this.props.options.mute}
-            value='mute' onClick={() => this.props.onTrackDataChange(this.props.index, 'mute', '')}
+            value='mute' onClick={() => this.props.onTrackOptionChange(this.props.index, 'mute', '')}
           >
             <VolumeMute />
           </ToggleButton>
