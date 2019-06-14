@@ -9,13 +9,12 @@ export default function SaveModal(props) {
   const classes = useStyles();
 
   return (
-    <Modal
-      open={props.open}
-    >
+    <Modal open={props.open}>
       <div style={modalStyle} className={classes.paper}>
         <Typography variant="h5">
           Save Composition
         </Typography>
+        <br />
         <Typography variant="subtitle1">
           Copy the text below
         </Typography>
