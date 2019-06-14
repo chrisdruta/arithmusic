@@ -1,7 +1,7 @@
 export default {
   selectedRowIndex: 0,
   selectedSegmentId: 't0',
-  compositionHasError: false,
+  alertErrors: null,
   settings: {
     fs: { value: 44100, error: "" },
     volume: { value: 10, error: "" },
@@ -12,7 +12,8 @@ export default {
   showingModals: {
     load: false,
     save: false,
-    settings: false
+    settings: false,
+    alert: false
   },
   timelines: [
     {

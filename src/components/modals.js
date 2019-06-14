@@ -1,6 +1,7 @@
 import SaveModal from './modals/save-modal';
 import LoadModal from './modals/load-modal';
 import SettingsModal from './modals/settings-modal';
+import AlertModal from './modals/alert-modal';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -35,6 +36,7 @@ export {
   SaveModal,
   LoadModal,
   SettingsModal,
+  AlertModal,
   getModalStyle,
   useStyles
 };

@@ -1,14 +1,42 @@
 import { parse, simplify } from 'mathjs';
 
 //#region User input with error checking handlers
+export function getCompositionErrors() {
+  // Check settings
+  const settings = [];
+  for (let [key, value] of Object.entries(this.state.settings)) {
+    if (!!value.error && key !== "graphRange") {
+      settings.push(key);
+    }
+  }
+
+  // Check editor
+  const editor = [];
+  this.state.timelines.forEach((timeline) => {
+    timeline.segments.forEach((segment) => {
+      for (let [key, value] of Object.entries(segment)) {
+        if (!!value.error && key !== "title") {
+          editor.push({ key: key, title: segment.title.value });
+        }
+      }
+    });
+  });
+
+  if (settings.length || editor.length) {
+    return { settings, editor };
+  } else {
+    return null;
+  }
+
+}
+
 export function settingsChange(field, value) {
-  const settings = this.state.settings;
+  const { settings } = this.state;
   let parsedVal;
   if (field !== 'aliasing') {
     parsedVal = parseInt(value);
     settings[field].value = value;
   }
-    
 
   // Error checking
   if (field === 'volume') {
@@ -51,7 +79,7 @@ export function settingsChange(field, value) {
   } else if (field === 'aliasing') {
     settings.aliasing = !settings.aliasing;
   }
-  this.setState({ settings: settings });
+  this.setState({ settings });
 }
 
 export function trackDataChange(field, value) {
@@ -113,7 +141,7 @@ export function trackDataChange(field, value) {
 export function loadJson(json) {
   // TODO: error checking
   const parsedJson = JSON.parse(json);
-  this.setState({ timelines: parsedJson }, () => this.setState({ showLoadModal: false }));
+  this.setState({ timelines: parsedJson }, () => this.toggleModal("load"));
 }
 //#endregion
 

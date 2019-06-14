@@ -6,12 +6,12 @@ import { Play, Stop, Tune } from 'mdi-material-ui';
 
 import { SynthesizeComposition } from './api/synthesize';
 import { settingsChange, trackDataChange, loadJson, toggleModal, segmentSelection, segmentRearrange,
-         addSegment, deleteSegment, trackOptionChange, addTrack, deleteTrack 
+         addSegment, deleteSegment, trackOptionChange, addTrack, deleteTrack, getCompositionErrors
 } from './api/handlers';
 
 import Graph from './components/graph';
 import Editor from './components/editor';
-import { SaveModal, LoadModal, SettingsModal } from './components/modals';
+import { SaveModal, LoadModal, SettingsModal, AlertModal } from './components/modals';
 import initialState from './initial-state';
 
 class App extends Component {
@@ -32,6 +32,7 @@ class App extends Component {
     this.trackOptionChange = trackOptionChange.bind(this);
     this.addTrack = addTrack.bind(this);
     this.deleteTrack = deleteTrack.bind(this);
+    this.getCompositionErrors = getCompositionErrors.bind(this);
 
     let count = 0;
     for (let tl of this.state.timelines) {
@@ -45,9 +46,11 @@ class App extends Component {
 
   handlePlay = () => {
 
-    // Check for editor errors before synthesizing
-    if (this.state.compositionHasError) {
-      alert("Please fix errors in the editor and try again");
+    // Check for errors before synthesizing
+    const errors = this.getCompositionErrors();
+    if (errors) {
+      this.setState({alertErrors: errors});
+      this.toggleModal("alert");
       return;
     }
 
@@ -118,6 +121,9 @@ class App extends Component {
           />
           <SettingsModal open={this.state.showingModals.settings} settings={this.state.settings}
             toggleModal={this.toggleModal} onChange={this.settingsChange}
+          />
+          <AlertModal open={this.state.showingModals.alert} errors={this.state.alertErrors}
+            toggleModal={this.toggleModal}
           />
         </div>
       </div>

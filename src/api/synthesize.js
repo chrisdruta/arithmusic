@@ -42,7 +42,7 @@ const SynthesizeComposition = (timelines, settings) => {
   });
 
   // Synthesize
-  const bufferSize = maxLengthMs / 1000 * fs;
+  const bufferSize = maxLengthMs / 1000 * fs.value;
   const rawBuffer = new Float32Array(bufferSize + 1);
 
   timelines.forEach((timeline, timelineIndex) => {
@@ -51,10 +51,10 @@ const SynthesizeComposition = (timelines, settings) => {
 
     timeline.segments.forEach((segment, segmentIndex) => {
       const func = (!segment.expression.error ? simplify(parse(segment.expression.value)) : parse("0")).compile();
-      for (let i = 0; i <= segment.length.value / 1000; i += 1/fs) {
+      for (let i = 0; i <= segment.length.value / 1000; i += 1/fs.value) {
         let tone = func.evaluate({x: i});
 
-        phase[bufferIndex] = phase[bufferIndex - 1] + 2 * Math.PI * tone/fs;
+        phase[bufferIndex] = phase[bufferIndex - 1] + 2 * Math.PI * tone/fs.value;
         if (phase[bufferIndex] > 2 * Math.PI)
           phase[bufferIndex] -= 2 * Math.PI;
         else if (phase[bufferIndex] < -2 * Math.PI)
