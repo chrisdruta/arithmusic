@@ -6,7 +6,7 @@ export default {
     fs: { value: 44100, error: "" },
     volume: { value: 10, error: "" },
     multiplier: { value: 1, error: "" },
-    range: { value: 11050, error: "" },
+    graphRange: { value: 11050, error: "" },
     aliasing: false
   },
   showingModals: {

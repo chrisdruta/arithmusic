@@ -11,6 +11,9 @@ const style = {
   multiplier: {
     width: 250
   },
+  graphRange: {
+    width: 173
+  },
   fs: {
     width: 180
   }
@@ -19,7 +22,7 @@ const style = {
 export default function SettingsModal(props) {
   const [modalStyle] = React.useState(getModalStyle);
   const classes = useStyles();
-
+  const { fs, volume, multiplier, graphRange, aliasing } = props.settings;
   return (
     <Modal open={props.open}>
       <div style={modalStyle} className={classes.paper}>
@@ -30,28 +33,43 @@ export default function SettingsModal(props) {
             </Typography>
             <TextField
               label="Master volume (%)"
-              value={props.volume}
+              value={volume.value}
+              error={!!volume.error}
+              helperText={volume.error}
               onChange={(e) => props.onChange('volume', e.target.value) }
               margin="normal"
               style={style.volume}
             />
             <TextField
               label="Auto multipler for function input (x)"
-              value={props.multiplier}
+              value={multiplier.value}
+              error={!!multiplier.error}
+              helperText={multiplier.error}
               onChange={(e) => props.onChange('multiplier', e.target.value) }
               margin="normal"
               style={style.multiplier}
             />
             <TextField
+              label="Upper graph range (Hz)"
+              value={graphRange.value}
+              error={!!graphRange.error}
+              helperText={graphRange.error}
+              onChange={(e) => props.onChange('graphRange', e.target.value) }
+              margin="normal"
+              style={style.graphRange}
+            />
+            <TextField
               label="Sampling frequency (Hz)"
-              value={props.fs}
+              value={fs.value}
+              error={!!fs.error}
+              helperText={fs.error}
               onChange={(e) => props.onChange('fs', e.target.value) }
               margin="normal"
               style={style.fs}
             />
             <FormControlLabel
-              style={{ alignSelf: "flex-start", marginLeft: 0, marginTop: 30 }}
-              control={<Switch checked={props.aliasing} onChange={() => props.onChange('aliasing')}/>}
+              style={{ alignSelf: "flex-start", marginLeft: 0, marginTop: 15 }}
+              control={<Switch checked={aliasing} onChange={() => props.onChange('aliasing')}/>}
               label="Enable Aliasing"
               labelPlacement="start"
             />

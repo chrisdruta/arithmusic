@@ -3,11 +3,15 @@ import { parse, simplify } from 'mathjs';
 //#region User input with error checking handlers
 export function settingsChange(field, value) {
   const settings = this.state.settings;
-  settings[field].value = value;
+  let parsedVal;
+  if (field !== 'aliasing') {
+    parsedVal = parseInt(value);
+    settings[field].value = value;
+  }
+    
 
   // Error checking
   if (field === 'volume') {
-    const parsedVal = parseInt(value);
     if (parsedVal >= 0) {
       settings.volume.value = parsedVal;
       settings.volume.error = "";
@@ -18,29 +22,37 @@ export function settingsChange(field, value) {
     }
 
   } else if (field === 'multiplier') {
-    const parsedVal = parseInt(value);
     if (isNaN(parsedVal)) {
       settings.multiplier.error = "Not a number";
     } else {
       settings.multiplier.value = parsedVal;
+      settings.multiplier.error = "";
+    }
+  } else if (field === 'graphRange') {
+    if (isNaN(parsedVal)) {
+      settings.graphRange.error = "Not a number";
+    } else if (parsedVal < 0) {
+      settings.graphRange.error = "Can't be negative";
+    } else {
+      settings.graphRange.value = parsedVal;
+      settings.graphRange.error = "";
     }
   } else if (field === 'fs') {
-    const parsedVal = parseInt(value);
     if (isNaN(parsedVal)) {
-      settings.multiplier.error = "Not a number";
+      settings.fs.error = "Not a number";
     } else if (parsedVal < 3000) {
-      settings.multiplier.error = "Must be greater than 3,000";
+      settings.fs.error = "Must be at least 3000";
     } else if (parsedVal > 96000) {
-      settings.multiplier.error = "Must be less than 96,000";
+      settings.fs.error = "Must be less than 96000";
     } else {
-      settings.multiplier.value = parsedVal;
+      settings.fs.value = parsedVal;
+      settings.fs.error = "";
     }
   } else if (field === 'aliasing') {
     settings.aliasing = !settings.aliasing;
   }
   this.setState({ settings: settings });
 }
-
 
 export function trackDataChange(field, value) {
   //TODO: find better method than looping through all segments (if slow)

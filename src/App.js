@@ -52,7 +52,7 @@ class App extends Component {
     }
 
     const rawBuffer = SynthesizeComposition(this.state.timelines, this.state.settings);
-    const audioSourceBuffer = this.audioContext.createBuffer(1, rawBuffer.length, this.state.settings.fs);
+    const audioSourceBuffer = this.audioContext.createBuffer(1, rawBuffer.length, this.state.settings.fs.value);
     audioSourceBuffer.copyToChannel(rawBuffer, 0);
     const audioSource = this.audioContext.createBufferSource();
     audioSource.buffer = audioSourceBuffer;
@@ -89,6 +89,7 @@ class App extends Component {
         <div className="AppContainer">
           <Graph
             revision={this.state.revision} multiplier={this.state.settings.multiplier.value}
+            upperRange={this.state.settings.graphRange.value}
             data={this.state.timelines[this.state.selectedRowIndex]
               ? this.state.timelines[this.state.selectedRowIndex].segments : null
             }

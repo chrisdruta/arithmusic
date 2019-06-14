@@ -25,7 +25,7 @@ class Graph extends Component {
           xaxis: { title: "Time (s)" },
           yaxis: {
             title: "Frequency (Hz)<br />&nbsp;",
-            range: [0, 11025]
+            range: [0, this.props.upperRange]
           },
           margin: {
             t: 40,
