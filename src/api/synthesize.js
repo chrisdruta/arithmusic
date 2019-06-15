@@ -1,6 +1,14 @@
 import { map, range } from 'lodash';
 import { parse, simplify } from 'mathjs';
 
+const waveTypes = {
+  sine: (x) => (Math.sin(x)),
+  triangle: (x) => (2/Math.PI * Math.asin(Math.sin(x))),
+  saw: (x) => (1/Math.PI * Math.atan(Math.tan(x/2 + Math.PI/2)))
+  //saw: (x) => (-2/Math.PI * (Math.PI / 2 - Math.atan(Math.tan(x/2 + Math.PI/2))) + 1)
+  //saw: (x) => (2*(x/Math.PI + 0.5 - Math.floor(x/Math.PI + 0.5)) - 1)
+};
+
 const SampleTrackGraph = (segments, multiplier) => {
   if (segments === null) return;
   const data = [];
@@ -45,14 +53,18 @@ const SynthesizeComposition = (timelines, settings) => {
   const bufferSize = maxLengthMs / 1000 * fs.value;
   const rawBuffer = new Float32Array(bufferSize + 1);
 
-  timelines.forEach((timeline, timelineIndex) => {
+  timelines.forEach((timeline) => {
     let bufferIndex = 1;
     const phase = new Float32Array(bufferSize + 1);
+    const waveFunc = waveTypes[timeline.options.type];
 
-    timeline.segments.forEach((segment, segmentIndex) => {
-      const func = (!segment.expression.error ? simplify(parse(segment.expression.value)) : parse("0")).compile();
+    timeline.segments.forEach((segment) => {
+      const func = simplify(parse(segment.expression.value));
       for (let i = 0; i <= segment.length.value / 1000; i += 1/fs.value) {
-        let tone = func.evaluate({x: i});
+        let tone = func.evaluate({x: multiplier.value * i});
+
+        if (!aliasing && (tone > fs.value/2 || tone < 0)) tone = 0;
+        let volumeMultiplier = segment.volume.value * volume.value / 10000; // TODO: Exponentially decrease gain near end
 
         phase[bufferIndex] = phase[bufferIndex - 1] + 2 * Math.PI * tone/fs.value;
         if (phase[bufferIndex] > 2 * Math.PI)
@@ -60,7 +72,7 @@ const SynthesizeComposition = (timelines, settings) => {
         else if (phase[bufferIndex] < -2 * Math.PI)
           phase[bufferIndex] += 2 * Math.PI;
 
-        rawBuffer[bufferIndex] += 0.1 * Math.sin(phase[bufferIndex]);
+        rawBuffer[bufferIndex] += volumeMultiplier * waveFunc(phase[bufferIndex]);
         bufferIndex++;
       }
     });

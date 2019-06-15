@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Button, InputBase } from '@material-ui/core/';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab/'
-import { VolumeMute, CurrentAc, HandSaw, SquareOutline, Minus } from 'mdi-material-ui';
+import { VolumeMute, CurrentAc, HandSaw, TriangleOutline, Minus } from 'mdi-material-ui';
 
 class TrackControls extends Component {
 
@@ -27,8 +27,8 @@ class TrackControls extends Component {
           <ToggleButton size="small" value='sine'>
             <CurrentAc />
           </ToggleButton>
-          <ToggleButton size="small" value='square'>
-            <SquareOutline />
+          <ToggleButton size="small" value='triangle'>
+            <TriangleOutline />
           </ToggleButton>
           <ToggleButton size="small" value='saw'>
             <HandSaw />
