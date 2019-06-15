@@ -57,6 +57,7 @@ const SynthesizeComposition = (timelines, settings) => {
     let bufferIndex = 1;
     const phase = new Float32Array(bufferSize + 1);
     const waveFunc = waveTypes[timeline.options.type];
+    const muteMultiplier = timeline.options.mute ? 0 : 1;
 
     timeline.segments.forEach((segment) => {
       const func = simplify(parse(segment.expression.value));
@@ -64,7 +65,8 @@ const SynthesizeComposition = (timelines, settings) => {
         let tone = func.evaluate({x: multiplier.value * i});
 
         if (!aliasing && (tone > fs.value/2 || tone < 0)) tone = 0;
-        let volumeMultiplier = segment.volume.value * volume.value / 10000; // TODO: Exponentially decrease gain near end
+        let volumeMultiplier = segment.volume.value * volume.value / 10000 * muteMultiplier; // TODO: Exponentially decrease gain near end
+
 
         phase[bufferIndex] = phase[bufferIndex - 1] + 2 * Math.PI * tone/fs.value;
         if (phase[bufferIndex] > 2 * Math.PI)
