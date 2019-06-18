@@ -5,8 +5,9 @@ import { AppBar, Toolbar, IconButton } from '@material-ui/core';
 import { Play, Stop, Tune } from 'mdi-material-ui';
 
 import { SynthesizeComposition } from './api/synthesize';
-import { settingsChange, trackDataChange, loadJson, toggleModal, segmentSelection, segmentRearrange,
-         addSegment, deleteSegment, trackOptionChange, addTrack, deleteTrack, getCompositionErrors
+import { settingsChange, trackDataChange, toggleModal, segmentSelection, segmentRearrange,
+         addSegment, deleteSegment, trackOptionChange, addTrack, deleteTrack, getCompositionErrors,
+         exportCompositionJson, loadCompositionJson
 } from './api/handlers';
 
 import Graph from './components/graph';
@@ -23,7 +24,6 @@ class App extends Component {
 
     this.settingsChange = settingsChange.bind(this);
     this.trackDataChange = trackDataChange.bind(this);
-    this.loadJson = loadJson.bind(this);
     this.toggleModal = toggleModal.bind(this);
     this.segmentSelection = segmentSelection.bind(this);
     this.segmentRearrange = segmentRearrange.bind(this);
@@ -33,6 +33,8 @@ class App extends Component {
     this.addTrack = addTrack.bind(this);
     this.deleteTrack = deleteTrack.bind(this);
     this.getCompositionErrors = getCompositionErrors.bind(this);
+    this.exportCompositionJson = exportCompositionJson.bind(this);
+    this.loadCompositionJson = loadCompositionJson.bind(this);
 
     let count = 0;
     for (let tl of this.state.timelines) {
@@ -113,11 +115,11 @@ class App extends Component {
           />
           <LoadModal open={this.state.showingModals.load}
             toggleModal={this.toggleModal}
-            onLoadJson={this.loadJson}
+            onLoadJson={this.loadCompositionJson}
           />
           <SaveModal open={this.state.showingModals.save}
             toggleModal={this.toggleModal}
-            currentComposition={JSON.stringify(this.state.timelines)}
+            currentComposition={(this.exportCompositionJson())}
           />
           <SettingsModal open={this.state.showingModals.settings} settings={this.state.settings}
             toggleModal={this.toggleModal} onChange={this.settingsChange}

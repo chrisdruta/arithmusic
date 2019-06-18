@@ -21,8 +21,8 @@ class TrackControls extends Component {
           onChange={(event) => this.props.onTrackOptionChange(this.props.index, 'title', event.target.value)}
         />
         <ToggleButtonGroup size="small" exclusive={true}
-          value={this.props.options.type}
-          onChange={(e, val) => this.props.onTrackOptionChange(this.props.index, 'type', val)}
+          value={this.props.options.wave}
+          onChange={(e, val) => this.props.onTrackOptionChange(this.props.index, 'wave', val)}
         >
           <ToggleButton size="small" value='sine'>
             <CurrentAc />

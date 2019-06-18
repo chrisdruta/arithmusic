@@ -1,7 +1,7 @@
 import { map, range } from 'lodash';
 import { parse, simplify } from 'mathjs';
 
-const waveTypes = {
+const wavewaves = {
   sine: (x) => (Math.sin(x)),
   triangle: (x) => (2/Math.PI * Math.asin(Math.sin(x))),
   saw: (x) => (1/Math.PI * Math.atan(Math.tan(x/2 + Math.PI/2)))
@@ -56,7 +56,7 @@ const SynthesizeComposition = (timelines, settings) => {
   timelines.forEach((timeline) => {
     let bufferIndex = 1;
     const phase = new Float32Array(bufferSize + 1);
-    const waveFunc = waveTypes[timeline.options.type];
+    const waveFunc = wavewaves[timeline.options.wave];
     const muteMultiplier = timeline.options.mute ? 0 : 1;
 
     timeline.segments.forEach((segment) => {

@@ -6,7 +6,7 @@ use serde::{Serialize, Deserialize};
 #[derive(Serialize, Deserialize, Debug)]
 struct TimelineOptions {
     title: String,
-    wave_type: String,
+    wave: String,
     mute: bool
 }
 
@@ -34,5 +34,5 @@ fn main() {
 
     let json: Vec<Timeline> = serde_json::from_str(&contents).expect("JSON was not well-formatted");
 
-    println!("json: {:?}", json[0].segments[0].expression);
+    println!("json: {:?}", json);
 }

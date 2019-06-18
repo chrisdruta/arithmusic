@@ -15,7 +15,7 @@ export function getCompositionErrors() {
   this.state.timelines.forEach((timeline) => {
     timeline.segments.forEach((segment) => {
       for (let [key, value] of Object.entries(segment)) {
-        if (!!value.error && key !== "title") {
+        if (!!value.error) {
           editor.push({ key: key, title: segment.title.value });
         }
       }
@@ -82,12 +82,12 @@ export function settingsChange(field, value) {
   this.setState({ settings });
 }
 
-export function trackDataChange(field, value) {
+export function trackDataChange(timelines, segmentId, field, value, updateState = false) {
   //TODO: find better method than looping through all segments (if slow)
-  this.state.timelines.forEach((tl, i) => {
+  //const timelines = [ ...timelinesRef ];
+  timelines.forEach((tl, i) => {
     tl.segments.forEach((segment, j) => {
-      if (segment.id === this.state.selectedSegmentId) {
-        const { timelines } = this.state;
+      if (segment.id === segmentId) {
         timelines[i].segments[j][field].value = value;
 
         if (field === "title") {
@@ -96,6 +96,7 @@ export function trackDataChange(field, value) {
           } else {
             timelines[i].segments[j].title.error = "Too short"
           }
+
         } else if (field === "expression") {
           try {
             const parsedMath = simplify(parse(value));
@@ -130,18 +131,15 @@ export function trackDataChange(field, value) {
             timelines[i].segments[j].volume.error = "Can't be negative"
           }
         }
-
-        this.setState({ timelines: timelines });
-        return;
+        if (updateState) {
+          this.setState({ timelines: timelines });
+          return;
+        } else {
+          return timelines;
+        }
       }
     });
   });
-}
-
-export function loadJson(json) {
-  // TODO: error checking
-  const parsedJson = JSON.parse(json);
-  this.setState({ timelines: parsedJson }, () => this.toggleModal("load"));
 }
 //#endregion
 
@@ -201,11 +199,11 @@ export function trackOptionChange(index, field, value) {
   const { timelines } = this.state;
   if (field === 'title') {
     timelines[index].options.title = value;
-  } else if (field === 'type') {
+  } else if (field === 'wave') {
     if (value === null)
-      timelines[index].options.type = 'sine';
+      timelines[index].options.wave = 'sine';
     else
-      timelines[index].options.type = value;
+      timelines[index].options.wave = value;
   } else if (field === 'mute') {
     timelines[index].options.mute = !timelines[index].options.mute;
   }
@@ -219,7 +217,7 @@ export function addTrack() {
   timelines.push({
     options: {
       title: 'Untitled Track',
-      type: 'sine',
+      wave: 'sine',
       mute: false
     },
     segments: []
@@ -244,3 +242,63 @@ export function toggleModal(kind) {
   this.setState({ showingModals });
 }
 //#endregion
+
+//#region Json parsing
+export function exportCompositionJson() {
+  const { timelines } = this.state;
+  const minimizedJson = [];
+
+  timelines.forEach((timeline) => {
+    const segments = [];
+    timeline.segments.forEach((segment) => {
+      segments.push({
+        title: segment.title.value,
+        expression: segment.expression.value,
+        length: segment.length.value,
+        volume: segment.volume.value
+      });
+    });
+
+    minimizedJson.push({
+      options: timeline.options,
+      segments: segments
+    });
+  });
+
+  return JSON.stringify(minimizedJson);
+}
+
+export function loadCompositionJson(json) {
+  const parsedJson = JSON.parse(json);
+  if (!Array.isArray(parsedJson)) {
+    // Make more robust
+    return "Unexpected format";
+  }
+
+  let id = 0;
+  try {
+    for (let timelineIndex in parsedJson) {
+      for (let segmentIndex in parsedJson[timelineIndex].segments) {
+        let oldSegment = {...parsedJson[timelineIndex].segments[segmentIndex]};
+        let segmentId = `t${id}`;
+        
+        parsedJson[timelineIndex].segments[segmentIndex] = {
+          title: {}, expression: {}, length: {}, volume: {}
+        };
+        parsedJson[timelineIndex].segments[segmentIndex].id = segmentId;
+        trackDataChange(parsedJson, segmentId, "title", oldSegment.title);
+        trackDataChange(parsedJson, segmentId, "expression", oldSegment.expression);
+        trackDataChange(parsedJson, segmentId, "length", oldSegment.length);
+        trackDataChange(parsedJson, segmentId, "volume", oldSegment.volume);
+        id++;
+      }
+    }
+  } catch (e){
+    alert(e.message);
+    return;
+  }
+
+  this.setState({timelines: parsedJson}, this.toggleModal("load"));
+
+}
+////#endregion

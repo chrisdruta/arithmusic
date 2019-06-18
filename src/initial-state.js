@@ -19,7 +19,7 @@ export default {
     {
       options: {
         title: 'Untitled Track 1',
-        type: 'sine',
+        wave: 'sine',
         mute: false
       },
       segments: [
@@ -42,7 +42,7 @@ export default {
     // {
     //   options: {
     //     title: 'Untitled Track 2',
-    //     type: 'saw',
+    //     wave: 'saw',
     //     mute: true
     //   },
     //   segments: [
