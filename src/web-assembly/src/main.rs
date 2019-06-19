@@ -30,7 +30,8 @@ fn main() {
     // Print text to the console
     println!("Hello World!");
 
-    let contents = fs::read_to_string("linear.json").unwrap();
+    let contents = fs::read_to_string("siren.json").expect("poop");
+    println!("contents: {}", contents);
 
     let json: Vec<Timeline> = serde_json::from_str(&contents).expect("JSON was not well-formatted");
 

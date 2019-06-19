@@ -51,7 +51,6 @@ class App extends Component {
     // Check for errors before synthesizing
     const errors = this.getCompositionErrors();
     if (errors) {
-      this.setState({alertErrors: errors});
       this.toggleModal("alert");
       return;
     }
@@ -95,14 +94,14 @@ class App extends Component {
           <Graph
             revision={this.state.revision} multiplier={this.state.settings.multiplier.value}
             upperRange={this.state.settings.graphRange.value}
-            data={this.state.timelines[this.state.selectedRowIndex]
-              ? this.state.timelines[this.state.selectedRowIndex].segments : null
+            data={this.state.timelines[this.state.selectedSegment.row]
+              ? this.state.timelines[this.state.selectedSegment.row].segments : null
             }
           />
           <Editor
             animateGraph={this.handleAnimateGraph}
             timelines={timelines}
-            selectedSegmentId={this.state.selectedSegmentId}
+            selectedSegment={this.state.selectedSegment}
             onSegmentSelection={this.segmentSelection}
             onSegmentRearrange={this.segmentRearrange}
             onAddTrack={this.addTrack}

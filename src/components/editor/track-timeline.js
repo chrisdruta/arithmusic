@@ -13,8 +13,6 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-const grid = 8;
-
 const getStyle = (isDragging, draggableStyle, isSelected) => ({
   // some basic styles to make the items look a bit nicer
   userSelect: 'none',
@@ -37,7 +35,7 @@ const getListStyle = isDraggingOver => ({
   background: isDraggingOver ? '#af4448' : '#ffa4a2',
   display: 'flex',
   justifyContent: 'flex-start',
-  padding: grid,
+  padding: 8,
   overflow: 'auto',
   flexGrow: 1,
   width: '100%'
@@ -57,7 +55,7 @@ class TrackTimeline extends Component {
       result.destination.index
     );
 
-    this.props.onSegmentRearrange(this.props.index, segments);
+    this.props.onSegmentRearrange(this.props.rowIndex, result.source.index, result.destination.index, segments);
   }
 
   render() {
@@ -70,9 +68,9 @@ class TrackTimeline extends Component {
               style={getListStyle(snapshot.isDraggingOver)}
               {...provided.droppableProps}
             >
-              {this.props.segments.map((segment, index) => {
+              {this.props.segments.map((segment, colIndex) => {
                 return (
-                  <Draggable key={segment.id} draggableId={segment.id} index={index}>
+                  <Draggable key={segment.id} draggableId={segment.id} index={colIndex}>
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
@@ -81,9 +79,10 @@ class TrackTimeline extends Component {
                         style={getStyle(
                           snapshot.isDragging,
                           provided.draggableProps.style,
-                          this.props.selectedSegmentId === segment.id
+                          (this.props.selectedSegment.row === this.props.rowIndex && 
+                           this.props.selectedSegment.col === colIndex)
                         )}
-                        onClick={() => this.props.onSegmentSelection(this.props.index, segment.id)}
+                        onClick={() => this.props.onSegmentSelection(this.props.rowIndex, colIndex)}
                       >
                         {segment.title.value}
                       </div>
@@ -92,7 +91,7 @@ class TrackTimeline extends Component {
               })}
               {provided.placeholder}
               <div className="verticalDivider"></div>
-              <IconButton onClick={() => this.props.onAddSegment(this.props.index)} size='small'><Plus /></IconButton>
+              <IconButton onClick={() => this.props.onAddSegment(this.props.rowIndex)} size='small'><Plus /></IconButton>
             </div>
           )}
         </Droppable>

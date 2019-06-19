@@ -1,7 +1,5 @@
 export default {
-  selectedRowIndex: 0,
-  selectedSegmentId: 't0',
-  alertErrors: null,
+  selectedSegment: { row: 0, col: 0 },
   settings: {
     fs: { value: 44100, error: "" },
     volume: { value: 10, error: "" },

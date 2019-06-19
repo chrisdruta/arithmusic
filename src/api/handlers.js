@@ -56,6 +56,7 @@ export function settingsChange(field, value) {
       settings.multiplier.value = parsedVal;
       settings.multiplier.error = "";
     }
+
   } else if (field === 'graphRange') {
     if (isNaN(parsedVal)) {
       settings.graphRange.error = "Not a number";
@@ -65,6 +66,7 @@ export function settingsChange(field, value) {
       settings.graphRange.value = parsedVal;
       settings.graphRange.error = "";
     }
+
   } else if (field === 'fs') {
     if (isNaN(parsedVal)) {
       settings.fs.error = "Not a number";
@@ -76,123 +78,111 @@ export function settingsChange(field, value) {
       settings.fs.value = parsedVal;
       settings.fs.error = "";
     }
+
   } else if (field === 'aliasing') {
     settings.aliasing = !settings.aliasing;
   }
+
   this.setState({ settings });
 }
 
-export function trackDataChange(timelines, segmentId, field, value, updateState = false) {
-  //TODO: find better method than looping through all segments (if slow)
-  //const timelines = [ ...timelinesRef ];
-  timelines.forEach((tl, i) => {
-    tl.segments.forEach((segment, j) => {
-      if (segment.id === segmentId) {
-        timelines[i].segments[j][field].value = value;
+export function trackDataChange(timelines, segmentCol, segmentRow, field, value) {
 
-        if (field === "title") {
-          if (value.length > 0) {
-            timelines[i].segments[j].title.error = "";
-          } else {
-            timelines[i].segments[j].title.error = "Too short"
-          }
+  // Set value so input is still interactive
+  timelines[segmentRow].segments[segmentCol][field].value = value;
 
-        } else if (field === "expression") {
-          try {
-            const parsedMath = simplify(parse(value));
-            parsedMath.evaluate({ x: 1 });
-            timelines[i].segments[j].expression.error = "";
-          } catch (e) {
-            timelines[i].segments[j].expression.error = e.message;
-          }
-          if (value.length === 0) {
-            timelines[i].segments[j].expression.error = "Undefined";
-          }
+  // Error checking
+  if (field === "title") {
+    if (value.length > 0) {
+      timelines[segmentRow].segments[segmentCol].title.error = "";
+    } else {
+      timelines[segmentRow].segments[segmentCol].title.error = "Too short"
+    }
 
-        } else if (field === "length") {
-          const parsedVal = parseInt(value);
-          if (parsedVal >= 0) {
-            timelines[i].segments[j].length.value = parsedVal;
-            timelines[i].segments[j].length.error = "";
-          } else if (isNaN(parsedVal)) {
-            timelines[i].segments[j].length.error = "Not a number";
-          } else {
-            timelines[i].segments[j].length.error = "Can't be negative"
-          }
+  } else if (field === "expression") {
+    try {
+      const parsedMath = simplify(parse(value));
+      parsedMath.evaluate({ x: 1 });
+      timelines[segmentRow].segments[segmentCol].expression.error = "";
+    } catch (e) {
+      timelines[segmentRow].segments[segmentCol].expression.error = e.message;
+    }
+    if (value.length === 0) {
+      timelines[segmentRow].segments[segmentCol].expression.error = "Undefined";
+    }
 
-        } else if (field === "volume") {
-          const parsedVal = parseInt(value);
-          if (parsedVal >= 0) {
-            timelines[i].segments[j].volume.value = parsedVal;
-            timelines[i].segments[j].volume.error = "";
-          } else if (isNaN(parsedVal)) {
-            timelines[i].segments[j].volume.error = "Not a number";
-          } else {
-            timelines[i].segments[j].volume.error = "Can't be negative"
-          }
-        }
-        if (updateState) {
-          this.setState({ timelines: timelines });
-          return;
-        } else {
-          return timelines;
-        }
-      }
-    });
-  });
+  } else if (field === "length") {
+    const parsedVal = parseInt(value);
+    if (parsedVal >= 0) {
+      timelines[segmentRow].segments[segmentCol].length.value = parsedVal;
+      timelines[segmentRow].segments[segmentCol].length.error = "";
+    } else if (isNaN(parsedVal)) {
+      timelines[segmentRow].segments[segmentCol].length.error = "Not a number";
+    } else {
+      timelines[segmentRow].segments[segmentCol].length.error = "Can't be negative"
+    }
+
+  } else if (field === "volume") {
+    const parsedVal = parseInt(value);
+    if (parsedVal >= 0) {
+      timelines[segmentRow].segments[segmentCol].volume.value = parsedVal;
+      timelines[segmentRow].segments[segmentCol].volume.error = "";
+    } else if (isNaN(parsedVal)) {
+      timelines[segmentRow].segments[segmentCol].volume.error = "Not a number";
+    } else {
+      timelines[segmentRow].segments[segmentCol].volume.error = "Can't be negative"
+    }
+  }
+
+  this.setState({ timelines });
 }
 //#endregion
 
 //#region Editor state changes
-export function segmentSelection(selectedRowIndex, selectedSegmentId) {
-  this.setState({
-    selectedRowIndex: selectedRowIndex,
-    selectedSegmentId: selectedSegmentId
-  });
+export function segmentSelection(selectedRowIndex, selectedColumnIndex) {
+  this.setState({ selectedSegment: { row: selectedRowIndex, col: selectedColumnIndex } });
 }
 
-export function segmentRearrange(index, segments) {
-  const { timelines } = this.state;
-  timelines[index].segments = segments;
-  this.setState({ timelines: timelines });
+export function segmentRearrange(rowIndex, sourceColIndex, destinationColIndex, segments) {
+  const { selectedSegment, timelines } = { ...this.state };
+  timelines[rowIndex].segments = segments;
+  this.setState({ timelines });
+
+  if (sourceColIndex === selectedSegment.col) {
+    selectedSegment.col = destinationColIndex;
+    this.setState({ selectedSegment });
+  }
 }
 
-export function addSegment(index) {
-  const { timelines } = this.state;
+export function addSegment(rowIndex) {
+  const timelines = [...this.state.timelines];
 
-  timelines[index].segments = [...timelines[index].segments,
+  timelines[rowIndex].segments = [...timelines[rowIndex].segments,
   {
     id: `t${++this.idCount}`,
     title: { value: "New Tab", error: "" },
-    expression: { value: "40000 * x", error: "" },
+    expression: { value: "440 + 100 * x", error: "" },
     length: { value: 500, error: "" },
     volume: { value: 100, error: "" }
   }
   ];
-  this.setState({ timelines: timelines });
+  this.setState({ timelines });
 }
 
 export function deleteSegment() {
-  const { timelines } = this.state;
-  let prevSegmentId = null;
+  const { selectedSegment, timelines } = { ...this.state };
 
-  timelines.forEach((tl, tlIndex) => {
-    tl.segments.forEach((segment, segmentIndex) => {
+  timelines[selectedSegment.row].segments.splice(selectedSegment.col, 1);
+  if (selectedSegment.col === 0) {
+    if (selectedSegment.row > 0) {
+      selectedSegment.row--;
+      selectedSegment.col = timelines[selectedSegment.row].segments.length - 1;
+    }
+  } else {
+    selectedSegment.col--;
+  }
 
-      if (segment.id === this.state.selectedSegmentId) {
-        const updateSegments = [...tl.segments];
-        updateSegments.splice(segmentIndex, 1);
-        timelines[tlIndex].segments = updateSegments;
-
-        this.setState({
-          selectedSegmentId: prevSegmentId,
-          timelines: timelines
-        });
-        return;
-      }
-      prevSegmentId = segment.id;
-    });
-  });
+  this.setState({ selectedSegment, timelines });
 }
 
 export function trackOptionChange(index, field, value) {
@@ -212,8 +202,7 @@ export function trackOptionChange(index, field, value) {
 }
 
 export function addTrack() {
-  const { timelines } = this.state;
-
+  const timelines = [...this.state.timelines];
   timelines.push({
     options: {
       title: 'Untitled Track',
@@ -226,13 +215,16 @@ export function addTrack() {
   this.setState({ timelines: timelines });
 }
 
-export function deleteTrack(trackIndex) {
-  const { timelines } = this.state;
+export function deleteTrack(rowIndex) {
+  const { selectedSegment, timelines } = { ...this.state };
+  timelines.splice(rowIndex, 1);
+  if (selectedSegment.row === rowIndex) {
+    selectedSegment.row--;
+    selectedSegment.col = 0;
+  }
 
-  timelines.splice(trackIndex, 1);
-  this.setState({ timelines: timelines });
+  this.setState({ selectedSegment, timelines });
 }
-
 //#endregion
 
 //#region Modal toggle handler
@@ -245,7 +237,7 @@ export function toggleModal(kind) {
 
 //#region Json parsing
 export function exportCompositionJson() {
-  const { timelines } = this.state;
+  const timelines = this.state.timelines;
   const minimizedJson = [];
 
   timelines.forEach((timeline) => {
@@ -277,28 +269,29 @@ export function loadCompositionJson(json) {
 
   let id = 0;
   try {
-    for (let timelineIndex in parsedJson) {
-      for (let segmentIndex in parsedJson[timelineIndex].segments) {
-        let oldSegment = {...parsedJson[timelineIndex].segments[segmentIndex]};
+    for (let rowIndex in parsedJson) {
+      for (let colIndex in parsedJson[rowIndex].segments) {
+        let oldSegment = { ...parsedJson[rowIndex].segments[colIndex] };
         let segmentId = `t${id}`;
-        
-        parsedJson[timelineIndex].segments[segmentIndex] = {
+
+        parsedJson[rowIndex].segments[colIndex] = {
           title: {}, expression: {}, length: {}, volume: {}
         };
-        parsedJson[timelineIndex].segments[segmentIndex].id = segmentId;
-        trackDataChange(parsedJson, segmentId, "title", oldSegment.title);
-        trackDataChange(parsedJson, segmentId, "expression", oldSegment.expression);
-        trackDataChange(parsedJson, segmentId, "length", oldSegment.length);
-        trackDataChange(parsedJson, segmentId, "volume", oldSegment.volume);
+        parsedJson[rowIndex].segments[colIndex].id = segmentId;
+        this.trackDataChange(parsedJson, colIndex, rowIndex, "title", oldSegment.title);
+        this.trackDataChange(parsedJson, colIndex, rowIndex, "expression", oldSegment.expression);
+        this.trackDataChange(parsedJson, colIndex, rowIndex, "length", oldSegment.length);
+        this.trackDataChange(parsedJson, colIndex, rowIndex, "volume", oldSegment.volume);
         id++;
       }
     }
-  } catch (e){
+  } catch (e) {
     alert(e.message);
     return;
   }
 
-  this.setState({timelines: parsedJson}, this.toggleModal("load"));
 
+  this.toggleModal("load");
+  this.setState({ selectedSegment: { row: 0, col: 0 } });
 }
 ////#endregion

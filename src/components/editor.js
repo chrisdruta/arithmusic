@@ -9,7 +9,7 @@ import { ChevronUp } from 'mdi-material-ui';
 import EditorControls from './editor/editor-controls';
 import EditorPanel from './editor/editor-panel';
 import TrackTimeline from './editor/track-timeline';
-import TrackControls from './editor/track-controls';
+import TrackOptions from './editor/track-options';
 
 const styles = theme => ({
   root: {
@@ -46,25 +46,21 @@ class Editor extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, selectedSegment, timelines } = this.props;
     const trackTimelines = [];
-    let selectedSegmentData = null;
+    const selectedSegmentData = timelines[selectedSegment.row].segments[selectedSegment.col]
 
-    this.props.timelines.forEach((tl, index) => {
-      tl.segments.forEach((segment) => {
-        if (segment.id === this.props.selectedSegmentId) selectedSegmentData = segment
-      });
+    this.props.timelines.forEach((tl, rowIndex) => {
       trackTimelines.push(
-        <div key={index} className="EditorTimelineRow">
-          <TrackControls
-            options={tl.options} index={index}
+        <div key={rowIndex} className="EditorTimelineRow">
+          <TrackOptions
+            options={tl.options} rowIndex={rowIndex}
             onTrackOptionChange={this.props.onTrackOptionChange}
-            onDeleteTrack={this.props.onDeleteTrack}
-            
+            onDeleteTrack={this.props.onDeleteTrack}  
           />
           <TrackTimeline
-            segments={tl.segments} index={index}
-            selectedSegmentId={this.props.selectedSegmentId}
+            segments={tl.segments} rowIndex={rowIndex}
+            selectedSegment={selectedSegment}
             onSegmentSelection={this.props.onSegmentSelection}
             onSegmentRearrange={this.props.onSegmentRearrange}
             onAddSegment={this.props.onAddSegment}
@@ -100,6 +96,8 @@ class Editor extends Component {
                   volume={selectedSegmentData.volume}
                   onTrackDataChange={this.props.onTrackDataChange}
                   onDeleteSegment={this.props.onDeleteSegment}
+                  timelines={timelines}
+                  selectedSegment={selectedSegment}
                 />
               : <div className="EmptyEditorPanel"/>
               }
