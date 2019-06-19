@@ -23,15 +23,17 @@ export function getCompositionErrors() {
   });
 
   if (settings.length || editor.length) {
-    return { settings, editor };
+    this.setState({ compositionErrors: { settings, editor } });
+    return true;
   } else {
-    return null;
+    this.setState({ compositionErrors: null });
+    return false;
   }
 
 }
 
 export function settingsChange(field, value) {
-  const { settings } = this.state;
+  const settings = {...this.state.settings};
   let parsedVal;
   if (field !== 'aliasing') {
     parsedVal = parseInt(value);
@@ -83,7 +85,7 @@ export function settingsChange(field, value) {
     settings.aliasing = !settings.aliasing;
   }
 
-  this.setState({ settings });
+  this.setState({ settings }, () => this.getCompositionErrors());
 }
 
 export function trackDataChange(timelines, segmentCol, segmentRow, field, value) {
@@ -134,7 +136,7 @@ export function trackDataChange(timelines, segmentCol, segmentRow, field, value)
     }
   }
 
-  this.setState({ timelines });
+  this.setState({ timelines }, () => this.getCompositionErrors());
 }
 //#endregion
 
@@ -229,8 +231,13 @@ export function deleteTrack(rowIndex) {
 
 //#region Modal toggle handler
 export function toggleModal(kind) {
-  const { showingModals } = this.state;
-  showingModals[kind] = !showingModals[kind];
+  const showingModals = {...this.state.showingModals};
+  if (kind === "save" && this.state.compositionErrors) {
+    showingModals["alert"] = true;
+  } else {
+    showingModals[kind] = !showingModals[kind];
+  }
+
   this.setState({ showingModals });
 }
 //#endregion

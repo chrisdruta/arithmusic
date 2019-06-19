@@ -19,7 +19,7 @@ export default function SaveModal(props) {
           Copy the text below
         </Typography>
         <TextField
-          label="Output" multiline className={classes.textField} disabled
+          label="Output" multiline className={classes.textField}
           rows="7" value={props.currentComposition} margin="normal" variant="filled"
         />
         <br />

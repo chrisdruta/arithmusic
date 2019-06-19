@@ -1,5 +1,6 @@
 export default {
   selectedSegment: { row: 0, col: 0 },
+  compositionErrors: null,
   settings: {
     fs: { value: 44100, error: "" },
     volume: { value: 10, error: "" },

@@ -47,7 +47,6 @@ class App extends Component {
   }
 
   handlePlay = () => {
-
     // Check for errors before synthesizing
     const errors = this.getCompositionErrors();
     if (errors) {
@@ -123,7 +122,7 @@ class App extends Component {
           <SettingsModal open={this.state.showingModals.settings} settings={this.state.settings}
             toggleModal={this.toggleModal} onChange={this.settingsChange}
           />
-          <AlertModal open={this.state.showingModals.alert} errors={this.state.alertErrors}
+          <AlertModal open={this.state.showingModals.alert} errors={this.state.compositionErrors}
             toggleModal={this.toggleModal}
           />
         </div>

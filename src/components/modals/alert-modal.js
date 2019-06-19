@@ -5,7 +5,7 @@ import { Button, Divider, List, ListItem, ListItemText, Modal, Typography } from
 import { getModalStyle, useStyles } from '../modals';
 
 const errorKeyMap = {
-  fs: "Samling frequency",
+  fs: "Sampling frequency",
   volume: "Volume",
   multiplier: "Auto multiplier",
   expression: "Expression",
@@ -53,7 +53,7 @@ export default function AlertModal(props) {
         </Typography>
         <br />
         <Typography variant="subtitle1">
-          Please fix the following errors before trying to syntehsize the composition
+          Please fix the following errors and try again
         </Typography>
         <List style={{ width: "55%" }}> {listItems} </List>
         <br />
