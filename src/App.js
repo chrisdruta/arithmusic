@@ -75,6 +75,11 @@ class App extends Component {
     this.setState({ revision: this.state.revision + 1 });
   }
 
+  handleWasm = async () => {
+    const wasm = await import('synthesis');
+    wasm.greet("WebAssembly");
+  }
+
   render() {
     const { timelines } = this.state;
     return (
@@ -85,6 +90,7 @@ class App extends Component {
               Arithmusic
             </span>
             <div style={{ flexGrow: 1 }}></div>
+            <IconButton color="inherit" onClick={() => this.handleWasm()}><Play /></IconButton>
             <IconButton color="inherit" onClick={this.handlePlay}><Play /></IconButton>
             <IconButton color="inherit" onClick={this.handleStop}><Stop /></IconButton>
             <IconButton color="inherit" onClick={() => this.toggleModal("settings")}><Tune /></IconButton>
