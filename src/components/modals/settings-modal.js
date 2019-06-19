@@ -97,6 +97,7 @@ export default function SettingsModal(props) {
 
         <br />
         <div className="modalActions">
+          <Button variant="contained" style={{marginRight: 10}} onClick={() => props.resetSettings()}>Defaults</Button>
           <Button variant="contained" onClick={() => props.toggleModal("settings")}>Close</Button>
         </div>
       </div>

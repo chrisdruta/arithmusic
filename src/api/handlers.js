@@ -33,7 +33,7 @@ export function getCompositionErrors() {
 }
 
 export function settingsChange(field, value) {
-  const settings = {...this.state.settings};
+  const settings = { ...this.state.settings };
   let parsedVal;
   if (field !== 'aliasing') {
     parsedVal = parseInt(value);
@@ -231,7 +231,7 @@ export function deleteTrack(rowIndex) {
 
 //#region Modal toggle handler
 export function toggleModal(kind) {
-  const showingModals = {...this.state.showingModals};
+  const showingModals = { ...this.state.showingModals };
   if (kind === "save" && this.state.compositionErrors) {
     showingModals["alert"] = true;
   } else {
@@ -239,6 +239,18 @@ export function toggleModal(kind) {
   }
 
   this.setState({ showingModals });
+}
+
+export function resetSettings() {
+  this.setState({
+    settings: {
+      fs: { value: 44100, error: "" },
+      volume: { value: 10, error: "" },
+      multiplier: { value: 1, error: "" },
+      graphRange: { value: 4000, error: "" },
+      aliasing: false
+    }
+  }, () => this.getCompositionErrors());
 }
 //#endregion
 

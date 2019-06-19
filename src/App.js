@@ -7,7 +7,7 @@ import { Play, Stop, Tune } from 'mdi-material-ui';
 import { SynthesizeComposition } from './api/synthesize';
 import { settingsChange, trackDataChange, toggleModal, segmentSelection, segmentRearrange,
          addSegment, deleteSegment, trackOptionChange, addTrack, deleteTrack, getCompositionErrors,
-         exportCompositionJson, loadCompositionJson
+         exportCompositionJson, loadCompositionJson, resetSettings
 } from './api/handlers';
 
 import Graph from './components/graph';
@@ -35,6 +35,7 @@ class App extends Component {
     this.getCompositionErrors = getCompositionErrors.bind(this);
     this.exportCompositionJson = exportCompositionJson.bind(this);
     this.loadCompositionJson = loadCompositionJson.bind(this);
+    this.resetSettings = resetSettings.bind(this);
 
     let count = 0;
     for (let tl of this.state.timelines) {
@@ -120,7 +121,7 @@ class App extends Component {
             currentComposition={(this.exportCompositionJson())}
           />
           <SettingsModal open={this.state.showingModals.settings} settings={this.state.settings}
-            toggleModal={this.toggleModal} onChange={this.settingsChange}
+            toggleModal={this.toggleModal} onChange={this.settingsChange} resetSettings={this.resetSettings}
           />
           <AlertModal open={this.state.showingModals.alert} errors={this.state.compositionErrors}
             toggleModal={this.toggleModal}
