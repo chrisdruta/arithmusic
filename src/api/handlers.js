@@ -12,11 +12,11 @@ export function getCompositionErrors() {
 
   // Check editor
   const editor = [];
-  this.state.timelines.forEach((timeline) => {
-    timeline.segments.forEach((segment) => {
+  this.state.timelines.forEach((timeline, rowIndex) => {
+    timeline.segments.forEach((segment, colIndex) => {
       for (let [key, value] of Object.entries(segment)) {
         if (!!value.error) {
-          editor.push({ key: key, title: segment.title.value });
+          editor.push({ key: key, title: segment.title.value, row: rowIndex + 1, col: colIndex + 1});
         }
       }
     });

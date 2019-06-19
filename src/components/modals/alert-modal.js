@@ -34,7 +34,7 @@ export default function AlertModal(props) {
     props.errors.editor.forEach((err, index) => {
       listItems.push(
         <ListItem key={`e${index}`}>
-          <ListItemText primary={`${errorKeyMap[err.key]} for tab titled '${err.title}' in Editor`} />
+          <ListItemText primary={`${errorKeyMap[err.key]} for tab titled '${err.title}' in Timeline [row ${err.row}, column ${err.col}]`}/>
         </ListItem>
       );
       if (index !== props.errors.editor.length - 1) {
@@ -55,7 +55,7 @@ export default function AlertModal(props) {
         <Typography variant="subtitle1">
           Please fix the following errors and try again
         </Typography>
-        <List style={{ width: "55%" }}> {listItems} </List>
+        <List style={{ width: "80%" }}> {listItems} </List>
         <br />
         <div className="modalActions">
           <Button variant="contained" onClick={() => props.toggleModal("alert")}>Close</Button>
