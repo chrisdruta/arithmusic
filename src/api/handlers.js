@@ -150,7 +150,7 @@ export function segmentRearrange(rowIndex, sourceColIndex, destinationColIndex, 
   timelines[rowIndex].segments = segments;
   this.setState({ timelines });
 
-  if (sourceColIndex === selectedSegment.col) {
+  if (sourceColIndex === selectedSegment.col && rowIndex === selectedSegment.row) {
     selectedSegment.col = destinationColIndex;
     this.setState({ selectedSegment });
   }
