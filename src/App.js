@@ -4,7 +4,6 @@ import './App.css';
 import { AppBar, Toolbar, IconButton } from '@material-ui/core';
 import { Play, Stop, Tune } from 'mdi-material-ui';
 
-import { SynthesizeComposition } from './api/synthesize';
 import { settingsChange, trackDataChange, toggleModal, segmentSelection, segmentRearrange,
          addSegment, deleteSegment, trackOptionChange, addTrack, deleteTrack, getCompositionErrors,
          exportCompositionJson, loadCompositionJson, resetSettings
@@ -69,6 +68,7 @@ class App extends Component {
     });
 
     const rawBuffer = this.wasm.synthesize_composition(composition, settings);
+    //const rawBuffer = SynthesizeComposition(this.state.timelines, this.state.settings);
     const audioSourceBuffer = this.audioContext.createBuffer(1, rawBuffer.length, this.state.settings.fs.value);
     audioSourceBuffer.copyToChannel(rawBuffer, 0);
     const audioSource = this.audioContext.createBufferSource();

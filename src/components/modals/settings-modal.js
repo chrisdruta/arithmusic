@@ -80,7 +80,7 @@ export default function SettingsModal(props) {
             </Typography>
             <Typography>
               Version: 1.0.0<br />
-              Last updated: June 6, 2019<br />
+              Last updated: June 20, 2019<br />
               <Link href="https://github.com/chrisdruta/arithmusic" target="_blank">
                 github.com/chrisdruta/arithmusic
             </Link>
