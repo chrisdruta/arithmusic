@@ -7,6 +7,6 @@ export function greet(name: string): void;
 /**
 * @param {string} composition_json 
 * @param {string} settings_json 
-* @returns {void} 
+* @returns {Float32Array} 
 */
-export function test(composition_json: string, settings_json: string): void;
+export function synthesize_composition(composition_json: string, settings_json: string): Float32Array;

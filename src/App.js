@@ -52,14 +52,7 @@ class App extends Component {
   }
 
   handlePlay =  () => {
-    const settings = {
-      fs: this.state.settings.fs.value,
-      volume: this.state.settings.volume.value,
-      multiplier: this.state.settings.multiplier.value,
-      aliasing: this.state.settings.aliasing
-    }
-    
-    this.wasm.test(this.exportCompositionJson(), JSON.stringify(settings));
+
     // Check for errors before synthesizing
     const errors = this.getCompositionErrors();
     if (errors) {
@@ -67,7 +60,15 @@ class App extends Component {
       return;
     }
 
-    const rawBuffer = SynthesizeComposition(this.state.timelines, this.state.settings);
+    const composition = this.exportCompositionJson();
+    const settings = JSON.stringify({
+      fs: this.state.settings.fs.value,
+      volume: this.state.settings.volume.value,
+      multiplier: this.state.settings.multiplier.value,
+      aliasing: this.state.settings.aliasing
+    });
+
+    const rawBuffer = this.wasm.synthesize_composition(composition, settings);
     const audioSourceBuffer = this.audioContext.createBuffer(1, rawBuffer.length, this.state.settings.fs.value);
     audioSourceBuffer.copyToChannel(rawBuffer, 0);
     const audioSource = this.audioContext.createBufferSource();

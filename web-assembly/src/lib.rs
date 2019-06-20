@@ -1,16 +1,14 @@
 extern crate wasm_bindgen;
-use wasm_bindgen::prelude::*;
-
+extern crate meval;
 mod json_format;
-use crate::json_format::*;
 
+use wasm_bindgen::prelude::*;
+use meval::Expr;
 use std::f64::consts::PI;
+use crate::json_format::*;
 
 const TWO_PI: f64 = 2.0_f64 * PI;
 const MS_FACTOR: f32 = 1000.0;
-
-extern crate meval;
-use meval::Expr;
 
 #[wasm_bindgen]
 extern "C" {
@@ -23,23 +21,23 @@ pub fn greet(name: &str) {
 }
 
 #[wasm_bindgen]
-pub fn test(composition_json: String, settings_json: String) {
+pub fn synthesize_composition(composition_json: String, settings_json: String) -> Vec<f32> {
+
+    // Read arguments
     let composition: Vec<Timeline> = serde_json::from_str(&composition_json).expect("JSON was not well-formatted");
     let settings: Settings= serde_json::from_str(&settings_json).expect("JSON was not well-formatted");
-    //alert(&"Hi in loop".to_string());
 
-    let fs = settings.fs as f32;
-    let masterVolume = settings.volume as f32;
-    let multiplier = settings.multiplier as f32;
+    let fs = settings.fs;
+    let master_volume = settings.volume;
+    let multiplier = settings.multiplier;
     let aliasing = settings.aliasing;
 
-    let mut max_timeline_length_ms: usize = 0;
-    let mut temp_track_length_ms: usize;
-
+    // Finding buffer size
+    let mut max_timeline_length_ms: f32 = 0.0;
     for timeline in &composition {
-        temp_track_length_ms = 0;
+        let mut temp_track_length_ms: f32 = 0.0;
         for segment in &timeline.segments {
-            temp_track_length_ms += segment.length as usize;
+            temp_track_length_ms += segment.length;
         }
 
         if temp_track_length_ms > max_timeline_length_ms {
@@ -47,22 +45,25 @@ pub fn test(composition_json: String, settings_json: String) {
         }
     }
 
-    let buffer_size: usize = (max_timeline_length_ms as f32 / MS_FACTOR * fs) as usize;
+    // Synthesize
+    let buffer_size: usize = (max_timeline_length_ms / MS_FACTOR * fs) as usize;
     let mut raw_buffer: Vec<f32> = vec![0.0; buffer_size + 1];
     let mut phase_buffer: Vec<f64> = vec![0.0; buffer_size + 1];
-    let mut n;
-
-    let mut expression: Expr;
-    let mut func;
 
     for timeline in &composition {
-        n = 1;
+        let mut n = 1;
         for segment in &timeline.segments {
-            expression = segment.expression.parse().unwrap();
-            func = expression.bind("x").unwrap();
+            let expression: Expr = segment.expression.parse().unwrap();
+            let func = expression.bind("x").unwrap();
 
             for i in 0..(segment.length / MS_FACTOR * fs) as usize {
-                phase_buffer[n] = phase_buffer[n - 1] + TWO_PI * func((i as f32 * multiplier / fs) as f64) / fs as f64;
+
+                let mut tone: f64 = func((i as f32 * multiplier / fs) as f64);
+                if !aliasing && (tone > (fs / 2.0_f32) as f64 || tone < 0.0_f64) {
+                    tone = 0.0;
+                }
+
+                phase_buffer[n] = phase_buffer[n - 1] + TWO_PI * tone / fs as f64;
 
                 if phase_buffer[n] > TWO_PI {
                     phase_buffer[n] -= TWO_PI;
@@ -70,11 +71,19 @@ pub fn test(composition_json: String, settings_json: String) {
                     phase_buffer[n] += TWO_PI;
                 }
 
-                raw_buffer[n] += phase_buffer[n].sin() as f32;
+                let volume_multiplier:f32 = master_volume * segment.volume / 10000.0_f32;
+
+                //get_wave_func(&timeline.options.wave);
+
+                raw_buffer[n] += volume_multiplier * phase_buffer[n].sin() as f32;
                 n += 1;
             }
         }
     }
     
-    alert(&format!("{:?}", raw_buffer));
+    raw_buffer
+}
+
+fn get_wave_func(wave_type: String) -> String {
+    wave_type
 }

@@ -83,17 +83,53 @@ export function greet(name) {
 
 }
 
+let cachegetFloat32Memory = null;
+function getFloat32Memory() {
+    if (cachegetFloat32Memory === null || cachegetFloat32Memory.buffer !== wasm.memory.buffer) {
+        cachegetFloat32Memory = new Float32Array(wasm.memory.buffer);
+    }
+    return cachegetFloat32Memory;
+}
+
+function getArrayF32FromWasm(ptr, len) {
+    return getFloat32Memory().subarray(ptr / 4, ptr / 4 + len);
+}
+
+let cachedGlobalArgumentPtr = null;
+function globalArgumentPtr() {
+    if (cachedGlobalArgumentPtr === null) {
+        cachedGlobalArgumentPtr = wasm.__wbindgen_global_argument_ptr();
+    }
+    return cachedGlobalArgumentPtr;
+}
+
+let cachegetUint32Memory = null;
+function getUint32Memory() {
+    if (cachegetUint32Memory === null || cachegetUint32Memory.buffer !== wasm.memory.buffer) {
+        cachegetUint32Memory = new Uint32Array(wasm.memory.buffer);
+    }
+    return cachegetUint32Memory;
+}
 /**
 * @param {string} composition_json
 * @param {string} settings_json
-* @returns {void}
+* @returns {Float32Array}
 */
-export function test(composition_json, settings_json) {
+export function synthesize_composition(composition_json, settings_json) {
     const ptr0 = passStringToWasm(composition_json);
     const len0 = WASM_VECTOR_LEN;
     const ptr1 = passStringToWasm(settings_json);
     const len1 = WASM_VECTOR_LEN;
-    return wasm.test(ptr0, len0, ptr1, len1);
+    const retptr = globalArgumentPtr();
+    wasm.synthesize_composition(retptr, ptr0, len0, ptr1, len1);
+    const mem = getUint32Memory();
+    const rustptr = mem[retptr / 4];
+    const rustlen = mem[retptr / 4 + 1];
+
+    const realRet = getArrayF32FromWasm(rustptr, rustlen).slice();
+    wasm.__wbindgen_free(rustptr, rustlen * 4);
+    return realRet;
+
 }
 
 let cachedTextDecoder = new TextDecoder('utf-8');

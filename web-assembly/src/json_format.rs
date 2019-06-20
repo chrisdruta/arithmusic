@@ -24,7 +24,7 @@ pub struct Timeline {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
-    pub fs: usize,
+    pub fs: f32,
     pub volume: f32,
     pub multiplier: f32,
     pub aliasing: bool
