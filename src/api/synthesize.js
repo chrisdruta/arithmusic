@@ -1,5 +1,5 @@
 import { map, range } from 'lodash';
-import { parse, simplify } from 'mathjs';
+import { simplify } from 'mathjs';
 
 const wavewaves = {
   sine: (x) => (Math.sin(x)),
@@ -22,7 +22,7 @@ const SampleTrackGraph = (segments, multiplier) => {
     }
 
     const sampleInput = range(0, lengthMs / 1000, 1 / 1000);
-    const func = (!segment.expression.error ? simplify(parse(segment.expression.value)) : parse("0")).compile();
+    const func = (!segment.expression.error ? simplify(segment.expression.value) : simplify("0")).compile();
     const sampleOutput = map(sampleInput, (x) => func.evaluate({ x: multiplier * x }));
     const shiftedSampleInput = map(sampleInput, (x) => (x + offsetMs / 1000));
 
@@ -60,7 +60,7 @@ const SynthesizeComposition = (timelines, settings) => {
     const muteMultiplier = timeline.options.mute ? 0 : 1;
 
     timeline.segments.forEach((segment) => {
-      const func = simplify(parse(segment.expression.value));
+      const func = simplify(segment.expression.value);
       for (let i = 0; i <= segment.length.value / 1000; i += 1/fs.value) {
         let tone = func.evaluate({x: multiplier.value * i});
 

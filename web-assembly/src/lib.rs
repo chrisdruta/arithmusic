@@ -58,7 +58,6 @@ pub fn test(composition_json: String, settings_json: String) {
     for timeline in &composition {
         n = 1;
         for segment in &timeline.segments {
-
             expression = segment.expression.parse().unwrap();
             func = expression.bind("x").unwrap();
 

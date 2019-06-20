@@ -103,7 +103,7 @@ export function trackDataChange(timelines, segmentCol, segmentRow, field, value)
 
   } else if (field === "expression") {
     try {
-      const parsedMath = simplify(parse(value));
+      const parsedMath = simplify(value);
       parsedMath.evaluate({ x: 1 });
       timelines[segmentRow].segments[segmentCol].expression.error = "";
     } catch (e) {
@@ -262,10 +262,21 @@ export function exportCompositionJson() {
   timelines.forEach((timeline) => {
     const segments = [];
     timeline.segments.forEach((segment) => {
-      console.log(parse(segment.expression.value).toString())
+      // Remove explicit multiplication for rust compatibility
+      let expr = "";
+      try {
+        expr = parse(segment.expression.value);
+        expr.traverse((node) => {
+          if (node.type === 'OperatorNode' && node.op === '*' && node.implicit) {
+            node.implicit = !node.implicit;
+            return node;
+          }
+        });
+      } catch { /* Doesnt matter because save is disabled anyways */ }
+
       segments.push({
         title: segment.title.value,
-        expression: segment.expression.value,
+        expression: expr.toString(),
         length: segment.length.value,
         volume: segment.volume.value
       });
