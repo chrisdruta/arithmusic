@@ -83,6 +83,19 @@ export function greet(name) {
 
 }
 
+/**
+* @param {string} composition_json
+* @param {string} settings_json
+* @returns {void}
+*/
+export function test(composition_json, settings_json) {
+    const ptr0 = passStringToWasm(composition_json);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passStringToWasm(settings_json);
+    const len1 = WASM_VECTOR_LEN;
+    return wasm.test(ptr0, len0, ptr1, len1);
+}
+
 let cachedTextDecoder = new TextDecoder('utf-8');
 
 function getStringFromWasm(ptr, len) {

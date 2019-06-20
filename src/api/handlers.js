@@ -262,6 +262,7 @@ export function exportCompositionJson() {
   timelines.forEach((timeline) => {
     const segments = [];
     timeline.segments.forEach((segment) => {
+      console.log(parse(segment.expression.value).toString())
       segments.push({
         title: segment.title.value,
         expression: segment.expression.value,

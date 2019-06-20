@@ -67,7 +67,6 @@ const SynthesizeComposition = (timelines, settings) => {
         if (!aliasing && (tone > fs.value/2 || tone < 0)) tone = 0;
         let volumeMultiplier = segment.volume.value * volume.value / 10000 * muteMultiplier; // TODO: Exponentially decrease gain near end
 
-
         phase[bufferIndex] = phase[bufferIndex - 1] + 2 * Math.PI * tone/fs.value;
         if (phase[bufferIndex] > 2 * Math.PI)
           phase[bufferIndex] -= 2 * Math.PI;

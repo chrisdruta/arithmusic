@@ -51,8 +51,15 @@ class App extends Component {
     this.wasm = await import('synthesis');
   }
 
-  handlePlay = () => {
-    this.wasm.greet("Hello there general kenobi");
+  handlePlay = async () => {
+    const settings = {
+      fs: this.state.settings.fs.value,
+      volume: this.state.settings.volume.value,
+      multiplier: this.state.settings.multiplier.value,
+      aliasing: this.state.settings.aliasing
+    }
+    
+    await this.wasm.test(this.exportCompositionJson(), JSON.stringify(settings));
     // Check for errors before synthesizing
     const errors = this.getCompositionErrors();
     if (errors) {
