@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/static/css/main.ac0e6078.chunk.css",
-    "main.js": "/static/js/main.66619538.chunk.js",
-    "main.js.map": "/static/js/main.66619538.chunk.js.map",
-    "runtime~main.js": "/static/js/runtime~main.8186280b.js",
-    "runtime~main.js.map": "/static/js/runtime~main.8186280b.js.map",
-    "static/js/2.7e83e3c7.chunk.js": "/static/js/2.7e83e3c7.chunk.js",
-    "static/js/2.7e83e3c7.chunk.js.map": "/static/js/2.7e83e3c7.chunk.js.map",
-    "static/js/3.74e6e6a3.chunk.js": "/static/js/3.74e6e6a3.chunk.js",
-    "f91c20199475b40e32ac.module.wasm": "/f91c20199475b40e32ac.module.wasm",
-    "static/js/3.74e6e6a3.chunk.js.map": "/static/js/3.74e6e6a3.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.c7edff2e976be79268f5b753f53863b4.js": "/precache-manifest.c7edff2e976be79268f5b753f53863b4.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/main.ac0e6078.chunk.css.map": "/static/css/main.ac0e6078.chunk.css.map"
+    "main.css": "/arithmusic/static/css/main.ac0e6078.chunk.css",
+    "main.js": "/arithmusic/static/js/main.159cc30a.chunk.js",
+    "main.js.map": "/arithmusic/static/js/main.159cc30a.chunk.js.map",
+    "runtime~main.js": "/arithmusic/static/js/runtime~main.b8efb3a7.js",
+    "runtime~main.js.map": "/arithmusic/static/js/runtime~main.b8efb3a7.js.map",
+    "static/js/2.7e83e3c7.chunk.js": "/arithmusic/static/js/2.7e83e3c7.chunk.js",
+    "static/js/2.7e83e3c7.chunk.js.map": "/arithmusic/static/js/2.7e83e3c7.chunk.js.map",
+    "static/js/3.74e6e6a3.chunk.js": "/arithmusic/static/js/3.74e6e6a3.chunk.js",
+    "f91c20199475b40e32ac.module.wasm": "/arithmusic/f91c20199475b40e32ac.module.wasm",
+    "static/js/3.74e6e6a3.chunk.js.map": "/arithmusic/static/js/3.74e6e6a3.chunk.js.map",
+    "index.html": "/arithmusic/index.html",
+    "precache-manifest.e1f45d3f86b7a83fb38d6f914301319d.js": "/arithmusic/precache-manifest.e1f45d3f86b7a83fb38d6f914301319d.js",
+    "service-worker.js": "/arithmusic/service-worker.js",
+    "static/css/main.ac0e6078.chunk.css.map": "/arithmusic/static/css/main.ac0e6078.chunk.css.map"
   }
 }
