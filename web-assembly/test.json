@@ -1,0 +1,23 @@
+[
+    {
+        "options": {
+            "title": "Untitled Track 1",
+            "wave": "sine",
+            "mute": false
+        },
+        "segments": [
+            {
+                "title": "Tab 1",
+                "expression": "200sin(20x) + 500",
+                "length": 1000,
+                "volume": 100
+            },
+            {
+                "title": "Tab 2",
+                "expression": "e^(8x) + 700",
+                "length": 1000,
+                "volume": 100
+            }
+        ]
+    }
+]

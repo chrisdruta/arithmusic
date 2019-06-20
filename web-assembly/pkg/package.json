@@ -1,0 +1,15 @@
+{
+  "name": "synthesis",
+  "collaborators": [
+    "chris <chris.aturd@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "synthesis_bg.wasm",
+    "synthesis.js",
+    "synthesis.d.ts"
+  ],
+  "module": "synthesis.js",
+  "types": "synthesis.d.ts",
+  "sideEffects": "false"
+}
