@@ -1,26 +1,16 @@
 extern crate wasm_bindgen;
 extern crate meval;
-mod json_format;
+mod json_structs;
 
 use wasm_bindgen::prelude::*;
 use meval::Expr;
 use std::f64::consts::PI;
-use crate::json_format::*;
+use crate::json_structs::*;
 
 const TWO_PI: f64 = 2.0_f64 * PI;
 const TWO_OVER_PI: f64 = 2.0_f64 / PI;
 const PI_OVER_TWO: f64 = PI / 2.0_f64;
 const MS_FACTOR: f32 = 1000.0;
-
-#[wasm_bindgen]
-extern "C" {
-    pub fn alert(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn greet(name: &str) {
-    alert(&format!("Hello, {}!", name));
-}
 
 #[wasm_bindgen]
 pub fn synthesize_composition(composition_json: String, settings_json: String) -> Vec<f32> {
