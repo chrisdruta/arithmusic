@@ -26,7 +26,7 @@ const styles = theme => ({
   },
   details: {
     width: "100%",
-    backgroundColor: "black",
+    backgroundColor: "#af4448",
     padding: 0
   },
   expanded: {
@@ -79,15 +79,18 @@ class Editor extends Component {
         <ExpansionPanelSummary expandIcon={<ChevronUp />}>
           <Typography className={classes.heading}>Timeline Editor</Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails classes={{root: classes.details}}>
-          <div className="Editor">
+
+        <ExpansionPanelDetails classes={{root: classes.details}} className="Editor">
+          
             <EditorControls
               onAddTrack={this.props.onAddTrack}
               toggleModal={this.props.toggleModal}
             />
+
             <div className="EditorTimelineContainer">
               {trackTimelines}
             </div>
+            
             { selectedSegmentData
               ? <EditorPanel
                   title={selectedSegmentData.title}
@@ -101,7 +104,7 @@ class Editor extends Component {
                 />
               : <div className="EmptyEditorPanel"/>
               }
-          </div>
+          
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
