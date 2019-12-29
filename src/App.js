@@ -4,9 +4,10 @@ import './App.css';
 import { AppBar, Toolbar, IconButton } from '@material-ui/core';
 import { Play, Stop, Tune } from 'mdi-material-ui';
 
-import { settingsChange, trackDataChange, toggleModal, segmentSelection, segmentRearrange,
-         addSegment, deleteSegment, trackOptionChange, addTrack, deleteTrack, getCompositionErrors,
-         exportCompositionJson, loadCompositionJson, resetSettings
+import {
+  settingsChange, trackDataChange, toggleModal, segmentSelection, segmentRearrange,
+  addSegment, deleteSegment, trackOptionChange, addTrack, deleteTrack, getCompositionErrors,
+  exportCompositionJson, loadCompositionJson, resetSettings
 } from './api/handlers';
 
 import Graph from './components/graph';
@@ -46,11 +47,11 @@ class App extends Component {
     this.audioSources = [];
   }
 
-  async componentDidMount () {
+  async componentDidMount() {
     this.wasm = await import('synthesis');
   }
 
-  handlePlay =  () => {
+  handlePlay = () => {
 
     // Check for errors before synthesizing
     const errors = this.getCompositionErrors();
@@ -92,18 +93,18 @@ class App extends Component {
     const { timelines } = this.state;
     return (
       <div className="App">
-        <AppBar position="static">
-          <Toolbar className="AppBar">
-            <span className="title">
-              Arithmusic
-            </span>
-            <div style={{ flexGrow: 1 }}></div>
-            <IconButton color="inherit" onClick={this.handlePlay}><Play /></IconButton>
-            <IconButton color="inherit" onClick={this.handleStop}><Stop /></IconButton>
-            <IconButton color="inherit" onClick={() => this.toggleModal("settings")}><Tune /></IconButton>
-          </Toolbar>
-        </AppBar>
-        <div className="AppContainer">
+        
+          <AppBar position="static">
+            <Toolbar className="AppBar">
+              <span className="title">
+                Arithmusic
+              </span>
+              <div style={{ flexGrow: 1 }}></div>
+              <IconButton color="inherit" onClick={this.handlePlay}><Play /></IconButton>
+              <IconButton color="inherit" onClick={this.handleStop}><Stop /></IconButton>
+              <IconButton color="inherit" onClick={() => this.toggleModal("settings")}><Tune /></IconButton>
+            </Toolbar>
+          </AppBar>
           <Graph
             revision={this.state.revision} multiplier={this.state.settings.multiplier.value}
             upperRange={this.state.settings.graphRange.value}
@@ -139,7 +140,7 @@ class App extends Component {
           <AlertModal open={this.state.showingModals.alert} errors={this.state.compositionErrors}
             toggleModal={this.toggleModal}
           />
-        </div>
+        
       </div>
     );
   }

@@ -25,7 +25,7 @@ const styles = theme => ({
     fontWeight: 600
   },
   details: {
-    wdith: "100%",
+    width: "100%",
     backgroundColor: "black",
     padding: 0
   },
@@ -42,7 +42,7 @@ class Editor extends Component {
   }
 
   animate = () => {
-    this.timer = setInterval(this.props.animateGraph, 16);
+    this.timer = setInterval(this.props.animateGraph, 1/60 * 1000);
   }
 
   render() {

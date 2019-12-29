@@ -19,13 +19,6 @@
   background-color: #EE6E73
 }
 
-.AppContainer {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
 .Graph {
   width: 100%;
   flex: 1;
