@@ -44,9 +44,7 @@ export default function AlertModal(props) {
   }
 
   return (
-    <Modal
-      open={props.open}
-    >
+    <Modal open={props.open} onBackdropClick={() => props.toggleModal("alert")}>
       <div style={modalStyle} className={classes.paper}>
         <Typography variant="h5">
           Composition Errors

@@ -26,7 +26,7 @@ export default function LoadModal(props) {
   const { getRootProps, getInputProps } = useDropzone({ onDrop, accept: ".json", multiple: false });
 
   return (
-    <Modal open={props.open}>
+    <Modal open={props.open} onBackdropClick={() => props.toggleModal("load")}>
       <div style={modalStyle} className={classes.paper}>
         <Typography variant="h5">
           Load Composition

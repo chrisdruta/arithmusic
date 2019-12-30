@@ -24,7 +24,7 @@ export default function SettingsModal(props) {
   const classes = useStyles();
   const { fs, volume, multiplier, graphRange, aliasing } = props.settings;
   return (
-    <Modal open={props.open}>
+    <Modal open={props.open} onBackdropClick={() => props.toggleModal("settings")}>
       <div style={modalStyle} className={classes.paper}>
         <div style={{ display: "flex", flexDirection: "row" }}>
           <div className="settingsColumn">
