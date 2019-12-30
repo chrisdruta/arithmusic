@@ -22,7 +22,7 @@ const style = {
 export default function SettingsModal(props) {
   const [modalStyle] = React.useState(getModalStyle);
   const classes = useStyles();
-  const { fs, volume, multiplier, graphRange, aliasing, spectrogram } = props.settings;
+  const { fs, volume, multiplier, graphRange, aliasing, spectrogram, darkmode } = props.settings;
   return (
     <Modal open={props.open} onBackdropClick={() => props.toggleModal("settings")}>
       <div style={modalStyle} className={classes.paper}>
@@ -77,6 +77,12 @@ export default function SettingsModal(props) {
               style={{ alignSelf: "flex-start", marginLeft: 0, marginTop: 15 }}
               control={<Switch checked={spectrogram} onChange={() => props.onChange('spectrogram')}/>}
               label="Spectrogram View"
+              labelPlacement="start"
+            />
+            <FormControlLabel
+              style={{ alignSelf: "flex-start", marginLeft: 0, marginTop: 15 }}
+              control={<Switch checked={darkmode} onChange={() => props.onChange('darkmode')}/>}
+              label="Dark Mode"
               labelPlacement="start"
             />
           </div>

@@ -7,7 +7,8 @@ export default {
     multiplier: { value: 1, error: "" },
     graphRange: { value: 4000, error: "" },
     aliasing: false,
-    spectrogram: true
+    spectrogram: true,
+    darkmode: false
   },
   showingModals: {
     load: false,

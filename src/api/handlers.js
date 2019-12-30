@@ -35,7 +35,7 @@ export function getCompositionErrors() {
 export function settingsChange(field, value) {
   const settings = { ...this.state.settings };
   let parsedVal;
-  if (field !== 'aliasing' && field !== 'spectrogram') {
+  if (field !== 'aliasing' && field !== 'spectrogram' && field !== "darkmode") {
     parsedVal = parseInt(value);
     settings[field].value = value;
   }
@@ -85,6 +85,8 @@ export function settingsChange(field, value) {
     settings.aliasing = !settings.aliasing;
   } else if (field === 'spectrogram') {
     settings.spectrogram = !settings.spectrogram;
+  } else if (field === 'darkmode') {
+    settings.darkmode = !settings.darkmode;
   }
 
   this.setState({ settings }, () => this.getCompositionErrors());
