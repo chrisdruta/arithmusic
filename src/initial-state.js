@@ -6,7 +6,8 @@ export default {
     volume: { value: 10, error: "" },
     multiplier: { value: 1, error: "" },
     graphRange: { value: 4000, error: "" },
-    aliasing: false
+    aliasing: false,
+    spectrogram: true
   },
   showingModals: {
     load: false,

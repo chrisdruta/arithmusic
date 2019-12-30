@@ -35,7 +35,7 @@ export function getCompositionErrors() {
 export function settingsChange(field, value) {
   const settings = { ...this.state.settings };
   let parsedVal;
-  if (field !== 'aliasing') {
+  if (field !== 'aliasing' && field !== 'spectrogram') {
     parsedVal = parseInt(value);
     settings[field].value = value;
   }
@@ -83,6 +83,8 @@ export function settingsChange(field, value) {
 
   } else if (field === 'aliasing') {
     settings.aliasing = !settings.aliasing;
+  } else if (field === 'spectrogram') {
+    settings.spectrogram = !settings.spectrogram;
   }
 
   this.setState({ settings }, () => this.getCompositionErrors());
@@ -292,7 +294,17 @@ export function exportCompositionJson() {
 }
 
 export function loadCompositionJson(json) {
-  const parsedJson = JSON.parse(json);
+  let parsedJson;
+  try {
+    parsedJson = JSON.parse(json);
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      console.log("Unexpected format");
+    } else {
+      console.log(e.message);
+    }
+  }
+  
   if (!Array.isArray(parsedJson)) {
     // Make more robust
     return "Unexpected format";

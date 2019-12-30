@@ -22,7 +22,7 @@ const style = {
 export default function SettingsModal(props) {
   const [modalStyle] = React.useState(getModalStyle);
   const classes = useStyles();
-  const { fs, volume, multiplier, graphRange, aliasing } = props.settings;
+  const { fs, volume, multiplier, graphRange, aliasing, spectrogram } = props.settings;
   return (
     <Modal open={props.open} onBackdropClick={() => props.toggleModal("settings")}>
       <div style={modalStyle} className={classes.paper}>
@@ -71,6 +71,12 @@ export default function SettingsModal(props) {
               style={{ alignSelf: "flex-start", marginLeft: 0, marginTop: 15 }}
               control={<Switch checked={aliasing} onChange={() => props.onChange('aliasing')}/>}
               label="Enable Aliasing"
+              labelPlacement="start"
+            />
+            <FormControlLabel
+              style={{ alignSelf: "flex-start", marginLeft: 0, marginTop: 15 }}
+              control={<Switch checked={spectrogram} onChange={() => props.onChange('spectrogram')}/>}
+              label="Spectrogram View"
               labelPlacement="start"
             />
           </div>

@@ -1,30 +1,27 @@
 import React, { Component } from 'react';
 
-import { SampleTrackGraph } from '../api/synthesize';
-
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from "./custom-plotly";
 const Plot = createPlotlyComponent(Plotly);
 
-class Graph extends Component {
+class Spectrogram extends Component {
 
   render() {
-    return (
-      <Plot
+    return (<Plot
         className="Graph"
         useResizeHandler
         config={{
           displayModeBar: false
         }}
-        data={SampleTrackGraph(this.props.data, this.props.multiplier)}
+        data={[{
+            z: [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+            type: "heatmap"
+        }]}
         layout={{
-          showlegend: false,
+          showlegend: true,
           autosize: true,
           xaxis: { title: "Time (s)" },
-          yaxis: {
-            title: "Frequency (Hz)<br />&nbsp;",
-            range: [0, this.props.upperRange]
-          },
+          yaxis: { title: "Frequency (Hz)<br />&nbsp;" },
           margin: {
             t: 40,
             l: 85,
@@ -33,10 +30,8 @@ class Graph extends Component {
             pad: 5
           }
         }}
-      />
-    );
+      />);
   }
-
 }
 
-export default Graph;
+export default Spectrogram;

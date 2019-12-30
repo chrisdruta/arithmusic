@@ -14,6 +14,7 @@ import Graph from './components/graph';
 import Editor from './components/editor';
 import { SaveModal, LoadModal, SettingsModal, AlertModal } from './components/modals';
 import initialState from './initial-state';
+import Spectrogram from './components/spectrogram';
 
 class App extends Component {
 
@@ -90,7 +91,7 @@ class App extends Component {
   }
 
   render() {
-    const { timelines } = this.state;
+    const { timelines, settings } = this.state;
     return (
       <div className="App">
         
@@ -105,13 +106,19 @@ class App extends Component {
               <IconButton color="inherit" onClick={() => this.toggleModal("settings")}><Tune /></IconButton>
             </Toolbar>
           </AppBar>
-          <Graph
-            revision={this.state.revision} multiplier={this.state.settings.multiplier.value}
+          
+          {!settings.spectrogram ? 
+          <Graph 
+            multiplier={this.state.settings.multiplier.value}
             upperRange={this.state.settings.graphRange.value}
             data={this.state.timelines[this.state.selectedSegment.row]
               ? this.state.timelines[this.state.selectedSegment.row].segments : null
             }
+          /> :
+          <Spectrogram
+            
           />
+          }
           <Editor
             animateGraph={this.handleAnimateGraph}
             timelines={timelines}
