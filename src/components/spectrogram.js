@@ -7,6 +7,8 @@ const Plot = createPlotlyComponent(Plotly);
 class Spectrogram extends Component {
 
   render() {
+    this.props.generateSpectrogram();
+
     return (<Plot
         className="Graph"
         useResizeHandler
@@ -14,6 +16,8 @@ class Spectrogram extends Component {
           displayModeBar: false
         }}
         data={[{
+            x: this.props.getTx(),
+            y: this.props.getFx(),
             z: [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
             type: "heatmap"
         }]}

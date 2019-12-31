@@ -1,5 +1,6 @@
 extern crate wasm_bindgen;
 extern crate meval;
+extern crate rustfft;
 mod json_structs;
 
 use wasm_bindgen::prelude::*;
@@ -7,10 +8,61 @@ use meval::Expr;
 use std::f64::consts::PI;
 use crate::json_structs::*;
 
+use std::mem;
+use std::slice;
+use std::os::raw::c_void;
+
 const TWO_PI: f64 = 2.0_f64 * PI;
 const TWO_OVER_PI: f64 = 2.0_f64 / PI;
 const PI_OVER_TWO: f64 = PI / 2.0_f64;
 const MS_FACTOR: f32 = 1000.0;
+
+#[wasm_bindgen]
+pub fn alloc_fx(size: usize) -> *mut c_void {
+    let mut buf = Vec::with_capacity(size);
+    let ptr = buf.as_mut_ptr();
+
+    mem::forget(buf);
+    return ptr as *mut c_void;
+}
+
+#[wasm_bindgen]
+pub fn alloc_tx(size: usize) -> *mut c_void {
+    let mut buf = Vec::with_capacity(size);
+    let ptr = buf.as_mut_ptr();
+
+    mem::forget(buf);
+    return ptr as *mut c_void;
+}
+
+#[wasm_bindgen]
+pub fn alloc_flat_spec(size: usize) -> *mut c_void {
+    let mut buf = Vec::with_capacity(size);
+    let ptr = buf.as_mut_ptr();
+
+    mem::forget(buf);
+    return ptr as *mut c_void;
+}
+
+#[wasm_bindgen]
+pub fn dealloc(ptr: *mut c_void, cap: usize) {
+    unsafe {
+        let _buf = Vec::from_raw_parts(ptr, 0, cap);
+    }
+}
+
+fn get_wave_func(wave_type: String) -> impl Fn(f64) -> f32 {
+    let mut func: fn(f64) -> f32 = |x| (x as f32);
+
+    if wave_type == "sine".to_string() {
+        func = |x| x.sin() as f32;
+    } else if wave_type == "triangle".to_string() {
+        func = |x| (TWO_OVER_PI * x.sin().asin()) as f32;
+    } else if wave_type == "saw".to_string() {
+        func = |x| (0.5_f64/PI * (x/2.0_f64 + PI_OVER_TWO).tan().atan()) as f32
+    }
+    func
+}
 
 #[wasm_bindgen]
 pub fn synthesize_composition(composition_json: String, settings_json: String) -> Vec<f32> {
@@ -90,15 +142,6 @@ pub fn synthesize_composition(composition_json: String, settings_json: String) -
     raw_buffer
 }
 
-fn get_wave_func(wave_type: String) -> impl Fn(f64) -> f32 {
-    let mut func: fn(f64) -> f32 = |x| (x as f32);
-
-    if wave_type == "sine".to_string() {
-        func = |x| x.sin() as f32;
-    } else if wave_type == "triangle".to_string() {
-        func = |x| (TWO_OVER_PI * x.sin().asin()) as f32;
-    } else if wave_type == "saw".to_string() {
-        func = |x| (0.5_f64/PI * (x/2.0_f64 + PI_OVER_TWO).tan().atan()) as f32
-    }
-    func
+#[wasm_bindgen]
+pub fn synthesize_spectrogram(composition_json: String, settings_json: String) {
 }

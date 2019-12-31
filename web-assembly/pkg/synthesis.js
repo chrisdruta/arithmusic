@@ -1,5 +1,22 @@
 import * as wasm from './synthesis_bg';
 
+/**
+* @param {number} size
+* @returns {number}
+*/
+export function alloc_flat_spec(size) {
+    return wasm.alloc_flat_spec(size);
+}
+
+/**
+* @param {number} ptr
+* @param {number} cap
+* @returns {void}
+*/
+export function dealloc(ptr, cap) {
+    return wasm.dealloc(ptr, cap);
+}
+
 let WASM_VECTOR_LEN = 0;
 
 let cachedTextEncoder = new TextEncoder('utf-8');
@@ -66,22 +83,6 @@ if (typeof cachedTextEncoder.encodeInto === 'function') {
         return ptr;
     };
 }
-/**
-* @param {string} name
-* @returns {void}
-*/
-export function greet(name) {
-    const ptr0 = passStringToWasm(name);
-    const len0 = WASM_VECTOR_LEN;
-    try {
-        return wasm.greet(ptr0, len0);
-
-    } finally {
-        wasm.__wbindgen_free(ptr0, len0 * 1);
-
-    }
-
-}
 
 let cachegetFloat32Memory = null;
 function getFloat32Memory() {
@@ -132,14 +133,32 @@ export function synthesize_composition(composition_json, settings_json) {
 
 }
 
-let cachedTextDecoder = new TextDecoder('utf-8');
-
-function getStringFromWasm(ptr, len) {
-    return cachedTextDecoder.decode(getUint8Memory().subarray(ptr, ptr + len));
+/**
+* @param {string} composition_json
+* @param {string} settings_json
+* @returns {void}
+*/
+export function synthesize_spectrogram(composition_json, settings_json) {
+    const ptr0 = passStringToWasm(composition_json);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passStringToWasm(settings_json);
+    const len1 = WASM_VECTOR_LEN;
+    return wasm.synthesize_spectrogram(ptr0, len0, ptr1, len1);
 }
 
-export const __wbg_alert_95e4cbcd649c0241 = function(arg0, arg1) {
-    let varg0 = getStringFromWasm(arg0, arg1);
-    alert(varg0);
-};
+/**
+* @param {number} size
+* @returns {number}
+*/
+export function alloc_tx(size) {
+    return wasm.alloc_tx(size);
+}
+
+/**
+* @param {number} size
+* @returns {number}
+*/
+export function alloc_fx(size) {
+    return wasm.alloc_fx(size);
+}
 

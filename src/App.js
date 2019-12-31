@@ -50,6 +50,8 @@ class App extends Component {
 
   async componentDidMount() {
     this.wasm = await import('synthesis');
+
+    
   }
 
   handlePlay = () => {
@@ -88,7 +90,26 @@ class App extends Component {
 
   handleAnimateGraph = () => {
     this.setState({ revision: this.state.revision + 1 });
+    //this.forceUpdate();
   }
+
+  wasmGenerateSpectrogram = () => {
+    const composition = this.exportCompositionJson();
+    const settings = JSON.stringify({
+      fs: this.state.settings.fs.value,
+      volume: this.state.settings.volume.value,
+      multiplier: this.state.settings.multiplier.value,
+      aliasing: this.state.settings.aliasing
+    });
+
+    console.log(composition)
+    if (this.wasm) {
+      this.wasm.synthesize_spectrogram(composition, settings);
+    }
+    
+  }
+  wasmGetTx = () => (null);
+  wasmGetFx = () => (null);
 
   render() {
     const { timelines, settings } = this.state;
@@ -108,7 +129,8 @@ class App extends Component {
           </AppBar>
           
           {!settings.spectrogram ? 
-          <Graph 
+          <Graph
+            rev={this.state.revision}
             multiplier={this.state.settings.multiplier.value}
             upperRange={this.state.settings.graphRange.value}
             data={this.state.timelines[this.state.selectedSegment.row]
@@ -116,7 +138,8 @@ class App extends Component {
             }
           /> :
           <Spectrogram
-            
+            composition={this.timelines} settings={this.state.settings} rev={this.state.revision}
+            generateSpectrogram={this.wasmGenerateSpectrogram} getTx={this.wasmGetTx} getFx={this.wasmGetFx}
           />
           }
           <Editor
