@@ -50,8 +50,6 @@ class App extends Component {
 
   async componentDidMount() {
     this.wasm = await import('synthesis');
-
-    
   }
 
   handlePlay = () => {
@@ -71,22 +69,31 @@ class App extends Component {
       aliasing: this.state.settings.aliasing
     });
 
-    const rawBuffer = this.wasm.synthesize_composition(composition, settings);
-    //const rawBuffer = SynthesizeComposition(this.state.timelines, this.state.settings);
+    this.wasm.synthesize_composition(composition, settings);
+    console.log(this.wasm.get_audio_buffer_ptr());
+    console.log(this.wasm.get_audio_buffer_size());
+
+    const rawBuffer = new Float32Array(
+                            this.wasm.get_wasm_heap_memory().buffer,
+                            this.wasm.get_audio_buffer_ptr(),
+                            this.wasm.get_audio_buffer_size()
+                          );
+    console.log(this.wasm.get_wasm_heap_memory())
+
     const audioSourceBuffer = this.audioContext.createBuffer(1, rawBuffer.length, this.state.settings.fs.value);
     audioSourceBuffer.copyToChannel(rawBuffer, 0);
     const audioSource = this.audioContext.createBufferSource();
     audioSource.buffer = audioSourceBuffer;
 
     this.audioSources.push(audioSource);
-
     audioSource.connect(this.audioContext.destination);
     audioSource.start(0);
+
+    // Leaky boi
+    this.wasm.dealloc(this.wasm.get_audio_buffer_ptr(), this.wasm.get_audio_buffer_size())
   }
 
-  handleStop = () => {
-    this.audioSources.forEach((source) => source.stop(0));
-  }
+  handleStop = () => this.audioSources.forEach((source) => source.stop(0));
 
   handleAnimateGraph = () => {
     this.setState({ revision: this.state.revision + 1 });
@@ -102,9 +109,10 @@ class App extends Component {
       aliasing: this.state.settings.aliasing
     });
 
-    console.log(composition)
     if (this.wasm) {
+      console.log("generating spec")
       this.wasm.synthesize_spectrogram(composition, settings);
+      console.log(this.wasm.get_audio_buffer_ptr())
     }
     
   }
@@ -130,7 +138,6 @@ class App extends Component {
           
           {!settings.spectrogram ? 
           <Graph
-            rev={this.state.revision}
             multiplier={this.state.settings.multiplier.value}
             upperRange={this.state.settings.graphRange.value}
             data={this.state.timelines[this.state.selectedSegment.row]
@@ -138,7 +145,8 @@ class App extends Component {
             }
           /> :
           <Spectrogram
-            composition={this.timelines} settings={this.state.settings} rev={this.state.revision}
+            errors={!!this.state.compositionErrors}
+            composition={this.timelines} settings={this.state.settings} 
             generateSpectrogram={this.wasmGenerateSpectrogram} getTx={this.wasmGetTx} getFx={this.wasmGetFx}
           />
           }
