@@ -4,7 +4,8 @@ schema: 1
 image:
   base: "mcr.microsoft.com/devcontainers/base:debian"
   agents: [claude, codex]
-  toolchains: [bun]
+  toolchains: [bun, node]
+  extension: true
 agent:
   cmd: claude
   tmux: true

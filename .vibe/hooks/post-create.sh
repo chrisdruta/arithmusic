@@ -4,3 +4,7 @@
 set -euo pipefail
 
 bun install
+
+# Playwright browsers land under the user home, not the image; keep the
+# major in lockstep with .vibe/Dockerfile's install-deps line.
+npx --yes playwright@1 install chromium
