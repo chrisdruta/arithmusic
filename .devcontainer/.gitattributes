@@ -1,3 +1,0 @@
-# Force LF line endings for all files in .devcontainer/
-# Shell scripts and Dockerfiles break with CRLF inside Linux containers
-* text eol=lf

@@ -1,0 +1,15 @@
+# Project manifest for the vibe harness (schema 1). Seeded by
+# `vibe init` from the "bun" preset; edit freely, then `vibe up`.
+schema: 1
+image:
+  base: "mcr.microsoft.com/devcontainers/base:debian"
+  agents: [claude, codex]
+  toolchains: [bun]
+agent:
+  cmd: claude
+  tmux: true
+  memory: off
+bootstrap:
+  required: [git, bun]
+runtime:
+  ports: ["127.0.0.1:5173:5173"]

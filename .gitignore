@@ -1,6 +1,8 @@
 # Custom
 .interface-design/*.png
 .interface-design/*.jpg
+*:Zone.Identifier
+.vibe/requests/
 
 
 # Logs

@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Dev Environment
+
+Development happens inside a `vibe` container — read `.vibe/AGENTS.md` for what the environment can and cannot do (write scopes, the rebuild request protocol, service hooks).
+
 ## Build & Dev Commands
 
 - **`bun dev`** — Start Vite dev server with hot reload
