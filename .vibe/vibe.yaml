@@ -4,7 +4,7 @@ schema: 1
 image:
   base: "mcr.microsoft.com/devcontainers/base:debian"
   agents: [claude, codex]
-  toolchains: [bun, node]
+  toolchains: [bun]
   extension: true
 agent:
   cmd: claude

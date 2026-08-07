@@ -1,11 +1,13 @@
-# Playwright system dependencies on top of the engine-built tools
-# image (node is already baked in). The engine supplies
-# VIBE_BASE_IMAGE digest-pinned. Browsers themselves install per-user —
-# see hooks/post-create.sh.
+# Playwright on top of the engine-built tools image, driven by the
+# baked-in bun (no node toolchain needed). Browsers + system deps land
+# in the image at /ms-playwright; keep the playwright version pinned in
+# lockstep with package.json.
 ARG VIBE_BASE_IMAGE
 FROM ${VIBE_BASE_IMAGE}
 
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 USER root
-RUN npx --yes playwright@1 install-deps chromium \
-    && rm -rf /var/lib/apt/lists/*
+RUN /home/vscode/.bun/bin/bunx playwright@1.62.1 install --with-deps chromium \
+    && chmod -R a+rX /ms-playwright \
+    && rm -rf /var/lib/apt/lists/* /root/.bun /root/.cache
 USER vscode
