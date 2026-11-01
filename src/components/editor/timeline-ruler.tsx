@@ -47,10 +47,10 @@ export default function TimelineRuler({
 
   return (
     <div
-      className="flex shrink-0 select-none border-b border-border/30"
+      className="flex shrink-0 select-none"
       style={{ paddingLeft: leftOffset }}
     >
-      <div className="relative h-6 flex-1 overflow-hidden px-3">
+      <div className="relative mr-12 ml-2.5 h-5 flex-1 overflow-hidden">
         {ticks.map(({ time, pct, isMajor }) => (
           <div
             key={time}
@@ -60,15 +60,15 @@ export default function TimelineRuler({
             style={{ left: `${pct}%` }}
           >
             {isMajor && (
-              <span className="mb-0.5 text-xs leading-none text-muted-foreground/40 whitespace-nowrap">
+              <span className="mb-0.5 font-button text-[0.5625rem] font-bold leading-none tracking-wider text-legend-alt whitespace-nowrap">
                 {formatTime(time)}
               </span>
             )}
             <div
               className={`w-px ${
                 isMajor
-                  ? 'h-1.5 bg-muted-foreground/30'
-                  : 'h-1 bg-muted-foreground/15'
+                  ? 'h-1.5 bg-legend-alt'
+                  : 'h-1 bg-legend-alt/40'
               }`}
             />
           </div>

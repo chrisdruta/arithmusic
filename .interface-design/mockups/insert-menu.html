@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>INSERT menu variants</title>
+<style>
+  :root {
+    --font-button: 'Helvetica Neue', Arial, sans-serif;
+    --legend: #e9c84a;
+    --legend-alt: #4fd1b5;
+    --track-1: #46ff7a;
+    --track-2: #ffb547;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px; background: #18191c; color: #ddd;
+    font-family: var(--font-button);
+    display: grid; gap: 28px;
+  }
+  h2 { margin: 0 0 10px; font-size: 14px; letter-spacing: .08em; color: #fff; }
+  h2 small { font-weight: 400; color: #9da1a8; letter-spacing: 0; margin-left: 8px; }
+
+  .deck {
+    position: relative; border-radius: 14px; padding: 26px 28px 22px; height: 330px;
+    background: linear-gradient(180deg, #45484e 0%, #3b3e43 100%);
+    box-shadow: inset 0 8px 12px -6px rgba(0,0,0,.65), inset 0 2px 0 rgba(0,0,0,.4);
+  }
+  .printed { font: 700 9px/1 var(--font-button); letter-spacing: .14em; text-transform: uppercase; color: #9da1a8; }
+
+  .key {
+    position: relative; border: 0; border-radius: 7px 7px 10px 10px; cursor: pointer;
+    font: 700 11px/1 var(--font-button); letter-spacing: .05em; text-transform: uppercase; color: #f3f3f3;
+    background: linear-gradient(180deg, #4a4d54 0%, #2c2e33 52%, #212327 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.2), inset 0 -2px 0 rgba(0,0,0,.35), 0 3px 0 #0b0c0e, 0 5px 9px rgba(0,0,0,.55);
+    padding: 0 12px; height: 30px; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .key.on { transform: translateY(2px); color: var(--legend);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 1px 0 #0b0c0e, 0 2px 3px rgba(0,0,0,.5); }
+  .key .legend { position: absolute; left: 0; right: 0; top: -14px; text-align: center; font-size: 8px; letter-spacing: .12em; color: var(--legend-alt); }
+  .grey {
+    color: #15171a;
+    background: linear-gradient(180deg, #c3c7cd 0%, #9da2aa 52%, #8a8f97 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.25), 0 3px 0 #1a1b1e, 0 5px 9px rgba(0,0,0,.5);
+  }
+  .chip::before { content: ''; position: absolute; top: 3px; left: 6px; right: 6px; height: 2px; border-radius: 1px; background: var(--chip); }
+
+  .controls { display: flex; align-items: center; gap: 10px; }
+  .divider { width: 1px; height: 26px; background: rgba(0,0,0,.4); box-shadow: 1px 0 0 rgba(255,255,255,.06); margin: 0 4px; }
+  .anchor { position: relative; }
+
+  .lane { margin-top: 26px; display: flex; gap: 6px; align-items: center; }
+  .plate { width: 150px; height: 30px; border-radius: 5px; background: #2a2c30; box-shadow: inset 0 2px 3px rgba(0,0,0,.6), 0 1px 0 rgba(255,255,255,.07);
+    display: flex; align-items: center; padding: 0 10px; font-size: 11px; font-weight: 700; color: #ddd; margin-right: 8px; }
+  .seg { height: 34px; justify-content: center; }
+
+  /* ---------- A: parts tray ---------- */
+  .tray {
+    position: absolute; left: 0; top: calc(100% + 12px); z-index: 5; width: 360px; padding: 12px 12px 14px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #2a2c30, #232528);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,.7), 0 0 0 1px #1b1c1f, 0 0 0 2px #4a4d53, 0 14px 28px rgba(0,0,0,.6);
+  }
+  .tray .printed { display: flex; justify-content: space-between; margin-bottom: 12px; }
+  .tray-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 10px; }
+  .tray-grid .key { height: 40px; flex-direction: column; justify-content: center; gap: 4px; padding: 0 6px; cursor: grab; }
+  .tray-grid .key span { font: 500 9px/1 ui-monospace, monospace; letter-spacing: 0; text-transform: none; color: #3b3f45; }
+  .tray-grid .key.lift { transform: translate(14px, -10px) rotate(-4deg); box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 14px 18px rgba(0,0,0,.55); z-index: 2; }
+  .tray-grid .slot { height: 40px; border-radius: 7px; background: rgba(0,0,0,.35); box-shadow: inset 0 2px 3px rgba(0,0,0,.6); }
+
+  /* ---------- B: printed reference card ---------- */
+  .card {
+    position: absolute; left: 0; top: calc(100% + 12px); z-index: 5; width: 300px; padding: 10px 0 8px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #3b3d42 0%, #303236 100%);
+    box-shadow: 0 0 0 1px #1d1e21, inset 0 1px 0 rgba(255,255,255,.08), 0 14px 28px rgba(0,0,0,.6);
+  }
+  .card .head { padding: 0 14px 8px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,.4); box-shadow: 0 1px 0 rgba(255,255,255,.05); }
+  .card .row { display: grid; grid-template-columns: 12px 1fr auto; align-items: center; gap: 10px; padding: 7px 14px; cursor: grab; }
+  .card .row b { font-size: 12px; color: #f3f3f3; letter-spacing: .04em; }
+  .card .row code { font: 10px ui-monospace, monospace; color: var(--legend-alt); }
+  .card .row .grip { width: 8px; height: 12px; background: radial-gradient(circle, #6b6f76 1px, transparent 1.5px) 0 0/4px 4px; }
+  .card .row.hover { background: rgba(0,0,0,.25); box-shadow: inset 2px 0 0 var(--legend); }
+
+  /* ---------- C: inline drawer ---------- */
+  .drawer {
+    margin-top: 16px; padding: 10px 12px; border-radius: 9px; display: flex; align-items: center; gap: 10px;
+    background: linear-gradient(180deg, #2a2c30, #26282b);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,.7), 0 1px 0 rgba(255,255,255,.06);
+  }
+  .drawer .key { height: 32px; cursor: grab; }
+  .drawer .key span { font: 500 9px/1 ui-monospace, monospace; letter-spacing: 0; text-transform: none; color: #3b3f45; }
+  .drawer .printed { writing-mode: vertical-rl; transform: rotate(180deg); margin-right: 2px; }
+</style>
+</head>
+<body>
+
+<section>
+  <h2>A · Parts tray <small>a recessed tray of grey key-chips — the same object you drop on the timeline</small></h2>
+  <div class="deck">
+    <div class="controls">
+      <span class="printed">Timeline</span>
+      <button class="key"><span class="legend" style="color:var(--legend)">NEW</span>Track+</button>
+      <div class="divider"></div>
+      <div class="anchor">
+        <button class="key on"><span class="legend">INSERT</span>Notes ▴</button>
+        <div class="tray">
+          <div class="printed"><span>Notes</span><span>drag onto a track</span></div>
+          <div class="tray-grid">
+            <div class="key grey">A4<span>440</span></div>
+            <div class="key grey">C4<span>261.63</span></div>
+            <div class="slot"></div>
+            <div class="key grey">E4<span>329.63</span></div>
+            <div class="key grey">F4<span>349.23</span></div>
+            <div class="key grey">G4<span>392</span></div>
+            <div class="key grey">A3<span>220</span></div>
+            <div class="key grey">B4<span>493.88</span></div>
+            <div class="key grey">C5<span>523.25</span></div>
+          </div>
+          <div class="key grey lift" style="position:absolute; left:250px; top:30px; width:100px; height:40px; flex-direction:column; justify-content:center; gap:4px">D4<span style="font:500 9px ui-monospace,monospace;color:#3b3f45;text-transform:none">293.66</span></div>
+        </div>
+      </div>
+      <button class="key"><span class="legend">INSERT</span>Functions ▾</button>
+      <button class="key"><span class="legend">INSERT</span>Patterns ▾</button>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>B · Printed reference card <small>a plastic flap with screen-printed rows, like the cheat sheet on the back of a calculator</small></h2>
+  <div class="deck">
+    <div class="controls">
+      <span class="printed">Timeline</span>
+      <button class="key"><span class="legend" style="color:var(--legend)">NEW</span>Track+</button>
+      <div class="divider"></div>
+      <button class="key"><span class="legend">INSERT</span>Notes ▾</button>
+      <div class="anchor">
+        <button class="key on"><span class="legend">INSERT</span>Patterns ▴</button>
+        <div class="card">
+          <div class="head printed"><span>Patterns</span><span>f(x) =</span></div>
+          <div class="row"><i class="grip"></i><b>Linear sweep</b><code>220 + 220*x</code></div>
+          <div class="row hover"><i class="grip"></i><b>Vibrato</b><code>440 + 20*sin(50x)</code></div>
+          <div class="row"><i class="grip"></i><b>Octave drop</b><code>880 − 440*x</code></div>
+          <div class="row"><i class="grip"></i><b>Trill</b><code>440 + 50*sin(100x)</code></div>
+        </div>
+      </div>
+      <button class="key"><span class="legend">INSERT</span>Functions ▾</button>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>C · Inline drawer <small>no popup — the deck opens a tray strip right above the tracks, chips sit in a row</small></h2>
+  <div class="deck" style="height:250px">
+    <div class="controls">
+      <span class="printed">Timeline</span>
+      <button class="key"><span class="legend" style="color:var(--legend)">NEW</span>Track+</button>
+      <div class="divider"></div>
+      <button class="key on"><span class="legend">INSERT</span>Notes ▴</button>
+      <button class="key"><span class="legend">INSERT</span>Functions ▾</button>
+      <button class="key"><span class="legend">INSERT</span>Patterns ▾</button>
+    </div>
+    <div class="drawer">
+      <span class="printed">Notes</span>
+      <div class="key grey">A4 <span>440</span></div>
+      <div class="key grey">C4 <span>261.63</span></div>
+      <div class="key grey">D4 <span>293.66</span></div>
+      <div class="key grey">E4 <span>329.63</span></div>
+      <div class="key grey">F4 <span>349.23</span></div>
+      <div class="key grey">G4 <span>392</span></div>
+      <div class="key grey">A3 <span>220</span></div>
+      <div class="key grey">B4 <span>493.88</span></div>
+      <div class="key grey">C5 <span>523.25</span></div>
+    </div>
+    <div class="lane">
+      <div class="plate">— Track 1</div>
+      <div class="key grey chip seg" style="--chip:var(--track-1); width:90px">Intro</div>
+      <div class="key grey chip seg" style="--chip:var(--track-1); width:60px">A4</div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

@@ -9,6 +9,7 @@ import TrackTimeline from './editor/track-timeline';
 import TrackOptions from './editor/track-options';
 import { Led } from './ui/led';
 import { getTemplateById } from '../lib/templates';
+import { trackColor } from '../lib/track-style';
 import type { Segment } from '../types';
 
 function reorder(list: Segment[], startIndex: number, endIndex: number): Segment[] {
@@ -100,18 +101,18 @@ export function TimelinePanel() {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-surface">
+    <div className="flex h-full flex-col overflow-hidden px-6">
       <DragDropContext onDragEnd={onDragEnd}>
         <EditorControls />
-        <div className="flex-1 overflow-y-auto pb-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.25)]">
+        <div className="flex-1 overflow-y-auto pb-4">
           <TimelineRuler maxTotalMs={maxTotalMs} leftOffset={controlsWidth} />
           {timelines.map((_tl, rowIndex) => (
-            <div key={rowIndex} className="mt-px flex w-full justify-start border-b border-border/50 bg-surface">
+            <div key={rowIndex} className="flex w-full justify-start">
               <div ref={rowIndex === 0 ? controlsRef : undefined} className="flex shrink-0">
-                <div className="flex w-8 shrink-0 items-center justify-center">
+                <div className="flex w-7 shrink-0 items-center justify-center">
                   <Led
-                    className="size-3"
-                    color={`var(--color-${['lcd-green', 'amber', 'func-blue', 'accent'][rowIndex % 4]})`}
+                    className="size-2.5"
+                    color={trackColor(rowIndex)}
                     on={selectedSegment.row === rowIndex}
                   />
                 </div>
@@ -126,33 +127,25 @@ export function TimelinePanel() {
   );
 }
 
+// Right half of the LCD: TI-style Y= editor for the selected segment
 export function SegmentPanel() {
   const { state } = useComposition();
   const { timelines, selectedSegment } = state;
-  const selectedSegmentData = timelines[selectedSegment.row]?.segments[selectedSegment.col];
-  const trackColor = selectedSegmentData
-    ? ['lcd-green', 'amber', 'func-blue', 'accent'][selectedSegment.row % 4]
-    : null;
+  const segments = timelines[selectedSegment.row]?.segments ?? [];
+  const selectedSegmentData = segments[selectedSegment.col];
 
   return (
-    <div className="flex w-80 shrink-0 flex-col overflow-hidden border-l border-border/50 bg-gradient-to-b from-surface-alt to-surface">
-      <div className="groove-bottom flex items-center gap-2 bg-surface-alt px-3 py-1.5">
-        <Led
-          color={trackColor ? `var(--color-${trackColor})` : 'var(--color-muted-foreground)'}
-          on={!!trackColor}
-        />
-        <span className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-          Segment Editor
-        </span>
+    <div className="flex min-h-0 flex-col border-l-2 border-lcd-ink/30">
+      <div className="lcd-inverse flex justify-between px-3 py-1 text-sm tracking-wider">
+        <span>Y= SEGMENT</span>
+        {selectedSegmentData && <span>{selectedSegment.col + 1}/{segments.length}</span>}
       </div>
-      <div className="relative flex-1 overflow-hidden">
+      <div className="relative min-h-0 flex-1">
         {selectedSegmentData ? (
           <EditorPanel />
         ) : (
-          <div className="flex h-full items-center justify-center">
-            <span className="font-display text-center text-sm tracking-widest text-muted-foreground/40">
-              SELECT A SEGMENT TO EDIT
-            </span>
+          <div className="flex h-full items-center justify-center text-sm tracking-widest text-lcd-dim">
+            SELECT A SEGMENT
           </div>
         )}
       </div>

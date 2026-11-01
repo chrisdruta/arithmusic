@@ -8,19 +8,14 @@ import { GridRows, GridColumns } from '@visx/grid';
 import { curveLinear } from '@visx/curve';
 import { SampleTrackGraph } from '../lib/synthesize';
 import { useComposition } from '../context/CompositionContext';
+import { trackDash } from '../lib/track-style';
 
-const fontFamily = '"TICELarge", "Share Tech Mono", monospace';
-const trackColors = [
-  'var(--color-lcd-green)',
-  'var(--color-amber)',
-  'var(--color-func-blue)',
-  'var(--color-accent)',
-];
-const dimOpacity = 0.3;
+const fontFamily = '"TICELarge", "VT323", monospace';
+const ink = 'var(--color-lcd-ink)';
+const dimInk = 'var(--color-lcd-dim)';
 const gridColor = 'var(--color-lcd-grid)';
 const bgColor = 'var(--color-lcd-bg)';
-const textColor = 'var(--color-lcd-dim)';
-const tickColor = 'var(--color-lcd-green)';
+const dimOpacity = 0.55;
 
 function Chart({ width, height, playbackTime }: { width: number; height: number; playbackTime: number | null }) {
   const { state } = useComposition();
@@ -66,29 +61,12 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
 
   return (
     <svg width={width} height={height}>
-      <defs>
-        <filter id="playhead-glow-wide" filterUnits="userSpaceOnUse" x={0} y={0} width={width} height={height}>
-          <feGaussianBlur stdDeviation="6" />
-        </filter>
-        <filter id="playhead-glow-med" filterUnits="userSpaceOnUse" x={0} y={0} width={width} height={height}>
-          <feGaussianBlur stdDeviation="2.5" />
-        </filter>
-        <filter id="playhead-glow" filterUnits="userSpaceOnUse" x={0} y={0} width={width} height={height}>
-          <feGaussianBlur stdDeviation="2.5" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-      <rect x={margin.left} y={margin.top} width={innerWidth} height={innerHeight} fill={bgColor} />
       <Group left={margin.left} top={margin.top}>
         <GridRows scale={yScale} width={innerWidth} stroke={gridColor} />
         <GridColumns scale={xScale} height={innerHeight} stroke={gridColor} />
         {/* Render non-selected timelines first (dimmed), then selected on top */}
         {allTraces.map((traces, trackIdx) => {
           if (trackIdx === selectedSegment.row) return null;
-          const color = trackColors[trackIdx % trackColors.length];
           return traces.map((trace, segIdx) => {
             const points = trace.x.map((xVal, j) => ({ x: xVal, y: trace.y[j] }));
             return (
@@ -97,16 +75,16 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
                 data={points}
                 x={(d) => xScale(d.x)}
                 y={(d) => yScale(d.y)}
-                stroke={color}
-                strokeWidth={1.5}
+                stroke={ink}
+                strokeWidth={1.75}
                 strokeOpacity={dimOpacity}
+                strokeDasharray={trackDash(trackIdx)}
                 curve={curveLinear}
               />
             );
           });
         })}
         {(allTraces[selectedSegment.row] ?? []).map((trace, segIdx) => {
-          const color = trackColors[selectedSegment.row % trackColors.length];
           const points = trace.x.map((xVal, j) => ({ x: xVal, y: trace.y[j] }));
           return (
             <LinePath
@@ -114,8 +92,9 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
               data={points}
               x={(d) => xScale(d.x)}
               y={(d) => yScale(d.y)}
-              stroke={color}
-              strokeWidth={2}
+              stroke={ink}
+              strokeWidth={2.5}
+              strokeDasharray={trackDash(selectedSegment.row)}
               curve={curveLinear}
             />
           );
@@ -123,24 +102,26 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
         <AxisBottom
           top={innerHeight}
           scale={xScale}
-          label="Time (s)"
-          labelProps={{ fill: textColor, fontSize: labelFontSize, fontFamily, textAnchor: 'middle', dy: 0.75 * rem }}
-          tickLabelProps={{ fill: tickColor, fontSize: tickFontSize, fontFamily }}
-          stroke={gridColor}
-          tickStroke={gridColor}
+          label="t (s)"
+          labelProps={{ fill: dimInk, fontSize: labelFontSize, fontFamily, textAnchor: 'middle', dy: 0.75 * rem }}
+          tickLabelProps={{ fill: ink, fontSize: tickFontSize, fontFamily }}
+          stroke={ink}
+          strokeWidth={2}
+          tickStroke={ink}
         />
         <AxisLeft
           scale={yScale}
-          label="Frequency (kHz)"
-          labelProps={{ fill: textColor, fontSize: labelFontSize, fontFamily, textAnchor: 'middle', dx: -1.125 * rem }}
+          label="f (kHz)"
+          labelProps={{ fill: dimInk, fontSize: labelFontSize, fontFamily, textAnchor: 'middle', dx: -1.125 * rem }}
           tickFormat={(v) => (Number(v) / 1000).toFixed(1)}
-          tickLabelProps={{ fill: tickColor, fontSize: tickFontSize, fontFamily }}
-          stroke={gridColor}
-          tickStroke={gridColor}
+          tickLabelProps={{ fill: ink, fontSize: tickFontSize, fontFamily }}
+          stroke={ink}
+          strokeWidth={2}
+          tickStroke={ink}
         />
         {/* Legend */}
         {(() => {
-          const legendLineW = 20;
+          const legendLineW = 1.75 * rem;
           const legendRowH = 1.25 * rem;
           const legendPadX = 0.5 * rem;
           const legendPadY = 0.375 * rem;
@@ -150,15 +131,14 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
           const legendY = 0.5 * rem;
           return (
             <Group left={legendX} top={legendY}>
-              <rect width={legendW} height={legendH} rx={2} fill={bgColor} fillOpacity={0.75} stroke={gridColor} strokeWidth={0.5} />
+              <rect width={legendW} height={legendH} fill={bgColor} fillOpacity={0.85} stroke={dimInk} strokeWidth={1.5} />
               {timelines.map((tl, idx) => {
-                const color = trackColors[idx % trackColors.length];
                 const isSelected = idx === selectedSegment.row;
                 const y = legendPadY + idx * legendRowH + legendRowH / 2;
                 return (
                   <g key={idx} opacity={isSelected ? 1 : dimOpacity}>
-                    <line x1={legendPadX} x2={legendPadX + legendLineW} y1={y} y2={y} stroke={color} strokeWidth={2} />
-                    <text x={legendPadX + legendLineW + 6} y={y} fill={color} fontSize={tickFontSize} fontFamily={fontFamily} dominantBaseline="central">
+                    <line x1={legendPadX} x2={legendPadX + legendLineW} y1={y} y2={y} stroke={ink} strokeWidth={2} strokeDasharray={trackDash(idx)} />
+                    <text x={legendPadX + legendLineW + 6} y={y} fill={ink} fontSize={tickFontSize} fontFamily={fontFamily} dominantBaseline="central">
                       {tl.options.title}
                     </text>
                   </g>
@@ -169,50 +149,18 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
         })()}
         {playbackTime !== null && playbackTime >= 0 && playbackTime <= xMax && (
           <>
-            {/* Soft phosphor glow layer */}
             <line
               x1={xScale(playbackTime)}
               x2={xScale(playbackTime)}
               y1={0}
               y2={innerHeight}
-              stroke="var(--color-lcd-green)"
-              strokeWidth={6}
-              strokeOpacity={0.1}
-              filter="url(#playhead-glow)"
-            />
-            {/* Main segmented line */}
-            <line
-              x1={xScale(playbackTime)}
-              x2={xScale(playbackTime)}
-              y1={0}
-              y2={innerHeight}
-              stroke="var(--color-lcd-green)"
+              stroke={ink}
               strokeWidth={1.5}
-              strokeOpacity={0.9}
-              strokeDasharray="8 4"
-              filter="url(#playhead-glow)"
+              strokeDasharray="2 3"
             />
-            {/* Top tick mark */}
-            <line
-              x1={xScale(playbackTime) - 5}
-              x2={xScale(playbackTime) + 5}
-              y1={0}
-              y2={0}
-              stroke="var(--color-lcd-green)"
-              strokeWidth={2}
-              strokeOpacity={0.9}
-              filter="url(#playhead-glow)"
-            />
-            {/* Bottom tick mark */}
-            <line
-              x1={xScale(playbackTime) - 5}
-              x2={xScale(playbackTime) + 5}
-              y1={innerHeight}
-              y2={innerHeight}
-              stroke="var(--color-lcd-green)"
-              strokeWidth={2}
-              strokeOpacity={0.9}
-              filter="url(#playhead-glow)"
+            <path
+              d={`M${xScale(playbackTime) - 6} 0 h12 l-6 8z`}
+              fill={ink}
             />
           </>
         )}
@@ -223,7 +171,7 @@ function Chart({ width, height, playbackTime }: { width: number; height: number;
 
 export default function Graph({ playbackTime }: { playbackTime: number | null }) {
   return (
-    <div className="lcd-scanlines lcd-pixel-grid relative min-h-0 flex-1 overflow-hidden rounded-sm border-[3px] border-border border-t-[#555]/20 bg-lcd-bg shadow-[inset_0_2px_6px_rgba(0,0,0,0.6),inset_0_0_1px_rgba(0,0,0,0.8),0_0_8px_rgba(51,255,102,0.06)]">
+    <div className="relative min-h-0 min-w-0 overflow-hidden">
       <ParentSize>
         {({ width, height }) => <Chart width={width} height={height} playbackTime={playbackTime} />}
       </ParentSize>

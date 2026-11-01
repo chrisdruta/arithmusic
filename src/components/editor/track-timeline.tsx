@@ -3,6 +3,7 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useComposition } from '../../context/CompositionContext';
+import { trackColor } from '../../lib/track-style';
 
 export default function TrackTimeline({ rowIndex, maxTotalMs }: { rowIndex: number; maxTotalMs: number }) {
   const { state, dispatch } = useComposition();
@@ -19,8 +20,8 @@ export default function TrackTimeline({ rowIndex, maxTotalMs }: { rowIndex: numb
           ref={provided.innerRef}
           {...provided.droppableProps}
           className={cn(
-            "flex w-full flex-1 items-start overflow-x-auto p-2",
-            snapshot.isDraggingOver ? "bg-secondary" : "bg-surface"
+            "flex w-full flex-1 items-stretch gap-1.5 overflow-x-auto rounded-md px-1 py-1.5",
+            snapshot.isDraggingOver && "bg-black/15"
           )}
         >
           {segments.map((segment, colIndex) => {
@@ -37,17 +38,14 @@ export default function TrackTimeline({ rowIndex, maxTotalMs }: { rowIndex: numb
                       flexShrink: 0,
                       flexBasis: 0,
                       minWidth: '3rem',
+                      '--chip': trackColor(rowIndex),
                       ...(provided.draggableProps.style as React.CSSProperties | undefined),
-                    }}
+                    } as React.CSSProperties}
                     onClick={() => dispatch({ type: 'SEGMENT_SELECT', row: rowIndex, col: colIndex })}
+                    aria-pressed={isSelected}
                     className={cn(
-                      "ml-1 select-none self-stretch truncate rounded-sm px-2 py-1.5 text-sm transition-all duration-75",
-                      "border border-t-[#555] border-l-[#555] border-b-[#222] border-r-[#222] shadow-[1px_1px_0px_#111,inset_0_1px_0_rgba(255,255,255,0.08)] active:shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)] active:translate-y-px",
-                      isSelected
-                        ? "bg-secondary text-highlight border-b-2 border-b-highlight [text-shadow:0_0_8px_rgba(51,255,102,0.4)]"
-                        : "bg-surface text-foreground border-b-2 border-b-transparent hover:bg-secondary/80 hover:text-highlight/80",
-                      snapshot.isDragging && snapshot.draggingOver != null && "glow-lcd",
-                      snapshot.isDragging && snapshot.draggingOver == null && "border-destructive! bg-destructive/20! text-destructive! opacity-60"
+                      "key key-grey key-chip flex h-9 select-none items-center truncate px-2.5 text-xs",
+                      snapshot.isDragging && snapshot.draggingOver == null && "key-doomed text-white"
                     )}
                   >
                     {segment.title.value}
@@ -60,12 +58,12 @@ export default function TrackTimeline({ rowIndex, maxTotalMs }: { rowIndex: numb
             <div style={{ flexGrow: remainderMs, flexShrink: 0, flexBasis: 0 }} />
           )}
           {provided.placeholder}
-          <div className="mx-1 self-stretch border-r border-border/40" />
           <Button
-            variant="ghost"
+            variant="calc-secondary"
             size="icon-sm"
             onClick={() => dispatch({ type: 'ADD_SEGMENT', rowIndex })}
-            className="self-center text-muted-foreground hover:bg-secondary hover:text-highlight"
+            className="ml-2 self-center"
+            aria-label="Add segment"
           >
             <Plus className="size-4" />
           </Button>

@@ -62,15 +62,15 @@ export default function SettingsModal() {
               />
             </div>
           </div>
-          <div className="flex w-56 flex-col justify-between rounded-sm border border-lcd-dim bg-lcd-bg p-4 self-center shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]">
-            <h3 className="text-center font-display text-lg tracking-wider text-highlight">ARITHMUSIC</h3>
-            <div className="mt-3 space-y-1 text-sm text-lcd-dim">
+          <div className="lcd-screen flex w-56 flex-col justify-between self-center p-4">
+            <h3 className="lcd-inverse text-center text-lg tracking-wider">ARITHMUSIC</h3>
+            <div className="mt-3 space-y-1 text-sm">
               <p>v2.0.0</p>
               <a
                 href="https://github.com/chrisdruta/arithmusic"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-highlight/70 hover:text-highlight transition-colors duration-75"
+                className="underline decoration-lcd-ink/40 hover:decoration-lcd-ink"
               >
                 github.com/chrisdruta/arithmusic
               </a>

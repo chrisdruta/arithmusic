@@ -1,5 +1,5 @@
-import { Plus, Upload, Save } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import { Key } from '@/components/ui/key';
 import { useComposition } from '../../context/CompositionContext';
 import TemplateDropdowns from './template-bar';
 
@@ -7,27 +7,13 @@ export default function EditorControls() {
   const { dispatch } = useComposition();
 
   return (
-    <div className="groove-bottom flex w-full items-center gap-2 bg-surface-alt px-2.5 py-2.5">
-      <span className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-        Timeline
-      </span>
-      <div className="mx-1 self-stretch border-r border-border/40" />
-      <Button variant="calc-secondary" size="sm" onClick={() => dispatch({ type: 'ADD_TRACK' })}>
+    <div className="flex w-full items-center gap-2.5 px-2.5 pt-5 pb-3">
+      <span className="printed mr-3 text-[0.6875rem] text-[#c9ccd1]">Timeline</span>
+      <Key variant="calc-secondary" size="sm" legend="NEW" onClick={() => dispatch({ type: 'ADD_TRACK' })}>
         Track <Plus className="size-4" />
-      </Button>
-      <div className="mx-1 self-stretch border-r border-border/40" />
+      </Key>
+      <div className="mx-1.5 h-5 w-px bg-black/30 shadow-[1px_0_0_rgba(255,255,255,0.06)]" />
       <TemplateDropdowns />
-      <div className="flex-1" />
-      <Button
-        variant="calc-secondary"
-        size="sm"
-        onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'load' })}
-      >
-        Load <Upload className="size-4" />
-      </Button>
-      <Button variant="calc-secondary" size="sm" onClick={() => dispatch({ type: 'TOGGLE_MODAL', kind: 'save' })}>
-        Save <Save className="size-4" />
-      </Button>
     </div>
   );
 }

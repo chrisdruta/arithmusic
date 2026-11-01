@@ -25,19 +25,19 @@ const STEPS: Step[] = [
   },
   {
     title: 'THE LCD GRAPH',
-    body: 'The large screen plots frequency over time for every track. Each track is a different color. When you hit Play, a playhead sweeps across so you can see exactly what\'s sounding.',
+    body: 'The large screen plots frequency over time for every track. Each track has its own line style — solid, dashed, dotted. When you hit Play, a playhead sweeps across so you can see exactly what\'s sounding.',
   },
   {
     title: 'TRACKS & TIMELINE',
-    body: 'The bottom panel holds your tracks. Each track has a wave type (sine, square, etc.) and a row of segments you can drag to reorder. Add tracks and segments with the + buttons.',
+    body: 'The bottom panel holds your tracks. Each track has a wave type (sine, triangle, saw) and a row of segment keys you can drag to reorder. Add tracks and segments with the + keys, or insert presets from Notes, Functions and Patterns.',
   },
   {
     title: 'SEGMENT EDITOR',
-    body: 'Click any segment to edit it in the right panel. Set the frequency expression (e.g. 440 * sin(x)), duration in milliseconds, and volume percentage.',
+    body: 'Click any segment key to edit it on the right side of the screen. Set the frequency expression (e.g. 440 + 100 * x), length in seconds, and volume. The blue cursor pad or arrow keys step between segments.',
   },
   {
     title: 'PLAY & SAVE',
-    body: 'Use the playback controls on the left to Play, Pause, or Stop. Open Settings to tweak sample rate and volume. Save and load compositions as JSON files.',
+    body: 'Use the blue F-keys on the left to Play or Pause, and the red key to Stop. MODE opens settings like sample rate and volume. LOAD and SAVE handle compositions as JSON files.',
   },
 ];
 
@@ -75,15 +75,15 @@ export default function TutorialModal() {
     <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
       <DialogContent showCloseButton={false} className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="font-display tracking-widest text-highlight">
+          <DialogTitle className="font-display tracking-widest text-legend">
             {STEPS[step].title}
           </DialogTitle>
           <DialogDescription className="sr-only">Tutorial step {step + 1} of {STEPS.length}</DialogDescription>
         </DialogHeader>
 
         {/* LCD-style content panel */}
-        <div className="rounded-sm border border-lcd-dim bg-lcd-bg p-5 shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]">
-          <p className="text-sm leading-relaxed text-lcd-dim">
+        <div className="lcd-screen p-5">
+          <p className="relative text-base leading-relaxed">
             {STEPS[step].body}
           </p>
         </div>
@@ -95,8 +95,8 @@ export default function TutorialModal() {
               key={i}
               className={
                 i === step
-                  ? 'h-1.5 w-6 rounded-full bg-highlight shadow-[0_0_6px_rgba(51,255,102,0.4)] transition-all'
-                  : 'h-1.5 w-1.5 rounded-full bg-lcd-dim transition-all'
+                  ? 'h-1.5 w-6 rounded-full bg-legend transition-all'
+                  : 'h-1.5 w-1.5 rounded-full bg-muted-foreground/50 transition-all'
               }
             />
           ))}

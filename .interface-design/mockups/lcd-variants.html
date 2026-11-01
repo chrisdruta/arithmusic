@@ -1,0 +1,306 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+  @font-face { font-family: "TICELarge"; src: url("../../public/fonts/TICELarge.ttf") format("truetype"); }
+  @font-face { font-family: "TI92"; src: url("../../public/fonts/Ti92Pluspc-unicode.ttf") format("truetype"); }
+
+  .variant { margin: 0 0 28px; }
+  .caption { font: 600 13px/1.4 var(--font-sans, system-ui); margin: 0 0 8px 4px; }
+  .caption span { opacity: .6; font-weight: 400; }
+  .stage { position: relative; width: 100%; }
+  .scaler { position: absolute; top: 0; left: 0; width: 1320px; transform-origin: 0 0; }
+
+  /* ---------- per-variant screen tokens ---------- */
+  .v-glow {
+    --lcd-bg: radial-gradient(ellipse at 45% 40%, #0d2a16 0%, #071a0d 60%, #04110a 100%);
+    --ink: #46ff7a; --ink-soft: rgba(70,255,122,.55); --ink-dim: rgba(70,255,122,.28); --grid: rgba(70,255,122,.08);
+    --inv-bg: #46ff7a; --inv-ink: #04110a;
+    --t1: #46ff7a; --t2: #ffb547; --t3: #4fd6ff;
+    --d1: none; --d2: none; --d3: none;
+    --text-fx: 0 0 6px rgba(70,255,122,.75);
+    --line-fx: drop-shadow(0 0 3px currentColor) drop-shadow(0 0 8px currentColor);
+    --lcd-tex: repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px);
+    --lcd-font: "TICELarge", "VT323", monospace;
+  }
+  .v-auth {
+    --lcd-bg: linear-gradient(172deg, #c9d1b6 0%, #b9c3a5 55%, #aab595 100%);
+    --ink: #1b2317; --ink-soft: rgba(27,35,23,.7); --ink-dim: rgba(27,35,23,.32); --grid: rgba(27,35,23,.08);
+    --inv-bg: #1b2317; --inv-ink: #bfc8ab;
+    --t1: #1b2317; --t2: #1b2317; --t3: #1b2317;
+    --d1: none; --d2: 7 4; --d3: 1.5 3.5;
+    --text-fx: 1.5px 1.5px 0 rgba(27,35,23,.14);
+    --line-fx: drop-shadow(1.5px 1.5px 0 rgba(27,35,23,.14));
+    --lcd-tex: repeating-linear-gradient(90deg, rgba(27,35,23,.035) 0 1px, transparent 1px 3px),
+               repeating-linear-gradient(0deg, rgba(27,35,23,.035) 0 1px, transparent 1px 3px);
+    --lcd-font: "TICELarge", "VT323", monospace;
+  }
+
+  /* ---------- body ---------- */
+  .calc { padding: 10px 6px 18px; }
+  .body {
+    position: relative; border-radius: 38px; padding: 0 30px;
+    background: linear-gradient(180deg, #3b3d42 0%, #303236 100%);
+    box-shadow: 0 22px 40px rgba(0,0,0,.55), 0 4px 10px rgba(0,0,0,.4),
+                inset 0 2px 0 rgba(255,255,255,.09), inset 0 -5px 0 rgba(0,0,0,.45),
+                inset 2px 0 0 rgba(255,255,255,.04), inset -2px 0 0 rgba(0,0,0,.3);
+  }
+  .grip { position: absolute; top: 120px; bottom: 120px; width: 14px;
+    background: repeating-linear-gradient(180deg, #26282c 0 6px, #3e4046 6px 8px, #2b2d31 8px 14px); border-radius: 7px;
+    box-shadow: inset 0 0 4px rgba(0,0,0,.6); }
+  .grip.l { left: 8px; } .grip.r { right: 8px; }
+
+  .upper { display: grid; grid-template-columns: 128px 1fr 196px; gap: 22px; padding: 26px 0 26px; align-items: center; }
+
+  /* ---------- keys ---------- */
+  .key {
+    position: relative; display: flex; align-items: center; justify-content: center; gap: 6px;
+    height: 32px; padding: 0 12px; border-radius: 7px 7px 10px 10px; cursor: default; user-select: none;
+    background: linear-gradient(180deg, #4a4d54 0%, #2c2e33 52%, #212327 100%);
+    color: #f3f3f3; font: 700 12px/1 "Helvetica Neue", Arial, sans-serif; letter-spacing: .05em; white-space: nowrap;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.2), inset 0 -2px 0 rgba(0,0,0,.35),
+                0 3px 0 #0b0c0e, 0 5px 9px rgba(0,0,0,.55);
+  }
+  .key.blue { background: linear-gradient(180deg, #6b8be0 0%, #3d5fbf 52%, #304ea3 100%); }
+  .key.grey { background: linear-gradient(180deg, #c3c7cd 0%, #9da2aa 52%, #8a8f97 100%); color: #15171a;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.25), 0 3px 0 #1a1b1e, 0 5px 9px rgba(0,0,0,.5); }
+  .key.red { background: linear-gradient(180deg, #ec6a5c 0%, #c63c30 52%, #a72f25 100%); }
+  .key.second { color: #f1cc43; box-shadow: inset 0 0 0 2px #c9a62a, inset 0 1px 0 rgba(255,255,255,.2), 0 3px 0 #0b0c0e, 0 5px 9px rgba(0,0,0,.55); }
+  .key.pressed { transform: translateY(2px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18), inset 0 -1px 0 rgba(0,0,0,.3), 0 1px 0 #0b0c0e, 0 2px 3px rgba(0,0,0,.5); }
+  .key.grey.pressed { box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -1px 0 rgba(0,0,0,.2), 0 1px 0 #1a1b1e, 0 2px 3px rgba(0,0,0,.45); }
+  .legend { position: absolute; bottom: 100%; left: -10px; right: -10px; margin-bottom: 5px; text-align: center;
+    font: 700 9px/1 Arial, sans-serif; letter-spacing: .07em; color: #e9c84a; }
+  .legend.teal { color: #4fd1b5; }
+  .led { width: 6px; height: 6px; border-radius: 50%; background: #3a2018; box-shadow: inset 0 1px 1px rgba(0,0,0,.6); flex: none; }
+  .led.on { background: #ff6a3d; box-shadow: 0 0 6px #ff6a3d, 0 0 2px #ffb59c inset; }
+  .printed { font: 700 9px/1 Arial, sans-serif; letter-spacing: .14em; color: #9da1a8; }
+
+  /* left function strip */
+  .fstrip { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 12px; padding-top: 14px; }
+  .fstrip .key { height: 40px; padding: 0; transform: rotate(-4deg); }
+  .fstrip .key.pressed { transform: rotate(-4deg) translateY(2px); }
+  .fstrip .span2 { grid-column: span 2; }
+  .fstrip .label { grid-column: span 2; text-align: center; margin: 4px 0 -16px; }
+
+  /* bezel + lcd */
+  .bezel { position: relative; border-radius: 16px; padding: 12px 22px 24px;
+    background: linear-gradient(180deg, #121316 0%, #070708 100%);
+    box-shadow: 0 0 0 2px #26282c, 0 0 0 3px #45474c, inset 0 1px 0 rgba(255,255,255,.08); overflow: hidden; }
+  .bezel::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(115deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 35%); }
+  .brandrow { display: flex; align-items: baseline; gap: 14px; padding: 0 4px 10px; color: #e9e9e9; }
+  .brand { font: 600 15px/1 Georgia, "Times New Roman", serif; font-variant: small-caps; letter-spacing: .12em; }
+  .model { margin-left: auto; font: italic 800 18px/1 "Helvetica Neue", Arial, sans-serif; letter-spacing: .02em; }
+  .tag { font: 700 10px/1 Arial, sans-serif; letter-spacing: .22em; color: #e9c84a; }
+  .lcd { position: relative; display: grid; grid-template-columns: 1fr 292px; grid-template-rows: 1fr auto;
+    height: 430px; border-radius: 5px; background: var(--lcd-bg); color: var(--ink);
+    font-family: var(--lcd-font); text-shadow: var(--text-fx);
+    box-shadow: inset 0 4px 10px rgba(0,0,0,.6), inset 0 0 0 1px rgba(0,0,0,.7); overflow: hidden; }
+  .lcd::after { content: ""; position: absolute; inset: 0; background: var(--lcd-tex); pointer-events: none; }
+  .lcd svg { display: block; }
+  .lcd svg text { fill: var(--ink); font-family: var(--lcd-font); }
+  .lcd .tr { fill: none; stroke-width: 3; stroke-linecap: square; filter: var(--line-fx); }
+
+  .editor { border-left: 2px solid var(--ink-dim); padding: 0 0 0; display: flex; flex-direction: column; font-size: 17px; }
+  .inv { background: var(--inv-bg); color: var(--inv-ink); text-shadow: none; padding: 5px 10px; font-size: 15px; letter-spacing: .06em;
+    display: flex; justify-content: space-between; }
+  .row { padding: 7px 12px 0; display: flex; align-items: baseline; gap: 10px; }
+  .row .k { width: 58px; color: var(--ink-soft); font-size: 15px; }
+  .row .hint { margin-left: auto; font-size: 12px; color: var(--ink-soft); }
+  .field.active { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .cursor { display: inline-block; width: .55em; height: 1em; background: var(--ink); vertical-align: -2px; animation: blink 1s steps(1) infinite; box-shadow: var(--text-fx); }
+  @keyframes blink { 50% { opacity: 0; } }
+  .bar { margin: 6px 12px 0 80px; height: 10px; display: flex; gap: 2px; }
+  .bar i { flex: 1; border: 1.5px solid var(--ink); }
+  .bar i.f { background: var(--ink); box-shadow: var(--text-fx); }
+  .sep { margin: 14px 12px 0; border-top: 2px dashed var(--ink-dim); }
+  .out { padding: 10px 14px 0; font-size: 34px; }
+  .out small { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 4px; }
+  .status { grid-column: span 2; display: flex; gap: 0; border-top: 2px solid var(--ink-dim); font-size: 13px; }
+  .status span { padding: 4px 12px; border-right: 2px solid var(--ink-dim); }
+  .status span:last-child { margin-left: auto; border-right: 0; border-left: 2px solid var(--ink-dim); }
+
+  /* right cluster */
+  .rcluster { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 14px; padding-top: 14px; }
+  .dpad { grid-column: span 2; position: relative; width: 132px; height: 132px; margin: 4px auto 0; border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #7393e6 0%, #3d5fbf 55%, #2c4894 100%);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.25), inset 0 -4px 6px rgba(0,0,0,.35), 0 4px 0 #0b0c0e, 0 7px 12px rgba(0,0,0,.55); }
+  .dpad::before { content: ""; position: absolute; inset: 34px; border-radius: 50%; background: radial-gradient(circle at 45% 40%, #5576d0, #3655ad);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,.4); }
+  .dpad b { position: absolute; color: rgba(255,255,255,.75); font: 10px Arial; }
+  .dpad .u { top: 10px; left: 50%; transform: translateX(-50%); } .dpad .d { bottom: 10px; left: 50%; transform: translateX(-50%); }
+  .dpad .lf { left: 12px; top: 50%; transform: translateY(-50%); } .dpad .rt { right: 12px; top: 50%; transform: translateY(-50%); }
+  .rcluster .wide { grid-column: span 2; height: 38px; }
+
+  /* ---------- keypad deck / timeline ---------- */
+  .deck { margin: 0 -30px; padding: 30px 40px 30px; border-radius: 0 0 38px 38px;
+    background: linear-gradient(180deg, #45484e 0%, #3b3e43 100%);
+    box-shadow: inset 0 8px 12px -6px rgba(0,0,0,.65), inset 0 2px 0 rgba(0,0,0,.4); }
+  .toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-top: 6px; }
+  .toolbar .printed.big { font-size: 11px; color: #c9ccd1; margin-right: 10px; }
+  .toolbar .spacer { flex: 1; }
+  .ruler { position: relative; height: 14px; margin-left: 318px; margin-right: 46px; margin-bottom: 8px; }
+  .ruler span { position: absolute; transform: translateX(-1px); font: 700 9px Arial; color: #4fd1b5; letter-spacing: .05em; padding-left: 4px; border-left: 1px solid #4fd1b5; height: 12px; }
+  .track { display: flex; align-items: center; gap: 10px; height: 46px; }
+  .track + .track { margin-top: 6px; }
+  .thead { width: 308px; display: flex; align-items: center; gap: 10px; flex: none; }
+  .plate { flex: 1; height: 30px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border-radius: 5px;
+    background: #2a2c30; box-shadow: inset 0 2px 3px rgba(0,0,0,.6), 0 1px 0 rgba(255,255,255,.07);
+    font: 700 10.5px/1 Arial, sans-serif; letter-spacing: .05em; color: #d9dbdf; text-transform: uppercase; white-space: nowrap; }
+  .plate svg { flex: none; }
+  .chips { flex: 1; display: flex; gap: 5px; }
+  .chips .key { height: 34px; padding: 0 8px; justify-content: flex-start; font-size: 11px; overflow: hidden; }
+  .chips .key::before { content: ""; position: absolute; left: 6px; right: 6px; top: 3px; height: 2px; border-radius: 1px; background: var(--chip); opacity: .9; }
+  .chips .key.pressed { box-shadow: inset 0 0 0 2px var(--chip), inset 0 1px 0 rgba(255,255,255,.5), 0 1px 0 #1a1b1e, 0 2px 3px rgba(0,0,0,.45); }
+  .add { width: 34px; padding: 0; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const DUR = 2.8;
+const TRACKS = [
+  { name: 'Am Arpeggio', led: '#46ff7a', ledAuth: '#46ff7a', on: true,
+    segs: [['A4',.2,440],['C5',.2,523],['E5',.2,659],['G5',.2,784],['A5',.6,880],['E5',.3,659],['A4',1.1,440]] },
+  { name: 'Octave Sweep', led: '#ffb547', segs: [['Glide Up',1.0,[220,440]],['Glide Down',1.8,[440,55]]] },
+  { name: 'Bass Pulse', led: '#4fd6ff', segs: [['Root',1.0,110],['Fifth',.5,165],['Root',1.3,110]] },
+];
+
+function graph() {
+  const W = 552, H = 404, m = { l: 62, r: 18, t: 22, b: 46 };
+  const X = t => m.l + t / DUR * (W - m.l - m.r), Y = f => H - m.b - f / 1000 * (H - m.t - m.b);
+  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`;
+  for (let t = 0; t <= DUR + 1e-9; t += .2) s += `<line x1="${X(t)}" x2="${X(t)}" y1="${m.t}" y2="${H-m.b}" style="stroke:var(--grid)"/>`;
+  for (let f = 0; f <= 1000; f += 100) s += `<line x1="${m.l}" x2="${W-m.r}" y1="${Y(f)}" y2="${Y(f)}" style="stroke:var(--grid)"/>`;
+  s += `<path d="M${m.l} ${m.t} V${H-m.b} H${W-m.r}" style="fill:none;stroke:var(--ink);stroke-width:2"/>`;
+  for (let t = 0; t <= DUR + 1e-9; t += .4) s += `<line x1="${X(t)}" x2="${X(t)}" y1="${H-m.b}" y2="${H-m.b+6}" style="stroke:var(--ink);stroke-width:2"/><text x="${X(t)}" y="${H-m.b+22}" font-size="15" text-anchor="middle">${t.toFixed(1)}</text>`;
+  for (let f = 0; f <= 1000; f += 200) s += `<line x1="${m.l-6}" x2="${m.l}" y1="${Y(f)}" y2="${Y(f)}" style="stroke:var(--ink);stroke-width:2"/><text x="${m.l-10}" y="${Y(f)+5}" font-size="15" text-anchor="end">${(f/1000).toFixed(1)}</text>`;
+  s += `<text x="${(W+m.l)/2}" y="${H-6}" font-size="14" text-anchor="middle" style="fill:var(--ink-soft)">t (s)</text>`;
+  s += `<text x="16" y="${(H-m.b+m.t)/2}" font-size="14" text-anchor="middle" transform="rotate(-90 16 ${(H-m.b+m.t)/2})" style="fill:var(--ink-soft)">f (kHz)</text>`;
+  TRACKS.forEach((tr, i) => {
+    let t = 0, d = '';
+    tr.segs.forEach(([, len, f]) => {
+      if (Array.isArray(f)) d += `M${X(t)} ${Y(f[0])} L${X(t+len)} ${Y(f[1])} `;
+      else d += `M${X(t)} ${Y(f)} H${X(t+len)} `;
+      t += len;
+    });
+    s += `<path class="tr" d="${d}" style="stroke:var(--t${i+1});color:var(--t${i+1});stroke-dasharray:var(--d${i+1});${i ? 'stroke-width:2.5' : ''}"/>`;
+  });
+  const ph = X(1.05);
+  s += `<line x1="${ph}" x2="${ph}" y1="${m.t}" y2="${H-m.b}" style="stroke:var(--ink);stroke-width:1.5;stroke-dasharray:2 3"/><path d="M${ph-6} ${m.t} h12 l-6 8z" style="fill:var(--ink)"/>`;
+  const lx = W - m.r - 190;
+  s += `<rect x="${lx-10}" y="${m.t+8}" width="190" height="84" style="fill:none;stroke:var(--ink-dim);stroke-width:1.5"/>`;
+  TRACKS.forEach((tr, i) => {
+    const y = m.t + 30 + i * 24;
+    s += `<line class="tr" x1="${lx}" x2="${lx+30}" y1="${y-5}" y2="${y-5}" style="stroke:var(--t${i+1});color:var(--t${i+1});stroke-dasharray:var(--d${i+1})"/><text x="${lx+40}" y="${y}" font-size="15">${tr.name}</text>`;
+  });
+  return s + '</svg>';
+}
+
+const sine = (c='#e9e9e9') => `<svg width="22" height="12" viewBox="0 0 22 12"><path d="M1 6 C4 -1, 7 -1, 11 6 S18 13, 21 6" fill="none" stroke="${c}" stroke-width="2"/></svg>`;
+const dash = i => `<svg width="22" height="6"><line x1="0" x2="22" y1="3" y2="3" stroke="#d9dbdf" stroke-width="2.5" stroke-dasharray="${['none','6 3','1.5 3'][i]}"/></svg>`;
+
+function calc(variant) {
+  const auth = variant === 'v-auth';
+  const bars = (n, of) => Array.from({ length: of }, (_, i) => `<i class="${i < n ? 'f' : ''}"></i>`).join('');
+  const ticks = [0,.5,1,1.5,2,2.5].map(t => `<span style="left:${t/DUR*100}%">${t}s</span>`).join('');
+  const tracks = TRACKS.map((tr, ti) => `
+    <div class="track">
+      <div class="thead">
+        <span class="led on" style="background:${tr.led};box-shadow:0 0 6px ${tr.led}"></span>
+        <div class="key" style="width:34px;padding:0">−</div>
+        <div class="plate">${auth ? dash(ti) : ''}${tr.name}</div>
+        <div class="key" style="padding:0 8px">${sine()}</div>
+        <div class="key" style="padding:0 8px;font-size:10px">MUTE</div>
+      </div>
+      <div class="chips">${tr.segs.map(([n, len], si) =>
+        `<div class="key grey${ti === 0 && si === 0 ? ' pressed' : ''}" style="flex:${len} 1 0;--chip:${tr.led}">${n}</div>`).join('')}</div>
+      <div class="key add">+</div>
+    </div>`).join('');
+
+  return `
+  <div class="calc ${variant}"><div class="body">
+    <div class="grip l"></div><div class="grip r"></div>
+    <div class="upper">
+      <div class="fstrip">
+        <div class="key blue pressed"><span class="legend">F1</span>▶</div>
+        <div class="key blue"><span class="legend">F2</span>❚❚</div>
+        <div class="key red span2"><span class="legend">F3 · RESET</span>■ STOP</div>
+        <div class="printed label">DOMAIN</div>
+        <div class="key"><span class="legend teal">F4</span><span class="led on"></span>TIME</div>
+        <div class="key"><span class="legend teal">F5</span><span class="led"></span>BEAT</div>
+      </div>
+
+      <div class="bezel">
+        <div class="brandrow">
+          <span class="brand">Arithmusic</span>
+          <span class="tag">FORMULA SYNTH</span>
+          <span class="model">fx-AM1</span>
+        </div>
+        <div class="lcd">
+          <div>${graph()}</div>
+          <div class="editor">
+            <div class="inv"><span>Y= SEGMENT</span><span>1/7</span></div>
+            <div class="row"><span class="k">TITLE</span><span>A4</span></div>
+            <div class="row"><span class="k">y1(x)=</span><span class="field active">440<span class="cursor"></span></span></div>
+            <div class="row"><span class="k"></span><span class="hint" style="margin-left:0">x = time (s)</span></div>
+            <div class="row"><span class="k">LEN</span><span>0.2 s</span><span class="hint">SLIDE</span></div>
+            <div class="bar">${bars(4, 12)}</div>
+            <div class="row"><span class="k">VOL</span><span>100 %</span><span class="hint">0–200</span></div>
+            <div class="bar">${bars(6, 12)}</div>
+            <div class="sep"></div>
+            <div class="out"><small>OUTPUT</small>f(x)=440</div>
+          </div>
+          <div class="status"><span>MAIN</span><span>TIME</span><span>TRK 1/3</span><span>SINE</span><span>▶ 1.05s / 2.80s</span></div>
+        </div>
+      </div>
+
+      <div class="rcluster">
+        <div class="key second">2nd</div>
+        <div class="key"><span class="legend">REDO</span>UNDO</div>
+        <div class="key"><span class="legend">SETUP</span>MODE</div>
+        <div class="key"><span class="legend teal">TUTORIAL</span>HELP</div>
+        <div class="key"><span class="legend">RCL</span>LOAD</div>
+        <div class="key"><span class="legend">STO▸</span>SAVE</div>
+        <div class="dpad"><b class="u">▲</b><b class="d">▼</b><b class="lf">◀</b><b class="rt">▶</b></div>
+        <div class="key blue wide"><span class="legend">COMMIT</span>ENTER</div>
+      </div>
+    </div>
+
+    <div class="deck">
+      <div class="toolbar">
+        <span class="printed big">TIMELINE</span>
+        <div class="key"><span class="legend">NEW</span>TRACK +</div>
+        <div class="key"><span class="legend teal">INSERT</span>NOTES</div>
+        <div class="key"><span class="legend teal">INSERT</span>FUNC</div>
+        <div class="key"><span class="legend teal">INSERT</span>PATTERN</div>
+        <div class="spacer"></div>
+        <div class="key"><span class="legend">DEL</span>CLEAR</div>
+      </div>
+      <div class="ruler">${ticks}</div>
+      ${tracks}
+    </div>
+  </div></div>`;
+}
+
+const variants = [
+  ['v-glow', 'A — Phosphor glow', 'dark green screen, glowing traces, colored tracks'],
+  ['v-auth', 'B — Authentic LCD', 'reflective grey-green, dark pixels, tracks told apart by line style'],
+];
+document.getElementById('root').innerHTML = variants.map(([v, t, d]) =>
+  `<div class="variant"><div class="caption">${t} <span>· ${d}</span></div><div class="stage"><div class="scaler">${calc(v)}</div></div></div>`).join('');
+
+function fit() {
+  document.querySelectorAll('.stage').forEach(st => {
+    const sc = st.querySelector('.scaler'), k = st.clientWidth / 1320;
+    sc.style.transform = `scale(${k})`;
+    st.style.height = sc.offsetHeight * k + 'px';
+  });
+}
+fit(); new ResizeObserver(fit).observe(document.body);
+</script>
+</body>
+</html>

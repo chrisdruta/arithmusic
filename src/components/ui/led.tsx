@@ -12,8 +12,8 @@ function Led({
   return (
     <div
       className={cn(
-        "size-2 rounded-[1px] transition-opacity duration-75",
-        on ? "opacity-100" : "opacity-20",
+        "size-2 shrink-0 rounded-full transition-opacity duration-75",
+        on ? "opacity-100" : "opacity-35",
         className,
       )}
       style={{

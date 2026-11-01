@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronRight, Minus, VolumeX } from 'lucide-react';
+import { Minus } from 'lucide-react';
 import { mdiSineWave, mdiTriangleWave, mdiSawtoothWave } from '@mdi/js';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Toggle } from '@/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useComposition } from '../../context/CompositionContext';
+import { trackDash } from '../../lib/track-style';
 
 function MdiIcon({ path }: { path: string }) {
   return (
@@ -46,11 +46,10 @@ function WaveSelect({ rowIndex }: { rowIndex: number }) {
         variant="calc-secondary"
         size="sm"
         onClick={() => setExpanded(true)}
-        className="gap-0.5 text-highlight"
+        className="px-2"
         aria-label={`Wave: ${selected.label}. Click to change.`}
       >
         <MdiIcon path={selected.path} />
-        <ChevronRight className="size-3 text-muted-foreground" />
       </Button>
     );
   }
@@ -60,6 +59,7 @@ function WaveSelect({ rowIndex }: { rowIndex: number }) {
       <ToggleGroup
         type="single"
         size="sm"
+        spacing={1}
         value={wave}
         onValueChange={(val) => {
           if (val) dispatch({ type: 'TRACK_OPTION_CHANGE', index: rowIndex, field: 'wave', value: val });
@@ -76,25 +76,38 @@ function WaveSelect({ rowIndex }: { rowIndex: number }) {
   );
 }
 
+// Line-style swatch matching this track's trace on the monochrome graph
+function DashSwatch({ rowIndex }: { rowIndex: number }) {
+  return (
+    <svg width="22" height="6" className="shrink-0" aria-hidden>
+      <line x1="0" x2="22" y1="3" y2="3" stroke="currentColor" strokeWidth="2.5" strokeDasharray={trackDash(rowIndex)} />
+    </svg>
+  );
+}
+
 export default function TrackOptions({ rowIndex }: { rowIndex: number }) {
   const { state, dispatch } = useComposition();
   const options = state.timelines[rowIndex].options;
 
   return (
-    <div className="flex items-center gap-2.5 bg-surface px-2.5 py-1">
+    <div className="flex items-center gap-2.5 py-1 pr-2.5">
       <Button
         variant="calc-secondary"
-        size="sm"
+        size="icon-sm"
         onClick={() => dispatch({ type: 'DELETE_TRACK', rowIndex })}
+        aria-label="Delete track"
       >
-        Track <Minus className="size-4" />
+        <Minus className="size-4" />
       </Button>
-      <Input
-        value={options.title}
-        onChange={(e) => dispatch({ type: 'TRACK_OPTION_CHANGE', index: rowIndex, field: 'title', value: e.target.value })}
-        size="sm"
-        className="w-32 bg-muted"
-      />
+      <div className="name-plate flex h-8 w-44 items-center gap-2 px-2.5 text-[#d9dbdf]">
+        <DashSwatch rowIndex={rowIndex} />
+        <input
+          value={options.title}
+          onChange={(e) => dispatch({ type: 'TRACK_OPTION_CHANGE', index: rowIndex, field: 'title', value: e.target.value })}
+          className="min-w-0 flex-1 bg-transparent font-button text-xs font-bold uppercase tracking-wider outline-none"
+          aria-label="Track name"
+        />
+      </div>
       <WaveSelect rowIndex={rowIndex} />
       <Toggle
         size="sm"
@@ -102,8 +115,9 @@ export default function TrackOptions({ rowIndex }: { rowIndex: number }) {
         onPressedChange={() => dispatch({ type: 'TRACK_OPTION_CHANGE', index: rowIndex, field: 'mute', value: '' })}
         aria-label="Mute track"
         variant="calc"
+        className="px-2 text-[0.625rem]"
       >
-        <VolumeX className="size-4" />
+        MUTE
       </Toggle>
     </div>
   );

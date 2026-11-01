@@ -21,9 +21,11 @@ const buttonVariants = cva(
         "ghost-destructive":
           "text-muted-foreground hover:bg-secondary hover:text-destructive",
         link: "text-primary underline-offset-4 hover:underline",
-        calc: "bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm border border-t-[#555] border-l-[#555] border-b-[#222] border-r-[#222] shadow-[1px_1px_0px_#111,inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-75 active:shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)] active:translate-y-px",
-        "calc-secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-sm border border-t-[#555] border-l-[#555] border-b-[#222] border-r-[#222] shadow-[1px_1px_0px_#111,inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-75 active:shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)] active:translate-y-px",
-        "calc-accent": "bg-accent text-accent-foreground hover:bg-accent/90 rounded-sm border border-t-[#555] border-l-[#555] border-b-[#222] border-r-[#222] shadow-[1px_1px_0px_#111,inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-75 active:shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)] active:translate-y-px",
+        calc: "key key-blue text-white",
+        "calc-secondary": "key text-[#f3f3f3]",
+        "calc-accent": "key key-red text-white",
+        "calc-grey": "key key-grey",
+        "calc-second": "key key-second",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

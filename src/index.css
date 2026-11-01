@@ -22,50 +22,57 @@
 }
 
 @theme inline {
-  /* Casio fx-6300G retro calculator palette */
+  /* Calculator shell (injection-molded plastic) */
   --color-shell-bg: #0a0a0a;
   --color-background: #1c1c1e;
-  --color-foreground: #c8c8c0;
-  --color-card: #0a1a0a;
-  --color-card-foreground: #33ff66;
-  --color-popover: #0a1a0a;
-  --color-popover-foreground: #33ff66;
-  --color-primary: #2255cc;
+  --color-foreground: #d9dbdf;
+  --color-card: #2a2c30;
+  --color-card-foreground: #d9dbdf;
+  --color-popover: #2a2c30;
+  --color-popover-foreground: #d9dbdf;
+  --color-primary: #3d5fbf;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #2a2a2c;
-  --color-secondary-foreground: #d0d0c8;
+  --color-secondary: #2c2e33;
+  --color-secondary-foreground: #e6e7ea;
   --color-muted: #2a2a2c;
-  --color-muted-foreground: #808078;
-  --color-accent: #cc3333;
+  --color-muted-foreground: #9da1a8;
+  --color-accent: #c63c30;
   --color-accent-foreground: #ffffff;
-  --color-destructive: #cc3333;
+  --color-destructive: #e0574a;
   --color-destructive-foreground: #ffffff;
   --color-border: #3a3a38;
   --color-input: #3a3a38;
-  --color-ring: #2255cc;
-  --color-highlight: #33ff66;
+  --color-ring: #e9c84a;
   --color-surface: #222224;
   --color-surface-alt: #2c2c2e;
 
-  /* LCD-specific colors */
-  --color-lcd-bg: #0a1a0a;
-  --color-lcd-green: #33ff66;
-  --color-lcd-grid: #0d2e0d;
-  --color-lcd-dim: #1a6633;
-  --color-amber: #d4a017;
-  --color-func-blue: #66aaff;
+  /* Reflective LCD — monochrome dark pixels on grey-green */
+  --color-lcd-bg: #bac4a6;
+  --color-lcd-ink: #1b2317;
+  --color-lcd-dim: #5c6851;
+  --color-lcd-grid: #a7b192;
 
-  /* Boxy calculator corners */
+  /* Ink printed on the plastic above keys (2nd-function legends) */
+  --color-legend: #e9c84a;
+  --color-legend-alt: #4fd1b5;
+
+  /* Track identity — LEDs and segment-key stripes (the LCD itself stays monochrome) */
+  --color-track-1: #46ff7a;
+  --color-track-2: #ffb547;
+  --color-track-3: #4fd6ff;
+  --color-track-4: #ff6a5c;
+
+  /* Rounded molded-plastic corners */
   --radius: 2px;
   --radius-sm: 2px;
   --radius-md: 3px;
   --radius-lg: 4px;
   --radius-xl: 6px;
 
-  /* Monospace calculator fonts */
   --font-sans: "Share Tech Mono", "Courier New", monospace;
   --font-display: "VT323", "Share Tech Mono", monospace;
-  --font-button: "TI92PlusPC", "Share Tech Mono", monospace;
+  --font-button: "Helvetica Neue", Arial, sans-serif;
+  --font-lcd: "TICELarge", "VT323", monospace;
 }
 
 html {
@@ -106,147 +113,275 @@ body {
   background: var(--color-muted-foreground);
 }
 
-/* --- Composable utilities via @layer --- */
+/* --- Calculator body ---------------------------------------------------- */
 
-@layer utilities {
-  /* LCD green glow (drag-and-drop, active states) */
-  .glow-lcd {
-    @apply shadow-[0_0_8px_rgba(51,255,102,0.3)];
-  }
-
-  /* Plastic mold seam — top edge groove (1px dark + 1px light = 3D channel) */
-  .groove {
-    @apply relative;
-  }
-  .groove::before {
-    content: '';
-    @apply pointer-events-none absolute top-0 right-0 left-0 z-2 h-[2px];
-    background: linear-gradient(to bottom, #111 0%, #111 50%, #3a3a3880 50%, #3a3a3880 100%);
-  }
-
-  /* Bottom edge groove variant (uses ::after — only where scanlines aren't present) */
-  .groove-bottom {
-    @apply relative;
-  }
-  .groove-bottom::after {
-    content: '';
-    @apply pointer-events-none absolute right-0 bottom-0 left-0 z-2 h-[2px];
-    background: linear-gradient(to bottom, #111 0%, #111 50%, #3a3a3880 50%, #3a3a3880 100%);
-  }
-
-  /* TI-92 ribbed grip strips — horizontal ridges running vertically */
-  .grip-ribs {
-    background:
-      repeating-linear-gradient(
-        to bottom,
-        #1a1a1c 0px,
-        #1a1a1c 2px,
-        #252527 2px,
-        #252527 3px,
-        #2e2e30 3px,
-        #2e2e30 4px
-      );
-  }
-
-  /* Calculator body frame — beveled plastic lip with physical depth */
-  .calc-frame {
-    border: 3px solid;
-    border-color: #444 #1a1a1a #111 #333;
-    box-shadow:
-      /* inner top-edge highlight — light catching the lip */
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      /* outer thin outline — crisp device edge */
-      0 0 0 1px rgba(0, 0, 0, 0.6),
-      /* tight near-shadow — device thickness sitting on surface */
-      0 2px 6px rgba(0, 0, 0, 0.5),
-      /* wide ambient shadow — device weight on desk */
-      0 8px 40px rgba(0, 0, 0, 0.7);
-  }
+.calc-body {
+  border-radius: 2.25rem;
+  background: linear-gradient(180deg, #3b3d42 0%, #303236 100%);
+  box-shadow:
+    0 22px 40px rgba(0, 0, 0, 0.55),
+    0 4px 10px rgba(0, 0, 0, 0.4),
+    inset 0 2px 0 rgba(255, 255, 255, 0.09),
+    inset 0 -5px 0 rgba(0, 0, 0, 0.45),
+    inset 2px 0 0 rgba(255, 255, 255, 0.04),
+    inset -2px 0 0 rgba(0, 0, 0, 0.3);
 }
 
-/* --- Pseudo-element effects (cannot be expressed in Tailwind) --- */
+/* Ribbed side grips */
+.grip-ribs {
+  border-radius: 999px;
+  background: repeating-linear-gradient(180deg, #26282c 0 6px, #3e4046 6px 8px, #2b2d31 8px 14px);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.6);
+}
 
-/* LCD scanline overlay */
-.lcd-scanlines::after {
+/* Glossy black frame the LCD sits in */
+.calc-bezel {
+  position: relative;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, #121316 0%, #070708 100%);
+  box-shadow: 0 0 0 2px #26282c, 0 0 0 3px #45474c, inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.calc-bezel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 35%);
+}
+
+/* Keypad deck — sits lower than the screen half of the body */
+.calc-deck {
+  background: linear-gradient(180deg, #45484e 0%, #3b3e43 100%);
+  box-shadow: inset 0 8px 12px -6px rgba(0, 0, 0, 0.65), inset 0 2px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Text screen-printed onto the plastic */
+.printed {
+  font: 700 0.5625rem/1 var(--font-button);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #9da1a8;
+}
+
+/* Recessed label plate (track names) */
+.name-plate {
+  border-radius: 0.3rem;
+  background: #2a2c30;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* --- LCD ---------------------------------------------------------------- */
+
+.lcd-screen {
+  position: relative;
+  border-radius: 0.3rem;
+  background: linear-gradient(172deg, #c9d1b6 0%, #b9c3a5 55%, #aab595 100%);
+  color: var(--color-lcd-ink);
+  font-family: var(--font-lcd);
+  /* pixels cast a faint shadow onto the reflector behind them */
+  text-shadow: 1.5px 1.5px 0 rgba(27, 35, 23, 0.14);
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+/* Pixel grid */
+.lcd-screen::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 2px,
-    rgba(0, 0, 0, 0.12) 2px,
-    rgba(0, 0, 0, 0.12) 4px
-  );
-  z-index: 1;
+  background:
+    repeating-linear-gradient(90deg, rgba(27, 35, 23, 0.035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg, rgba(27, 35, 23, 0.035) 0 1px, transparent 1px 3px);
 }
 
-/* LCD pixel grid (composites with scanlines) */
-.lcd-scanlines.lcd-pixel-grid::after {
-  background-image:
-    repeating-linear-gradient(
-      to right,
-      rgba(0, 0, 0, 0.06) 0px,
-      rgba(0, 0, 0, 0.06) 1px,
-      transparent 1px,
-      transparent 3px
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.06) 0px,
-      rgba(0, 0, 0, 0.06) 1px,
-      transparent 1px,
-      transparent 3px
-    );
+/* Inverted pixels — TI-style title bars and selections */
+.lcd-inverse {
+  background: var(--color-lcd-ink);
+  color: var(--color-lcd-bg);
+  text-shadow: none;
 }
 
-/* KaTeX third-party class override — TI calculator LCD font */
+/* Pop-up menu drawn on the LCD */
+.lcd-popup {
+  border: 2px solid var(--color-lcd-ink);
+  border-radius: 0.2rem;
+  background: var(--color-lcd-bg);
+  color: var(--color-lcd-ink);
+  font-family: var(--font-lcd);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+}
+
+/* KaTeX output in the LCD font */
 .lcd-katex .katex {
-  color: var(--color-lcd-green);
+  color: var(--color-lcd-ink);
 }
 .lcd-katex .katex .katex-html * {
   font-family: "TICELarge", monospace !important;
 }
 
-/* --- Vendor-prefixed slider (no Tailwind support) --- */
-
+/* Segmented pixel bar slider (vendor-prefixed, no Tailwind support).
+   Set --pct on the element to fill the bar. */
 .lcd-slider {
   -webkit-appearance: none;
   appearance: none;
-  height: 0.375rem;
-  background: var(--color-lcd-grid);
-  border-radius: 2px;
+  height: 1.25rem;
+  background: transparent;
   outline: none;
   cursor: pointer;
+}
+.lcd-slider::-webkit-slider-runnable-track {
+  height: 0.625rem;
+  border: 2px solid var(--color-lcd-ink);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 0.5rem, var(--color-lcd-bg) 0.5rem 0.625rem),
+    linear-gradient(90deg, var(--color-lcd-ink) var(--pct, 0%), transparent var(--pct, 0%));
+}
+.lcd-slider::-moz-range-track {
+  height: 0.625rem;
+  border: 2px solid var(--color-lcd-ink);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 0.5rem, var(--color-lcd-bg) 0.5rem 0.625rem),
+    linear-gradient(90deg, var(--color-lcd-ink) var(--pct, 0%), transparent var(--pct, 0%));
 }
 .lcd-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 0.875rem;
-  height: 0.875rem;
-  border-radius: 2px;
-  background: var(--color-lcd-green);
-  border: 1px solid #1a6633;
-  box-shadow: 0 0 4px rgba(51, 255, 102, 0.4);
-  cursor: pointer;
+  width: 0.375rem;
+  height: 1.125rem;
+  margin-top: calc(-0.25rem - 2px);
+  border: 0;
+  border-radius: 0;
+  background: var(--color-lcd-ink);
 }
 .lcd-slider::-moz-range-thumb {
-  width: 0.875rem;
-  height: 0.875rem;
-  border-radius: 2px;
-  background: var(--color-lcd-green);
-  border: 1px solid #1a6633;
-  box-shadow: 0 0 4px rgba(51, 255, 102, 0.4);
-  cursor: pointer;
+  width: 0.375rem;
+  height: 1.125rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-lcd-ink);
 }
-.lcd-slider::-webkit-slider-runnable-track {
-  height: 0.375rem;
-  background: var(--color-lcd-grid);
-  border-radius: 2px;
+
+/* --- Physical keys ------------------------------------------------------
+   Unlayered on purpose: these beat Tailwind's layered utilities, so shadcn
+   size/variant classes (rounded-sm, bg-*, shadow-*) can't flatten the keys.
+   Text color and sizing are left to utilities. */
+
+.key {
+  position: relative;
+  border: 0;
+  border-radius: 0.45rem 0.45rem 0.6rem 0.6rem;
+  font-family: var(--font-button);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: linear-gradient(180deg, #4a4d54 0%, #2c2e33 52%, #212327 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.35),
+    0 3px 0 #0b0c0e,
+    0 5px 9px rgba(0, 0, 0, 0.55);
+  transition: transform 60ms, box-shadow 60ms, filter 60ms;
 }
-.lcd-slider::-moz-range-track {
-  height: 0.375rem;
-  background: var(--color-lcd-grid);
-  border-radius: 2px;
+.key:hover { filter: brightness(1.1); }
+.key:focus-visible { outline: 2px solid var(--color-legend); outline-offset: 3px; }
+.key:disabled { filter: saturate(0.4) brightness(0.8); }
+
+.key-blue { background: linear-gradient(180deg, #6b8be0 0%, #3d5fbf 52%, #304ea3 100%); }
+.key-red { background: linear-gradient(180deg, #ec6a5c 0%, #c63c30 52%, #a72f25 100%); }
+.key-grey {
+  color: #15171a;
+  background: linear-gradient(180deg, #c3c7cd 0%, #9da2aa 52%, #8a8f97 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.25),
+    0 3px 0 #1a1b1e,
+    0 5px 9px rgba(0, 0, 0, 0.5);
 }
+.key-second {
+  color: #f1cc43;
+  box-shadow:
+    inset 0 0 0 2px #c9a62a,
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 3px 0 #0b0c0e,
+    0 5px 9px rgba(0, 0, 0, 0.55);
+}
+
+/* Held down: momentary press, latched toggles, or the selected segment */
+.key:active,
+.key[data-state='on'],
+.key[aria-pressed='true'] {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 1px 0 #0b0c0e,
+    0 2px 3px rgba(0, 0, 0, 0.5);
+}
+.key-grey:active,
+.key-grey[aria-pressed='true'] {
+  box-shadow:
+    inset 0 0 0 2px var(--chip, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 1px 0 #1a1b1e,
+    0 2px 3px rgba(0, 0, 0, 0.45);
+}
+.key-second[aria-pressed='true'] {
+  color: #15171a;
+  background: linear-gradient(180deg, #f6d966 0%, #e1bb35 52%, #c9a62a 100%);
+}
+
+/* Track-color stripe across the top of segment keys (set --chip) */
+.key-chip::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 6px;
+  right: 6px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--chip);
+}
+/* INSERT parts tray: recessed bin of template chips, each in its own slot */
+.parts-tray {
+  border-radius: 0.65rem;
+  background: linear-gradient(180deg, #2a2c30, #232528);
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.7),
+    0 0 0 1px #1b1c1f,
+    0 0 0 2px #4a4d53,
+    0 14px 28px rgba(0, 0, 0, 0.6);
+}
+.tray-slot {
+  border-radius: 0.45rem;
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.6);
+}
+/* Chip lifted out of the tray */
+.key-grey.key-lifted {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.25),
+    0 14px 18px rgba(0, 0, 0, 0.55);
+}
+
+/* Segment being dragged off the timeline (will be deleted on drop) */
+.key-doomed {
+  opacity: 0.7;
+  background: linear-gradient(180deg, #ec6a5c 0%, #c63c30 52%, #a72f25 100%);
+}
+
+/* 2nd-function legend printed above a key */
+.key-legend {
+  position: absolute;
+  bottom: 100%;
+  left: -0.75rem;
+  right: -0.75rem;
+  margin-bottom: 0.3rem;
+  pointer-events: none;
+  text-align: center;
+  font: 700 0.5625rem/1 var(--font-button);
+  letter-spacing: 0.07em;
+  color: var(--color-legend);
+}
+.key-legend-alt { color: var(--color-legend-alt); }

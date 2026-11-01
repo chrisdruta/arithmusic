@@ -14,7 +14,7 @@ const inputVariants = cva(
       },
       surface: {
         default: "",
-        lcd: "bg-lcd-bg border-border shadow-[inset_0_1px_3px_rgba(0,0,0,0.5),0_0_6px_rgba(51,255,102,0.08)]",
+        lcd: "h-8 rounded-none border-0 border-b-2 border-dashed border-lcd-ink/35 bg-transparent px-1 font-lcd text-base text-lcd-ink shadow-none selection:bg-lcd-ink selection:text-lcd-bg focus-visible:border-solid focus-visible:border-lcd-ink focus-visible:ring-0 aria-invalid:border-lcd-ink aria-invalid:ring-0",
       },
     },
     defaultVariants: {
