@@ -1,8 +1,7 @@
 # Custom
-.interface-design/*.png
-.interface-design/*.jpg
+.agents/context/
+.agents/scratch/
 *:Zone.Identifier
-.vibe/requests/
 
 
 # Logs

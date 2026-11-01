@@ -14,7 +14,7 @@
 **Metaphor:** The entire app is one physical calculator sitting on a muted desk. A glossy black bezel holds the brand and the **one** LCD. Blue F-keys angle down the left side, a key cluster with a cursor pad sits on the right, and the timeline is the keypad deck along the bottom.
 **Signature elements:** Reflective grey-green LCD with dark pixels and a pixel grid; monochrome traces told apart by line style; raised keys in color families with yellow/teal 2nd-function legends; a TI-style status line; the `2nd` modifier.
 
-Reference photos: `TI-92-II_1.jpg`, `casio_fx-6300g.jpg`. The phosphor-vs-LCD comparison that picked this direction is `mockups/lcd-variants.html`.
+Reference photos (local only, may be missing): `.agents/context/TI-92-II_1.jpg`, `.agents/context/casio_fx-6300g.jpg`. The green-phosphor vs grey-LCD comparison that picked this direction was committed as `.interface-design/mockups/lcd-variants.html` in `50f2710`.
 
 ---
 
@@ -277,4 +277,4 @@ No confirmation dialog — undo via Ctrl+Z is the recovery path.
 
 ## UX Audit
 
-Simulated user testing results are tracked in `.interface-design/ux-audit-2026-02-16.md`. Consult it before building new features.
+Simulated user testing results are tracked in `.agents/ux-audit-2026-02-16.md`. Consult it before building new features.
